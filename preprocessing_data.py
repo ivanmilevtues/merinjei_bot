@@ -7,7 +7,7 @@ import numpy as np
 from nltk.corpus import stopwords
 
 main_directory = "data"
-sub_directories = ["books"]
+sub_directories = ["books", "dvd"]
 data_types = ["negative", "positive"]
 
 
@@ -33,36 +33,34 @@ def generate_data_set(word_bag: list) -> tuple:
     for sub_dir in sub_directories:
         for data_type in data_types:
             with(open(main_directory + "/" + sub_dir + "/" + data_type + ".review")) as f:
-                curr_features, curr_labels = data_to_numpy_array(f.readlines(), word_bag, 1 if data_type == 'positive' else 0)
+                curr_features = data_to_numpy_array(f.readlines(), word_bag, 1 if data_type == 'positive' else 0)
                 features += curr_features
-                labels += curr_labels
-    return (np.array(features), np.array(labels))
+    return np.array(features)
 
 
 rows_sum = []
 
 def data_to_numpy_array(data_string: str, bag_of_words: list, label_data: int) -> list:
     result = []
-    labels = []
-    for index in range(int(len(data_string)/10)):
+    for index in range(int(len(data_string))):
         row = data_string[index]
-        print(index, len(data_string)/ 10)
+        print(index, len(data_string))
         result_row = [0 for i in range(len(bag_of_words))]
         items = re.split(":|\s", row)
         for i in range(0, len(items) - 2, 2):
             try:
                 result_row[bag_of_words.index(items[i])] += int(items[i+1])
-                rows_sum[bag_of_words.index(items[i])] += int(items[i+1])
+                # rows_sum[bag_of_words.index(items[i])] += int(items[i+1])
             except Exception:
                 continue
+        result_row.append(label_data)
         result.append(result_row)
-        labels.append(label_data)
-    return (result, labels)
+    return result
 
 def remove_one_words():
     bag_of_words = generate_bag_of_words()
     rows_sum = [0 for i in range(len(bag_of_words))]
-    features, labels = generate_data_set(bag_of_words)
+    features = generate_data_set(bag_of_words)
     real_features = []
     for ind in range(len(rows_sum)):
         if ind > 50:
