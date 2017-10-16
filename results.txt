@@ -1,0 +1,38 @@
+
+On test data: 0.0
+On train data: 1.0
+        
+On train data: 1.0
+        
+On train data: 1.0
+        
+On train data: 1.0
+=======================
+On test data: 1.0
+On train data: 1.0
+Time: Mon Oct 16 20:59:08 2017
+==============================================
+On test data: 1.0
+On train data: 1.0
+Time: Mon Oct 16 21:07:44 2017
+==============================================
+On test data: 1.0
+On train data: 1.0
+Time: Mon Oct 16 21:15:04 2017
+==============================================
+On test data: 1.0
+On train data: 1.0
+Time: Mon Oct 16 22:58:24 2017
+==============================================
+On test data: 1.0
+On train data: 1.0
+Time: Mon Oct 16 23:02:36 2017
+==============================================
+On test data: 1.0
+On train data: 1.0
+Time: Mon Oct 16 23:14:16 2017
+==============================================
+On test data: 0.994375
+On train data: 0.9920833333333333
+Time: Mon Oct 16 23:52:15 2017
+=======================
