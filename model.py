@@ -26,6 +26,10 @@ def main():
 
     pred_test = clf.predict(features_test)
     pred_train = clf.predict(features_train)
+
+    with open("classifier.txt", "wb") as fp:
+        pickle.dump(clf, fp)
+
     with open("results.txt", "a") as fp:
         fp.write("""=======================
 On test data: {}
