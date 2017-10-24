@@ -12,12 +12,14 @@ class PreprocessData:
     Numpy vector which can be used for machine learning tasks
     """
 
-    def __init__(self, sub_directories: list, file_names: list):
+    def __init__(self, sub_directories: list, file_names: list, load_features: bool = False):
         self.sub_directories = sub_directories
         self.file_names = file_names
         self.main_dir = "data"
         self.stemmer = SnowballStemmer("english")
         self.features = None
+        if load_features:
+            self.load_features()
         self.dataset = None
         self.files = []
 
@@ -45,6 +47,10 @@ class PreprocessData:
     def save_features(self, file="features.pickle"):
         with open(file, "wb") as f:
             pickle.dump(self.features, f)
+
+    def load_features(self, file="features.pickle"):
+        with open(file, "rb") as f:
+            self.features = pickle.load(f)
 
     @not_none('features')
     def init_dataset(self):
@@ -91,6 +97,7 @@ class PreprocessData:
             array[self.features.index(word)] += int(val)
 
     def __reduce_tokens(self, tokens: list) -> list:
+        print(len(tokens))
         print('tokens stemmed')
         tokens = [self.stemmer.stem(w) for w in tokens if w not in stopwords.words()]
         print('done with reduce')
@@ -112,8 +119,12 @@ class PreprocessData:
 
 
 if __name__ == '__main__':
+    # with open('features.pickle' ) as f:
+    #     features = pickle.load(f)
+
+    # print(len(features))
     sub_directories = ["books"]
-    data_types = ["positive_test"]
+    data_types = ["positive", "negative"]
     preprocess = PreprocessData(sub_directories, data_types)
     t = time.time()
     features = preprocess.init_features()
