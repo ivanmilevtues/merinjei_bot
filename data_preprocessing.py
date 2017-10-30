@@ -12,14 +12,12 @@ class PreprocessData:
     Numpy vector which can be used for machine learning tasks
     """
 
-    def __init__(self, sub_directories: list, file_names: list, load_features: bool = False):
+    def __init__(self, sub_directories: list, file_names: list):
         self.sub_directories = sub_directories
         self.file_names = file_names
         self.main_dir = "data"
         self.stemmer = SnowballStemmer("english")
         self.features = None
-        if load_features:
-            self.load_features()
         self.dataset = None
         self.files = []
 
@@ -30,9 +28,13 @@ class PreprocessData:
         features = set()
 
         for file in self.files:
+            print('tokenizing for ' + file.name + ' started')
             tokens = tokenizer.tokenize(file.read())[:-2]
-            print('tokens are ready')
+            print('tokenizing for ' + file.name + ' finished')
+            print('features extracting for ' + file.name)
             features.update(self.__reduce_tokens(tokens))
+            print('features extracted for ' + file.name)
+
         features.remove('_')
 
         self.__close_files()
@@ -53,19 +55,28 @@ class PreprocessData:
             self.features = pickle.load(f)
 
     @not_none('features')
-    def init_dataset(self):
+    def init_dataset(self, pattern=r"([a-z]+.[a-z]+):(\d)"):
         self.__open_files()
         dataset = []
-        pattern = r"([a-z]+.[a-z]+):(\d)"
         tokenizer = RegexpTokenizer(pattern)
-        for file in self.__open_files():
+        for file in self.files:
+            label = 1 if 'positive' in file.name else 0
+
+            print("dataset extraction for " + file.name + " started")
             file_lines = file.readlines()
             for line in file_lines:
+                if 'unlabeled' in file.name:
+                    label = 1 if 'positive' in line.split('#label#:')[1] else 0
                 tokens = tokenizer.tokenize(line)
-                dataset.append(self.__words_to_array(tokens, 1 if 'positive' in file.name else 0))
+                dataset.append(self.__words_to_array(tokens, label))
+            print("dataset extraction for " + file.name + " done")
 
         self.dataset = np.array(dataset)
         return self.dataset
+
+    def load_dataset(self, file='dataset.pickle'):
+        with open(file, 'rb') as f:
+            self.dataset = pickle.load(f)
 
     @not_none('dataset')
     def get_dataset(self):
@@ -88,19 +99,17 @@ class PreprocessData:
         result.append(label)
         return result
 
+
     @not_none('features')
     def __add_to_array(self, array: list, word: str, val: str):
         if word in stopwords.words():
             return
-        word = self.stemmer(word)
+        word = self.stemmer.stem(word)
         if word in self.features:
             array[self.features.index(word)] += int(val)
 
     def __reduce_tokens(self, tokens: list) -> list:
-        print(len(tokens))
-        print('tokens stemmed')
         tokens = [self.stemmer.stem(w) for w in tokens if w not in stopwords.words()]
-        print('done with reduce')
         return tokens
 
     def __open_files(self):
@@ -119,15 +128,10 @@ class PreprocessData:
 
 
 if __name__ == '__main__':
-    # with open('features.pickle' ) as f:
-    #     features = pickle.load(f)
 
-    # print(len(features))
-    sub_directories = ["books"]
-    data_types = ["positive", "negative"]
+    sub_directories = ["books", "dvd", "electronics", "kitchen"]
+    data_types = ['unlabeled']
     preprocess = PreprocessData(sub_directories, data_types)
-    t = time.time()
-    features = preprocess.init_features()
-    print(t - time.time())
-    print(len(features))
-    preprocess.save_features()
+    preprocess.load_features()
+    preprocess.init_dataset()
+    preprocess.save_dataset(file='unlabled_dataset.pickle')
