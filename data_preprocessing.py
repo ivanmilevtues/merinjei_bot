@@ -1,10 +1,12 @@
 import time
 import numpy as np
-from decorators import not_none
+import pickle
 from nltk.tokenize import RegexpTokenizer
 from nltk.stem import SnowballStemmer
 from nltk.corpus import stopwords
-import pickle
+from decorators import not_none
+from preprocessing_utilities import add_to_array, get_unused_dataset_indxs
+
 
 class PreprocessData:
     """
@@ -60,15 +62,14 @@ class PreprocessData:
         dataset = []
         tokenizer = RegexpTokenizer(pattern)
         for file in self.files:
-            label = 1 if 'positive' in file.name else 0
-
             print("dataset extraction for " + file.name + " started")
+
             file_lines = file.readlines()
             for line in file_lines:
-                if 'unlabeled' in file.name:
-                    label = 1 if 'positive' in line.split('#label#:')[1] else 0
+                label = 1 if 'positive' in line.split('#label#:')[1] else 0
                 tokens = tokenizer.tokenize(line)
                 dataset.append(self.__words_to_array(tokens, label))
+
             print("dataset extraction for " + file.name + " done")
 
         self.dataset = np.array(dataset)
@@ -77,6 +78,17 @@ class PreprocessData:
     def load_dataset(self, file='dataset.pickle'):
         with open(file, 'rb') as f:
             self.dataset = pickle.load(f)
+
+    @staticmethod
+    def reduce_dataset(dataset, threshold=0):
+        indx_to_delete = get_unused_dataset_indxs(dataset, threshold)
+        return np.delete(dataset, indx_to_delete, 1)
+
+    @staticmethod
+    def reduce_features(dataset, features, threshold=0):
+        indx_to_delete = get_unused_dataset_indxs(dataset, threshold)
+        return [features[i] for i in range(len(features)) if i not in indx_to_delete]
+
 
     @not_none('dataset')
     def get_dataset(self):
@@ -87,27 +99,16 @@ class PreprocessData:
         with open(file, 'wb') as f:
             pickle.dump(self.dataset, f)
 
-
     @not_none('features')
     def __words_to_array(self, tokens, label):
         result = [0 for _ in self.features]
         for k, v in tokens:
             if "_" in k:
-                self.__add_to_array(result, k.split('_')[0], v)
-                self.__add_to_array(result, k.split('_')[1], v)
-            self.__add_to_array(result, k, v)
+                add_to_array(result, k.split('_')[0], v, self.features, self.stemmer)
+                add_to_array(result, k.split('_')[1], v, self.features, self.stemmer)
+            add_to_array(result, k, v, self.features, self.stemmer)
         result.append(label)
         return result
-
-
-    @not_none('features')
-    def __add_to_array(self, array: list, word: str, val: str):
-        if word in stopwords.words():
-            return
-        word = self.stemmer.stem(word)
-        if word in self.features:
-            array[self.features.index(word)] += int(val)
-
     def __reduce_tokens(self, tokens: list) -> list:
         tokens = [self.stemmer.stem(w) for w in tokens if w not in stopwords.words()]
         return tokens
@@ -128,10 +129,12 @@ class PreprocessData:
 
 
 if __name__ == '__main__':
+    preprocess = PreprocessData("", "")
+    preprocess.load_dataset()
+    labeled_data = preprocess.get_dataset()
+    preprocess.load_dataset("unlabled_dataset.pickle")
+    unlabeled_data = preprocess.get_dataset()
 
-    sub_directories = ["books", "dvd", "electronics", "kitchen"]
-    data_types = ['unlabeled']
-    preprocess = PreprocessData(sub_directories, data_types)
-    preprocess.load_features()
-    preprocess.init_dataset()
-    preprocess.save_dataset(file='unlabled_dataset.pickle')
+    dataset = np.concatenate((labeled_data, unlabeled_data), axis=0)
+    print(np.count_nonzero(dataset[:, -1:]))
+    dataset = PreprocessData.reduce_dataset(dataset)
