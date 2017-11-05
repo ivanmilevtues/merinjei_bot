@@ -80,13 +80,11 @@ class PreprocessData:
             self.dataset = pickle.load(f)
 
     @staticmethod
-    def reduce_dataset(dataset, threshold=0):
-        indx_to_delete = get_unused_dataset_indxs(dataset, threshold)
+    def reduce_dataset(dataset, indx_to_delete):
         return np.delete(dataset, indx_to_delete, 1)
 
     @staticmethod
-    def reduce_features(dataset, features, threshold=0):
-        indx_to_delete = get_unused_dataset_indxs(dataset, threshold)
+    def reduce_features(features, indx_to_delete):
         return [features[i] for i in range(len(features)) if i not in indx_to_delete]
 
 

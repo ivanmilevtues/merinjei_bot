@@ -112,9 +112,6 @@ def main():
 
     features_test, features_train, labels_test, labels_train = split_to_train_test(full_dataset, test_set_percent=0.2, shuffle=True)
 
-    print(features_test.shape, features_train.shape, labels_train.shape, labels_test.shape)
-    train_classifiers(features_test, features_train, labels_test, labels_train)
-
     from sklearn.ensemble import RandomForestClassifier
     clf = RandomForestClassifier()
     clf.fit(features_train, labels_train)
@@ -124,8 +121,13 @@ def main():
     features_test, features_train, labels_test, labels_train = split_to_train_test(dataset, test_set_percent=0.2, shuffle=True)
 
     print(features_test.shape, features_train.shape, labels_train.shape, labels_test.shape)
-    train_classifiers(features_test, features_train, labels_test, labels_train)
+    # train_classifiers(features_test, features_train, labels_test, labels_train)
 
+    clf = RandomForestClassifier()
+    clf.fit(features_train, labels_train)
+
+    features = PreprocessData.reduce_features(features, indx_to_delete)
+    terminal_testing(clf, features)
     # plot(clf.feature_importances_ )
 
 
