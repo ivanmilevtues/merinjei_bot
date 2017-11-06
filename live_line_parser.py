@@ -1,6 +1,7 @@
 import numpy as np
 from nltk import word_tokenize
 from preprocessing_utilities import add_to_array
+from collections import Counter
 from nltk.stem import SnowballStemmer
 
 
@@ -12,19 +13,9 @@ class LineParser():
 
     def parse_line(self, line):
         line = line[:-1].lower()
-        tokens = word_tokenize(line)
-        mapped_tokens = self.__tokens_to_map(tokens)
-        dataset = self.__map_to_dataset(mapped_tokens)
+        mapped_dataset = Counter(w for w in line.split(' '))
+        dataset = self.__map_to_dataset(mapped_dataset)
         return np.array(dataset)
-
-    def __tokens_to_map(self, tokens):
-        res = {}
-        for token in tokens:
-            if token not in res.items():
-                res[token] = 1
-            else:
-                res[token] += 1
-        return res
 
     def __map_to_dataset(self, data):
         result = [0 for _ in self.features]
