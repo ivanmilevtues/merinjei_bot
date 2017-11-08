@@ -1,5 +1,5 @@
-from data_preprocessing import PreprocessData
-from live_line_parser import LineParser
+from PreprocessData import PreprocessData
+from LineParser import LineParser
 import pickle
 from sklearn.naive_bayes import GaussianNB
 from sklearn.metrics import accuracy_score
