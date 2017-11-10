@@ -34,13 +34,13 @@ class PreprocessHateData(PreprocessData):
                     skip_first = False
                     continue
 
-                label = 1 if row[self.label_indx] != 2 else 0
+                label = 1 if int(row[self.label_indx]) != 2 else 0
                 tokens = re.split(pattern, row[self.txt_indx].lower())
                 tokens = Counter(word for word in tokens)
                 curr_row = self._words_to_array(tokens, label)
                 dataset.append(curr_row)
-                print(sum(curr_row))
 
+        self._close_files()
         self.dataset = np.array(dataset)
         return self.dataset
 
@@ -49,3 +49,4 @@ if __name__ == '__main__':
     pd = PreprocessHateData([''], ['twitter_hate_speech.csv'])
     pd.load_features()
     pd.init_dataset()
+    pd.save_dataset('hatespeech_dataset.pickle')

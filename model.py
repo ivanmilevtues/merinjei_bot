@@ -108,7 +108,10 @@ def main():
     preprocess.load_dataset("unlabled_dataset.pickle")
     unlabeled_data = preprocess.get_dataset()
 
-    full_dataset = np.concatenate((labeled_data, unlabeled_data), axis=0)
+    preprocess.load_dataset("hatespeech_dataset.pickle")
+    hatespeech_data = preprocess.get_dataset()
+
+    full_dataset = np.concatenate((labeled_data, unlabeled_data, hatespeech_data), axis=0)
 
     features_test, features_train, labels_test, labels_train = split_to_train_test(full_dataset, test_set_percent=0.2, shuffle=True)
 

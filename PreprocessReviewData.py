@@ -15,7 +15,7 @@ class PreprocessReviewData(PreprocessData):
         super().__init__(sub_directories, file_names, main_dir)
 
     def init_features(self):
-        self.__open_files()
+        self._open_files()
         pattern = r"([a-z]+|_)"
         tokenizer = RegexpTokenizer(pattern)
         features = set()
@@ -30,13 +30,13 @@ class PreprocessReviewData(PreprocessData):
 
         features.remove('_')
 
-        self.__close_files()
+        self._close_files()
         self.features = list(features)
         return features
 
     @not_none('features')
     def init_dataset(self, pattern=r"([a-z]+.[a-z]+):(\d)"):
-        self.__open_files()
+        self._open_files()
         dataset = []
         tokenizer = RegexpTokenizer(pattern)
         for file in self.files:
@@ -49,7 +49,7 @@ class PreprocessReviewData(PreprocessData):
                 dataset.append(self.__words_to_array(tokens, label))
 
             print("dataset extraction for " + file.name + " done")
-
+        self._close_files()
         self.dataset = np.array(dataset)
         return self.dataset
 
