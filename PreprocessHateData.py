@@ -34,7 +34,7 @@ class PreprocessHateData(PreprocessData):
                     skip_first = False
                     continue
 
-                label = 1 if int(row[self.label_indx]) != 2 else 0
+                label = 1 if int(row[self.label_indx]) == 2 else 1
                 tokens = re.split(pattern, row[self.txt_indx].lower())
                 tokens = Counter(word for word in tokens)
                 curr_row = self._words_to_array(tokens, label)
