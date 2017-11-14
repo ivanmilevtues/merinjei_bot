@@ -1,11 +1,12 @@
 from PreprocessData import PreprocessData
 from LineParser import LineParser
+from PreprocessHateData import PreprocessHateData
 import pickle
 from sklearn.naive_bayes import GaussianNB
 from sklearn.metrics import accuracy_score
 import numpy as np
 import time
-from sklearn.metrics import average_precision_score
+from sklearn.metrics import average_precision_score, recall_score, f1_score
 import matplotlib.pyplot as plt
 from preprocessing_utilities import get_unused_dataset_indxs, get_unused_features
 
@@ -19,18 +20,39 @@ def split_to_train_test(features_and_labels: list, test_set_percent=0.4, shuffle
             labels[:int(len(labels) * test_set_percent)], labels[-int(len(labels) * (1. - test_set_percent)):])
 
 
-def log_classifier(clf, test_set_acc, train_set_acc, time_start, time_end, precision):
+def log_classifier(clf, train_labels_pred, train_labels_true, test_labels_pred, test_labels_true, time_start, time_end):
+    test_acc = accuracy_score(test_labels_true, test_labels_pred)
+    train_acc = accuracy_score(train_labels_true, train_labels_pred)
+
+    test_precision = average_precision_score(test_labels_true, test_labels_pred)
+    train_precision = average_precision_score(train_labels_true, train_labels_pred)
+
+    test_recall = recall_score(test_labels_true, test_labels_pred, average='binary')
+    train_recall = recall_score(train_labels_true, train_labels_pred, average='binary')
+
+    test_f1 = f1_score(test_labels_true, test_labels_pred, average='binary')
+    train_f1 = f1_score(train_labels_true, train_labels_pred, average='binary')
     log_text = """=======================
-On test data: {}
-On train data: {}
 Date: {}
 Time taken to train: {} seconds
 Classifier: {}
-Precision: {}
-=======================""".format(test_set_acc, train_set_acc, time.asctime(), time_start - time_end,
-                                  str(clf), precision)
-    with open("classifier.txt", "a") as fp:
-        fp.write(log_text)
+---------------------------------
+Test Accuracy   : {}
+Train Accuracy  : {}
+---------------------------------
+Test precision  : {}
+Train  precision: {}
+---------------------------------
+Test recall     : {}
+Train recall    : {}
+---------------------------------
+Test f1         : {}
+Train f1        : {}
+=======================""".format(time.asctime(), time_end - time_start, str(clf),
+                                  test_acc, train_acc,
+                                  test_precision, train_precision,
+                                  test_recall, train_recall,
+                                  test_f1, train_f1)
     with open("results.txt", "a") as f:
         f.write(log_text)
 
@@ -43,9 +65,9 @@ def train_and_log(clf_class, features_train, labels_train, features_test, labels
     time_end = time.time()
     pred_test = clf.predict(features_test)
     pred_train = clf.predict(features_train)
-    precision = average_precision_score(pred_test, labels_test)
-    log_classifier(clf, accuracy_score(pred_test, labels_test), accuracy_score(pred_train, labels_train),
-                   time_start, time_end, precision)
+    
+    log_classifier(clf, pred_train, labels_train, pred_test, labels_test,
+                   time_start, time_end)
 
 
 def train_classifiers(features_test, features_train, labels_test, labels_train):
@@ -89,15 +111,14 @@ def terminal_testing(clf, features):
     for _ in range(10):
         inp = input("Your hate here:")
         ds = lp.parse_line(inp)
+        print(len(ds), sum(ds))
         print(clf.predict_proba(ds))
         print(clf.predict(ds))
         print('-----------')
 
 
-def main():
-    with open("features.txt", "rb") as fp:
-        bag_of_words = pickle.load(fp)
-    preprocess = PreprocessData("", "")
+def preprocess_data():
+    preprocess = PreprocessHateData("", "")
 
     preprocess.load_features()
     features = preprocess.get_features()
@@ -108,12 +129,14 @@ def main():
     preprocess.load_dataset("unlabled_dataset.pickle")
     unlabeled_data = preprocess.get_dataset()
 
-    preprocess.load_dataset("hatespeech_dataset.pickle")
-    hatespeech_data = preprocess.get_dataset()
+    # preprocess.load_dataset("hatespeech_dataset.pickle")
+    # hatespeech_data = preprocess.get_dataset()
+    # hatespeech_data = preprocess.balance_dataset()
 
-    full_dataset = np.concatenate((labeled_data, unlabeled_data, hatespeech_data), axis=0)
+    full_dataset = np.concatenate((labeled_data, unlabeled_data), axis=0)
 
-    features_test, features_train, labels_test, labels_train = split_to_train_test(full_dataset, test_set_percent=0.2, shuffle=True)
+    features_test, features_train, labels_test, labels_train = split_to_train_test(full_dataset, test_set_percent=0.2,
+                                                                                   shuffle=True)
 
     from sklearn.ensemble import RandomForestClassifier
     clf = RandomForestClassifier()
@@ -121,18 +144,53 @@ def main():
 
     indx_to_delete = get_unused_features(clf.feature_importances_)
     dataset = PreprocessData.reduce_dataset(full_dataset, indx_to_delete)
-    features_test, features_train, labels_test, labels_train = split_to_train_test(dataset, test_set_percent=0.2, shuffle=True)
 
-    print(features_test.shape, features_train.shape, labels_train.shape, labels_test.shape)
+    preprocess.dataset = full_dataset
+    preprocess.save_dataset('reduced_data_nonhatespeech.pickle')
+
+    preprocess.load_dataset("hatespeech_dataset.pickle")
+    hatespeech_data = preprocess.get_dataset()
+    hatespeech_data = preprocess.balance_dataset()
+
+    hatespeech_data = PreprocessHateData.reduce_dataset(hatespeech_data, indx_to_delete)
+
+    return np.array(hatespeech_data)
+
+
+def main():
+    hs = preprocess_data()
+    print(hs.shape)
+    input()
+    hs_ls = hs[:, -1:].ravel()
+    hs_f = hs[:,:-1]
+    preprocess = PreprocessData("", "")
+
+    preprocess.load_features("reduced_features.pickle")
+    features = preprocess.get_features()
+    print(np.array(features).shape)
+
+    preprocess.load_dataset("reduced_data_nonhatespeech.pickle")
+    dataset = preprocess.get_dataset()
+
+    from sklearn.ensemble import RandomForestClassifier
+
+    features_test, features_train, labels_test, labels_train = split_to_train_test(dataset, test_set_percent=0.2,
+                                                                                   shuffle=False)
     # train_classifiers(features_test, features_train, labels_test, labels_train)
 
-    clf = RandomForestClassifier()
-    clf.fit(features_train, labels_train)
+    clf = RandomForestClassifier(n_jobs=-1, n_estimators=20)
+    time_start = time.time()
+    clf.fit(features_train, labels_train.T)
+    time_end = time.time()
+    pred_test = clf.predict(features_test)
+    pred_train = clf.predict(features_train)
 
-    features = PreprocessData.reduce_features(features, indx_to_delete)
+    print(accuracy_score(hs_ls, clf.predict(hs_f)))
+
+    log_classifier(clf, pred_train, labels_train, pred_test, labels_test,
+                   time_start, time_end)
+
     terminal_testing(clf, features)
-    # plot(clf.feature_importances_ )
-
 
 
 if __name__ == "__main__":

@@ -19,6 +19,22 @@ class PreprocessHateData(PreprocessData):
     def init_features(self):
         pass
 
+    @not_none('dataset')
+    def balance_dataset(self):
+        labels = self.dataset[:, -1:]
+        labels_sum = np.sum(labels)
+        balance = labels_sum if labels_sum < len(labels) // 2 else len(labels) - labels_sum
+
+        # sort the dataset by its labels
+        self.dataset[self.dataset[:, -1:].argsort()]
+
+        negatives = self.dataset[0: balance,: ]
+        postives = self.dataset[-balance: -1, :]
+
+        self.dataset = np.concatenate((negatives, postives), axis=0)
+
+        return self.dataset
+
     @not_none('features')
     def init_dataset(self, pattern=r"\W+"):
         self._open_files()
@@ -34,7 +50,7 @@ class PreprocessHateData(PreprocessData):
                     skip_first = False
                     continue
 
-                label = 1 if int(row[self.label_indx]) == 2 else 1
+                label = 1 if int(row[self.label_indx]) == 2 else 0
                 tokens = re.split(pattern, row[self.txt_indx].lower())
                 tokens = Counter(word for word in tokens)
                 curr_row = self._words_to_array(tokens, label)
@@ -47,6 +63,13 @@ class PreprocessHateData(PreprocessData):
 
 if __name__ == '__main__':
     pd = PreprocessHateData([''], ['twitter_hate_speech.csv'])
+    pd.load_dataset("hatespeech_dataset.pickle")
+    pd.balance_dataset()
+    ds = pd.get_dataset()
     pd.load_features()
-    pd.init_dataset()
-    pd.save_dataset('hatespeech_dataset.pickle')
+    print("FEATUES")
+    print(len(pd.get_features()))
+    print(ds.shape)
+    print(sum(ds[:, -1:]))
+    print(len(ds))
+    print(ds)
