@@ -15,8 +15,10 @@ class PreprocessHateData(PreprocessData):
         super().__init__(sub_directories, file_names, main_dir)
         self.label_indx = 5
         self.txt_indx = 6
+        self.slang_dict = None
         self.spell_correct_dict = None
 
+    @not_none('slang_dict')
     @not_none('spell_correct_dict')
     def init_features(self):
         self._open_files()
@@ -35,12 +37,14 @@ class PreprocessHateData(PreprocessData):
                 tokens = re.split(pattern, row[self.txt_indx].lower())
                 for indx in range(len(tokens)):
                     word = tokens[indx]
+                    if word in self.slang_dict:
+                        tokens += self.slang_dict[word].split()
+                        del tokens[indx]
                     if word in self.spell_correct_dict:
                         tokens[indx] = self.spell_correct_dict[word]
 
                 features.update(self._reduce_tokens(tokens))
         self.features = list(features)
-
 
     @not_none('dataset')
     def balance_dataset(self):
@@ -83,7 +87,30 @@ class PreprocessHateData(PreprocessData):
         self.dataset = np.array(dataset)
         return self.dataset
 
-    def _init_spell_correction(self, main_dir, sub_dirs, files):
+    def init_slang_dict(self, main_dir, sub_dirs, files):
+        self._open_files({'main_dir': main_dir, 'sub_directories': sub_dirs, 'file_names': files})
+        slang_dict = {}
+        content = []
+        for file in self.files:
+            content += file.readlines()
+
+        for line in content:
+            line = line.strip().lower()
+            if '`' in line:
+                k, v = line.split('`')
+                slang_dict[k] = v
+        self.slang_dict = slang_dict
+
+    @not_none('slang_dict')
+    def save_slang_dict(self, file='slang_correction.pickle'):
+        with open(file, 'wb') as f:
+            pickle.dump(self.slang_dict, f)
+
+    def load_slang_dict(self, file='slang_correction.pickle'):
+        with open(file, 'rb') as f:
+            self.slang_dict = pickle.load(f)
+
+    def init_spell_correction(self, main_dir, sub_dirs, files):
         self._open_files({'main_dir': main_dir, 'sub_directories': sub_dirs, 'file_names': files})
         spell_correct_dict = {}
         content = []
@@ -111,6 +138,7 @@ class PreprocessHateData(PreprocessData):
 
 if __name__ == '__main__':
     pd = PreprocessHateData([''], ['twitter_hate_speech.csv'])
+    pd.load_slang_dict()
     pd.load_spell_correct()
     pd.init_features()
-    pd.save_features('hs_features.pickle')
+    pd.save_features()

@@ -30,10 +30,10 @@ class PreprocessData:
     def get_features(self):
         return self.features
 
-
+    @not_none('features')
     def save_features(self, file="features.pickle"):
         with open(file, "wb") as f:
-    @not_none('features')            pickle.dump(self.features, f)
+            pickle.dump(self.features, f)
 
     def load_features(self, file="features.pickle"):
         with open(file, "rb") as f:
