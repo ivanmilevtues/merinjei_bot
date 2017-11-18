@@ -8,14 +8,14 @@ After training a classifier and removing the unused features ended up with ~7.5k
 
 I got a pretty good results on the Amazon review dataset:
 
-|Test Accuracy   | 0.9057377049180327|
-|Train Accuracy  | 0.9999761723217689|
-|Test precision  | 0.9597017694837057|
-|Train  precision| 0.999983824528485 |
-|Test recall     | 0.9365570599613153|
-|Train recall    | 1.0               |
-|Test f1         | 0.9362552368675475|
-|Train f1        | 0.9999838242668349|
+Test Accuracy   | 0.9057377049180327
+Train Accuracy  | 0.9999761723217689
+Test precision  | 0.9597017694837057
+Train  precision| 0.999983824528485
+Test recall     | 0.9365570599613153
+Train recall    | 1.0
+Test f1         | 0.9362552368675475
+Train f1        | 0.9999838242668349
 
 I added hatespeech dataset from twitter and kept the same features. Yet I got good results again, however as the set has
 around 4k positive and 4k negative examples from 25k examples in the whole dataset they were not as accurate as the numbers
