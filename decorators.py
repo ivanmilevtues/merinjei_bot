@@ -4,7 +4,8 @@ def not_none(arg_name):
             arg = getattr(self, arg_name)
             if arg == None:
                 raise TypeError(
-                    arg_name + " is not initialized! Use init_" + arg_name + " to initialize " + arg_name + " first.")
+                    arg_name + " is not initialized! Use init_" + arg_name + "() or load_"+ arg_name + "() to initialize "
+                    + arg_name + " first.")
             return  func(self, *args, **kwargs)
         return inner
 
