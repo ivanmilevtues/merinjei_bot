@@ -1,6 +1,5 @@
 import numpy as np
 from nltk.tokenize import RegexpTokenizer
-from nltk.corpus import stopwords
 from decorators import not_none
 from PreprocessData import PreprocessData
 
@@ -25,7 +24,7 @@ class PreprocessReviewData(PreprocessData):
             tokens = tokenizer.tokenize(file.read())[:-2]
             print('tokenizing for ' + file.name + ' finished')
             print('features extracting for ' + file.name)
-            features.update(self.__reduce_tokens(tokens))
+            features.update(self._reduce_tokens(tokens))
             print('features extracted for ' + file.name)
 
         features.remove('_')
@@ -60,10 +59,6 @@ class PreprocessReviewData(PreprocessData):
     @staticmethod
     def reduce_features(features, indx_to_delete):
         return [features[i] for i in range(len(features)) if i not in indx_to_delete]
-
-    def __reduce_tokens(self, tokens: list) -> list:
-        tokens = [self.stemmer.stem(w) for w in tokens if w not in stopwords.words()]
-        return tokens
 
 
 if __name__ == '__main__':

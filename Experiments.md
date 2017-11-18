@@ -1,0 +1,1 @@
+![alt Remember, kids, the only difference between screwing around and science is writing it down](https://goo.gl/dBsh1g)

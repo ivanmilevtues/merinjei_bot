@@ -3,7 +3,7 @@ import re
 import numpy as np
 from collections import Counter
 from decorators import not_none
-
+import pickle
 from PreprocessData import PreprocessData
 
 # TODO
@@ -15,9 +15,32 @@ class PreprocessHateData(PreprocessData):
         super().__init__(sub_directories, file_names, main_dir)
         self.label_indx = 5
         self.txt_indx = 6
+        self.spell_correct_dict = None
 
+    @not_none('spell_correct_dict')
     def init_features(self):
-        pass
+        self._open_files()
+        pattern = r"\W+"
+        features = set()
+        csv_readers = []
+        for file in self.files:
+            csv_readers.append(csv.reader(file))
+
+        for reader in csv_readers:
+            skip_first = True
+            for row in reader:
+                if skip_first:
+                    skip_first = False
+                    continue
+                tokens = re.split(pattern, row[self.txt_indx].lower())
+                for indx in range(len(tokens)):
+                    word = tokens[indx]
+                    if word in self.spell_correct_dict:
+                        tokens[indx] = self.spell_correct_dict[word]
+
+                features.update(self._reduce_tokens(tokens))
+        self.features = list(features)
+
 
     @not_none('dataset')
     def balance_dataset(self):
@@ -60,16 +83,34 @@ class PreprocessHateData(PreprocessData):
         self.dataset = np.array(dataset)
         return self.dataset
 
+    def _init_spell_correction(self, main_dir, sub_dirs, files):
+        self._open_files({'main_dir': main_dir, 'sub_directories': sub_dirs, 'file_names': files})
+        spell_correct_dict = {}
+        content = []
+        for file in self.files:
+            content += file.readlines()
+
+        for line in content:
+            line = line.strip()
+            print(line.split(": "))
+            v, k = line.split(': ')
+            for key in k.split():
+                spell_correct_dict[key] = v
+
+        self._close_files()
+        self.spell_correct_dict = spell_correct_dict
+
+    @not_none('spell_correct_dict')
+    def save_spell_correction(self, file="spell_correct.pickle"):
+        with open(file, 'wb') as f:
+            pickle.dump(self.spell_correct_dict, f)
+
+    def load_spell_correct(self, file="spell_correct.pickle"):
+        with open(file, 'rb') as f:
+            self.spell_correct_dict = pickle.load(f)
 
 if __name__ == '__main__':
     pd = PreprocessHateData([''], ['twitter_hate_speech.csv'])
-    pd.load_dataset("hatespeech_dataset.pickle")
-    pd.balance_dataset()
-    ds = pd.get_dataset()
-    pd.load_features()
-    print("FEATUES")
-    print(len(pd.get_features()))
-    print(ds.shape)
-    print(sum(ds[:, -1:]))
-    print(len(ds))
-    print(ds)
+    pd.load_spell_correct()
+    pd.init_features()
+    pd.save_features('hs_features.pickle')

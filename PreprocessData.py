@@ -2,6 +2,7 @@ from abc import abstractmethod
 import numpy as np
 from nltk.stem import SnowballStemmer
 import pickle
+from nltk.corpus import stopwords
 from preprocessing_utilities import add_to_array
 from decorators import not_none
 
@@ -29,10 +30,10 @@ class PreprocessData:
     def get_features(self):
         return self.features
 
-    @not_none('features')
+
     def save_features(self, file="features.pickle"):
         with open(file, "wb") as f:
-            pickle.dump(self.features, f)
+    @not_none('features')            pickle.dump(self.features, f)
 
     def load_features(self, file="features.pickle"):
         with open(file, "rb") as f:
@@ -79,15 +80,23 @@ class PreprocessData:
     def __generate_file_path(self, path):
         return '/'.join(path.split('//'))
 
-    def _open_files(self):
+    def _reduce_tokens(self, tokens: list) -> list:
+        tokens = [self.stemmer.stem(w) for w in tokens if w not in stopwords.words()]
+        return tokens
+
+    def _open_files(self, paths=None):
+        if paths == None:
+            main_dir, sub_directories, file_names = self.main_dir, self.sub_directories, self.file_names
+        else:
+            main_dir, sub_directories, file_names = paths['main_dir'], paths['sub_directories'], paths['file_names']
         for file in self.files:
             if not file.closed:
                 file.close()
 
         self.files = []
-        for sub_dir in self.sub_directories:
-            for file_name in self.file_names:
-                path = self.main_dir + "/" + sub_dir + "/" + file_name
+        for sub_dir in sub_directories:
+            for file_name in file_names:
+                path = main_dir + "/" + sub_dir + "/" + file_name
                 path = self.__generate_file_path(path)
                 self.files.append(open(path))
 
