@@ -11,11 +11,9 @@ def add_to_array(array: list, word: str, val: str, features, stemmer):
 
 def get_unused_dataset_indxs(dataset, bottom_threshold, top_threshold):
     summed_dataset = np.sum(dataset, axis=0)
-
     bottom_indxs_delete = summed_dataset <= bottom_threshold
     top_indxs_delete = summed_dataset >= top_threshold
-
-    cols_to_delete = np.logical_and(bottom_indxs_delete, top_indxs_delete)
+    cols_to_delete = np.logical_or(bottom_indxs_delete, top_indxs_delete)
     indx_to_delete = [indx for indx in range(len(cols_to_delete)) if cols_to_delete[indx]]
 
     return indx_to_delete
