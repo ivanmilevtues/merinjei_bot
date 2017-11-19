@@ -140,5 +140,5 @@ if __name__ == '__main__':
     pd = PreprocessHateData([''], ['twitter_hate_speech.csv'])
     pd.load_slang_dict()
     pd.load_spell_correct()
-    pd.init_features()
-    pd.save_features()
+    pd.init_dataset()
+    pd.save_dataset("hs_dataset.pickle")
