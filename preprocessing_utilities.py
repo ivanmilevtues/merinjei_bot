@@ -1,5 +1,6 @@
 import numpy as np
 from nltk.corpus import stopwords
+import pickle
 
 def add_to_array(array: list, word: str, val: str, features, stemmer):
     if word in stopwords.words():
@@ -23,3 +24,11 @@ def get_unused_features(features_importance, threshold=0):
     cols_to_delete = features_importance <= threshold
     indx_to_delete = [indx for indx in range(len(cols_to_delete)) if cols_to_delete[indx]]
     return indx_to_delete
+
+
+def concat_features(features_a, features_b, file):
+    features_a = set(features_a)
+    features_a.update(features_b)
+    features_a = list(features_a)
+    with open(file, 'wb') as f:
+        pickle.dump(features_a, f)

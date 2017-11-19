@@ -3,7 +3,7 @@ import numpy as np
 from nltk.stem import SnowballStemmer
 import pickle
 from nltk.corpus import stopwords
-from preprocessing_utilities import add_to_array
+from preprocessing_utilities import add_to_array, concat_features
 from decorators import not_none
 
 
@@ -103,3 +103,21 @@ class PreprocessData:
     def _close_files(self):
         for file in self.files:
             file.close()
+
+
+if __name__ == "__main__":
+    pd = PreprocessData([], [])
+    pd.load_features()
+    all_review_features = pd.get_features()
+    pd.load_features("hs_features.pickle")
+    all_hs_features = pd.get_features()
+    print(len(all_review_features), len(all_hs_features))
+
+    pd.load_features("reduced_features.pickle")
+    reduced_review_features = pd.get_features()
+    pd.load_features("reduced_hs_features.pickle")
+    reduced_hs_features = pd.get_features()
+    print(len(reduced_review_features), len(reduced_hs_features))
+
+    concat_features(reduced_hs_features, reduced_review_features, "reduced_full_features.pickle")
+    concat_features(all_review_features, all_hs_features, "full_features.pickle")
