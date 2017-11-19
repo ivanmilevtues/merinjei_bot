@@ -5,9 +5,7 @@ from collections import Counter
 from decorators import not_none
 import pickle
 from PreprocessData import PreprocessData
-
-# TODO
-# Add autocorrection!
+from preprocessing_utilities import get_unused_dataset_indxs
 
 class PreprocessHateData(PreprocessData):
 
@@ -138,7 +136,8 @@ class PreprocessHateData(PreprocessData):
 
 if __name__ == '__main__':
     pd = PreprocessHateData([''], ['twitter_hate_speech.csv'])
-    pd.load_slang_dict()
-    pd.load_spell_correct()
-    pd.init_dataset()
-    pd.save_dataset("hs_dataset.pickle")
+    pd.load_dataset('hs_dataset.pickle')
+    pd.load_features('hs_features.pickle')
+    indexes = get_unused_dataset_indxs(pd.get_dataset(), 2, 18000)
+    ds = PreprocessData.reduce_dataset(pd.get_dataset(), indexes)
+    features = PreprocessData.reduce_features(pd.get_features(),  indexes)
