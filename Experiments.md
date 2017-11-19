@@ -1,4 +1,4 @@
-# Writing down the process through which I've come:
+# Writing down the process through which I've gone:
 <img src="http://i.imgur.com/Xedui4H.jpg" width="100%"></img>
 ## Features for the hatespeech classifier:
 I started learning the model only on Amazon review dataset which resulted in features taken only from there.
@@ -16,7 +16,7 @@ I got a pretty good results on the Amazon review dataset:
 <tr><td>Train recall    </td><td> 1.0               </td></tr>
 <tr><td>Test f1         </td><td> 0.9362552368675475</td></tr>
 <tr><td>Train f1        </td><td> 0.9999838242668349</td></tr>
-<table>
+</table>
 
 I added hatespeech dataset from twitter and kept the same features. Yet I got good results again, however as the set has
 around 4k positive and 4k negative examples from 25k examples in the whole dataset they were not as accurate as the numbers
@@ -31,7 +31,7 @@ Results:
 <tr><td>Train recall    </td><td> 0.9987401007919366</td></tr>
 <tr><td>Test f1         </td><td> 0.8191113589886596</td></tr>
 <tr><td>Train f1        </td><td> 0.999234682393193 </td></tr>
-<table>
+</table>
 
 After adding features from the twitter hatespeech dataset:
 coming soon

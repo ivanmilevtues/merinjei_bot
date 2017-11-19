@@ -16,7 +16,7 @@ def split_to_train_test(features_and_labels: list, test_set_percent=0.4, shuffle
         np.random.shuffle(features_and_labels)
     features = features_and_labels[:, :-1]
     labels = features_and_labels[:, -1:].ravel()
-    return (features[:int(len(features) * test_set_percent)], features[-int(len(features) * (1.-test_set_percent)):],
+    return (features[:int(len(features) * test_set_percent)], features[-int(len(features) * (1. - test_set_percent)):],
             labels[:int(len(labels) * test_set_percent)], labels[-int(len(labels) * (1. - test_set_percent)):])
 
 
@@ -65,7 +65,7 @@ def train_and_log(clf_class, features_train, labels_train, features_test, labels
     time_end = time.time()
     pred_test = clf.predict(features_test)
     pred_train = clf.predict(features_train)
-    
+
     log_classifier(clf, pred_train, labels_train, pred_test, labels_test,
                    time_start, time_end)
 
@@ -162,7 +162,7 @@ def main():
     print(hs.shape)
     input()
     hs_ls = hs[:, -1:].ravel()
-    hs_f = hs[:,:-1]
+    hs_f = hs[:, :-1]
     preprocess = PreprocessData("", "")
 
     preprocess.load_features("reduced_features.pickle")
