@@ -158,40 +158,31 @@ def preprocess_data():
 
 
 def main():
-    hs = preprocess_data()
-    print(hs.shape)
-    input()
-    hs_ls = hs[:, -1:].ravel()
-    hs_f = hs[:, :-1]
-    preprocess = PreprocessData("", "")
+    preprocess = PreprocessData([],[])
+    preprocess.load_dataset("reduced_hs_dataset.pickle")
+    preprocess.balance_dataset()
+    hs_dataset = preprocess.get_dataset()
+    preprocess.load_dataset("dataset_review_w_reduced_hs_features.pickle")
+    review_datset = preprocess.get_dataset()
 
-    preprocess.load_features("reduced_features.pickle")
-    features = preprocess.get_features()
-    print(np.array(features).shape)
+    full_dataset = np.concatenate((hs_dataset, review_datset), axis=0)
 
-    preprocess.load_dataset("reduced_data_nonhatespeech.pickle")
-    dataset = preprocess.get_dataset()
+    features_test, features_train, labels_test, labels_train = split_to_train_test(full_dataset)
 
-    from sklearn.ensemble import RandomForestClassifier
-
-    features_test, features_train, labels_test, labels_train = split_to_train_test(dataset, test_set_percent=0.2,
-                                                                                   shuffle=False)
     # train_classifiers(features_test, features_train, labels_test, labels_train)
 
-    clf = RandomForestClassifier(n_jobs=-1, n_estimators=20)
+    from sklearn.ensemble import RandomForestClassifier
     time_start = time.time()
-    clf.fit(features_train, labels_train.T)
+    clf = RandomForestClassifier(n_estimators=200 , n_jobs=-1)
+    clf.fit(features_train, labels_train)
     time_end = time.time()
-    pred_test = clf.predict(features_test)
     pred_train = clf.predict(features_train)
-
-    print(accuracy_score(hs_ls, clf.predict(hs_f)))
-
+    pred_test = clf.predict(features_test)
     log_classifier(clf, pred_train, labels_train, pred_test, labels_test,
                    time_start, time_end)
 
-    terminal_testing(clf, features)
-
+    preprocess.load_features("reduced_hs_features.pickle")
+    terminal_testing(clf, preprocess.get_features())
 
 if __name__ == "__main__":
     main()
