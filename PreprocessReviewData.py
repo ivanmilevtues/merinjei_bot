@@ -45,7 +45,7 @@ class PreprocessReviewData(PreprocessData):
             for line in file_lines:
                 label = 1 if 'positive' in line.split('#label#:')[1] else 0
                 tokens = tokenizer.tokenize(line)
-                dataset.append(self.__words_to_array(tokens, label))
+                dataset.append(self._words_to_array(tokens, label))
 
             print("dataset extraction for " + file.name + " done")
         self._close_files()
@@ -62,12 +62,7 @@ class PreprocessReviewData(PreprocessData):
 
 
 if __name__ == '__main__':
-    preprocess = PreprocessData("", "")
-    preprocess.load_dataset()
-    labeled_data = preprocess.get_dataset()
-    preprocess.load_dataset("unlabled_dataset.pickle")
-    unlabeled_data = preprocess.get_dataset()
-
-    dataset = np.concatenate((labeled_data, unlabeled_data), axis=0)
-    print(np.count_nonzero(dataset[:, -1:]))
-    dataset = PreprocessData.reduce_dataset(dataset)
+    preprocess = PreprocessReviewData(["books", "dvd", "electronics", "kitchen"], ["negative.review", "positive.review", "unlabeled.review"])
+    preprocess.load_features("reduced_hs_features.pickle")
+    preprocess.init_dataset()
+    preprocess.save_dataset("dataset_review_w_reduced_hs_features.pickle")

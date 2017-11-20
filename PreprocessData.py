@@ -22,6 +22,22 @@ class PreprocessData:
         self.stemmer = SnowballStemmer("english")
         self.files = []
 
+    @not_none('dataset')
+    def balance_dataset(self):
+        labels = self.dataset[:, -1:]
+        labels_sum = np.sum(labels)
+        balance = labels_sum if labels_sum < len(labels) // 2 else len(labels) - labels_sum
+
+        # sort the dataset by its labels
+        self.dataset[self.dataset[:, -1:].argsort()]
+
+        negatives = self.dataset[0: balance,: ]
+        postives = self.dataset[-balance: -1, :]
+
+        self.dataset = np.concatenate((negatives, postives), axis=0)
+
+        return self.dataset
+
     @abstractmethod
     def init_features(self):
         pass
@@ -69,7 +85,7 @@ class PreprocessData:
     @not_none('features')
     def _words_to_array(self, tokens, label):
         result = [0 for _ in self.features]
-        for k, v in tokens.items():
+        for k, v in tokens:
             if "_" in k:
                 add_to_array(result, k.split('_')[0], v, self.features, self.stemmer)
                 add_to_array(result, k.split('_')[1], v, self.features, self.stemmer)
