@@ -16,7 +16,7 @@ class LineParser():
         tokens = re.split(r"\W", line)
         mapped_dataset = Counter(w for w in tokens)
         dataset = self.__map_to_dataset(mapped_dataset)
-        return np.array(dataset)
+        return np.array([dataset])
 
     def __map_to_dataset(self, data):
         result = [0 for _ in self.features]

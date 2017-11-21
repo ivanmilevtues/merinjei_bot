@@ -60,3 +60,26 @@ that its "positive" examples are in fact not so positive they are just negative.
 can be used in order to recognise positives.
 
 ------------------------------------------
+
+Using the mixed features has good results overall however when live testing it had some problems with very short sentences
+like:
+```
+Definitely one of the better products out there!
+I am in love with your product!
+```
+Table of results:
+
+<table>
+<tr><td>Test Accuracy   </td><td> 0.8843803704410922/td></tr>
+<tr><td>Train Accuracy  </td><td> 0.9997135855901728</td></tr>
+<tr><td>Test precision  </td><td> 0.7495532905040647</td></tr>
+<tr><td>Train  precision</td><td> 0.9992909245585498</td></tr>
+<tr><td>Test recall     </td><td> 0.8343055555555555 </td></tr>
+<tr><td>Train recall    </td><td> 0.9996281836772635</td></tr>
+<tr><td>Test f1         </td><td> 0.8322249930728733</td></tr>
+<tr><td>Train f1        </td><td> 0.9995817260770554</td></tr>
+</table>
+
+As you can see the precision is a bit on the lower side and to me this means that it predicts with an ease the negatives
+so I think that the labels should be changed in order to have better precision as the idea of the classifier is mostly to
+get the negative examples right!

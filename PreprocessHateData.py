@@ -120,15 +120,7 @@ class PreprocessHateData(PreprocessData):
 
 if __name__ == '__main__':
     pd = PreprocessHateData([''], ['twitter_hate_speech.csv'])
-    pd.load_dataset('hs_dataset.pickle')
-    pd.load_features('hs_features.pickle')
-    print(len(pd.get_features()))
-    indexes = get_unused_dataset_indxs(pd.get_dataset(), 2, 20000)
-    print(len(indexes))
-    ds = PreprocessData.reduce_dataset(pd.get_dataset(), indexes)
-    features = PreprocessData.reduce_features(pd.get_features(),  indexes)
-    print(len(features))
-    pd.features = features
-    pd.dataset = ds
-    pd.save_features('reduced_hs_features.pickle')
-    pd.save_dataset('reduced_hs_dataset.pickle')
+    pd.load_features('reduced_full_features.pickle')
+    pd.init_dataset()
+
+    pd.save_dataset("dataset_hs_w_reduced_full_features.pickle")

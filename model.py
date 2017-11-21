@@ -41,7 +41,7 @@ Test Accuracy   : {}
 Train Accuracy  : {}
 ---------------------------------
 Test precision  : {}
-Train  precision: {}
+Train precision : {}
 ---------------------------------
 Test recall     : {}
 Train recall    : {}
@@ -111,10 +111,9 @@ def terminal_testing(clf, features):
     for _ in range(10):
         inp = input("Your hate here:")
         ds = lp.parse_line(inp)
-        print(len(ds), sum(ds))
+        print(len(ds), sum(ds[0]))
         print(clf.predict_proba(ds))
         print(clf.predict(ds))
-        print('-----------')
 
 
 def preprocess_data():
@@ -159,10 +158,10 @@ def preprocess_data():
 
 def main():
     preprocess = PreprocessData([],[])
-    preprocess.load_dataset("reduced_hs_dataset.pickle")
+    preprocess.load_dataset("dataset_review_w_reduced_full_features.pickle")
     preprocess.balance_dataset()
     hs_dataset = preprocess.get_dataset()
-    preprocess.load_dataset("dataset_review_w_reduced_hs_features.pickle")
+    preprocess.load_dataset("dataset_hs_w_reduced_full_features.pickle")
     review_datset = preprocess.get_dataset()
 
     full_dataset = np.concatenate((hs_dataset, review_datset), axis=0)
@@ -173,16 +172,20 @@ def main():
 
     from sklearn.ensemble import RandomForestClassifier
     time_start = time.time()
-    clf = RandomForestClassifier(n_estimators=200 , n_jobs=-1)
+    clf = RandomForestClassifier(n_estimators=100 , n_jobs=-1)
     clf.fit(features_train, labels_train)
     time_end = time.time()
     pred_train = clf.predict(features_train)
     pred_test = clf.predict(features_test)
     log_classifier(clf, pred_train, labels_train, pred_test, labels_test,
                    time_start, time_end)
-
-    preprocess.load_features("reduced_hs_features.pickle")
+    print(len(full_dataset[0]))
+    preprocess.load_features("reduced_full_features.pickle")
+    print(len(preprocess.get_features()))
+    with open('classifier.pickle', 'wb') as f:
+        pickle.dump(clf, f)
     terminal_testing(clf, preprocess.get_features())
+
 
 if __name__ == "__main__":
     main()

@@ -63,6 +63,6 @@ class PreprocessReviewData(PreprocessData):
 
 if __name__ == '__main__':
     preprocess = PreprocessReviewData(["books", "dvd", "electronics", "kitchen"], ["negative.review", "positive.review", "unlabeled.review"])
-    preprocess.load_features("reduced_hs_features.pickle")
+    preprocess.load_features("reduced_full_features.pickle")
     preprocess.init_dataset()
-    preprocess.save_dataset("dataset_review_w_reduced_hs_features.pickle")
+    preprocess.save_dataset("dataset_review_w_reduced_full_features.pickle")

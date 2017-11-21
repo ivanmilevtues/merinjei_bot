@@ -27,7 +27,6 @@ class PreprocessData:
         labels = self.dataset[:, -1:]
         labels_sum = np.sum(labels)
         balance = labels_sum if labels_sum < len(labels) // 2 else len(labels) - labels_sum
-
         # sort the dataset by its labels
         self.dataset[self.dataset[:, -1:].argsort()]
 
@@ -85,6 +84,7 @@ class PreprocessData:
     @not_none('features')
     def _words_to_array(self, tokens, label):
         result = [0 for _ in self.features]
+        tokens = tokens if type(tokens) is list else tokens.items()
         for k, v in tokens:
             if "_" in k:
                 add_to_array(result, k.split('_')[0], v, self.features, self.stemmer)
