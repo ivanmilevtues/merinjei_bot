@@ -70,11 +70,11 @@ I am in love with your product!
 Table of results:
 
 <table>
-<tr><td>Test Accuracy   </td><td> 0.8843803704410922/td></tr>
+<tr><td>Test Accuracy   </td><td> 0.8843803704410922</td></tr>
 <tr><td>Train Accuracy  </td><td> 0.9997135855901728</td></tr>
 <tr><td>Test precision  </td><td> 0.7495532905040647</td></tr>
 <tr><td>Train  precision</td><td> 0.9992909245585498</td></tr>
-<tr><td>Test recall     </td><td> 0.8343055555555555 </td></tr>
+<tr><td>Test recall     </td><td> 0.8343055555555555</td></tr>
 <tr><td>Train recall    </td><td> 0.9996281836772635</td></tr>
 <tr><td>Test f1         </td><td> 0.8322249930728733</td></tr>
 <tr><td>Train f1        </td><td> 0.9995817260770554</td></tr>

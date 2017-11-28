@@ -16,6 +16,7 @@ def split_to_train_test(features_and_labels: list, test_set_percent=0.4, shuffle
         np.random.shuffle(features_and_labels)
     features = features_and_labels[:, :-1]
     labels = features_and_labels[:, -1:].ravel()
+    labels = np.logical_xor(labels, 1)
     return (features[:int(len(features) * test_set_percent)], features[-int(len(features) * (1. - test_set_percent)):],
             labels[:int(len(labels) * test_set_percent)], labels[-int(len(labels) * (1. - test_set_percent)):])
 
@@ -123,6 +124,7 @@ def preprocess_data():
     features = preprocess.get_features()
 
     preprocess.load_dataset()
+    preprocess.add_len_feature()
     labeled_data = preprocess.get_dataset()
 
     preprocess.load_dataset("unlabled_dataset.pickle")
@@ -168,7 +170,7 @@ def main():
 
     features_test, features_train, labels_test, labels_train = split_to_train_test(full_dataset)
 
-    # train_classifiers(features_test, features_train, labels_test, labels_train)
+    train_classifiers(features_test, features_train, labels_test, labels_train)
 
     from sklearn.ensemble import RandomForestClassifier
     time_start = time.time()
@@ -180,6 +182,7 @@ def main():
     log_classifier(clf, pred_train, labels_train, pred_test, labels_test,
                    time_start, time_end)
     print(len(full_dataset[0]))
+    plot(clf.feature_importances_)
     preprocess.load_features("reduced_full_features.pickle")
     print(len(preprocess.get_features()))
     with open('classifier.pickle', 'wb') as f:

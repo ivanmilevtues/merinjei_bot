@@ -93,6 +93,18 @@ class PreprocessData:
         result.append(label)
         return result
 
+    @not_none('dataset')
+    def add_len_feature(self):
+        dataset = self.dataset[:, :-1]
+        labels = self.dataset[:, -1:]
+
+        dataset_lens = np.sum(dataset, axis=1)
+        dataset_lens = np.array([dataset_lens])
+
+        dataset = np.append(dataset.T, dataset_lens, axis=0).T
+        self.dataset = np.append(dataset, labels, axis=1)
+
+
     def __generate_file_path(self, path):
         return '/'.join(path.split('//'))
 
