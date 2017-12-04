@@ -9,14 +9,14 @@ import time
 from sklearn.metrics import average_precision_score, recall_score, f1_score
 import matplotlib.pyplot as plt
 from preprocessing_utilities import get_unused_dataset_indxs, get_unused_features
-
+from sklearn.feature_extraction.text import  TfidfTransformer
+from failed_test_examples import FAILED_EXAMPLES
 
 def split_to_train_test(features_and_labels: list, test_set_percent=0.4, shuffle=True) -> tuple:
     if shuffle:
         np.random.shuffle(features_and_labels)
     features = features_and_labels[:, :-1]
-    labels = features_and_labels[:, -1:].ravel()
-    labels = np.logical_xor(labels, 1)
+    labels = np.logical_xor(1, features_and_labels[:, -1:].ravel())
     return (features[:int(len(features) * test_set_percent)], features[-int(len(features) * (1. - test_set_percent)):],
             labels[:int(len(labels) * test_set_percent)], labels[-int(len(labels) * (1. - test_set_percent)):])
 
@@ -66,6 +66,10 @@ def train_and_log(clf_class, features_train, labels_train, features_test, labels
     time_end = time.time()
     pred_test = clf.predict(features_test)
     pred_train = clf.predict(features_train)
+    lp = LineParser()
+    for example in FAILED_EXAMPLES:
+        ds = lp.parse_line(example)
+        print(str(clf.predict_proba(ds)) + ' <- ' + example)
 
     log_classifier(clf, pred_train, labels_train, pred_test, labels_test,
                    time_start, time_end)
@@ -91,6 +95,18 @@ def train_classifiers(features_test, features_train, labels_test, labels_train):
     from sklearn.ensemble import RandomForestClassifier
     train_and_log(RandomForestClassifier, features_train, labels_train, features_test, labels_test)
 
+    from sklearn.ensemble import AdaBoostClassifier
+    train_and_log(AdaBoostClassifier, features_train, labels_train, features_test, labels_test)
+
+    from sklearn.ensemble import BaggingClassifier
+    train_and_log(BaggingClassifier, features_train, labels_train, features_test, labels_test)
+
+    from sklearn.ensemble import GradientBoostingClassifier
+    train_and_log(GradientBoostingClassifier, features_train, labels_train, features_test, labels_test)
+
+    from sklearn.ensemble import VotingClassifier
+    train_and_log(VotingClassifier, features_train, labels_train, features_test, labels_test)
+
 
 def plot(data):
     x = list(range(len(data)))
@@ -112,29 +128,40 @@ def terminal_testing(clf, features):
     for _ in range(10):
         inp = input("Your hate here:")
         ds = lp.parse_line(inp)
-        print(len(ds), sum(ds[0]))
+        print(sum(ds[0]))
         print(clf.predict_proba(ds))
         print(clf.predict(ds))
 
 
 def preprocess_data():
-    preprocess = PreprocessHateData("", "")
-
-    preprocess.load_features()
+    preprocess = PreprocessData("", "")
+    
+    preprocess.load_features("reduced_full_features.pickle")
     features = preprocess.get_features()
 
-    preprocess.load_dataset()
-    preprocess.add_len_feature()
-    labeled_data = preprocess.get_dataset()
+    preprocess.load_dataset("dataset_review_w_reduced_full_features.pickle")
+    preprocess.balance_dataset()
+    hs_dataset = preprocess.get_dataset()
 
-    preprocess.load_dataset("unlabled_dataset.pickle")
-    unlabeled_data = preprocess.get_dataset()
+    preprocess.load_dataset("dataset_hs_w_reduced_full_features.pickle")
+    review_datset = preprocess.get_dataset()
 
-    # preprocess.load_dataset("hatespeech_dataset.pickle")
-    # hatespeech_data = preprocess.get_dataset()
-    # hatespeech_data = preprocess.balance_dataset()
+    full_dataset = np.concatenate((hs_dataset, review_datset), axis=0)
+    print(full_dataset.shape)
+    dataset = full_dataset[:, :-1]
+    labels = full_dataset[:, -1:]
 
-    full_dataset = np.concatenate((labeled_data, unlabeled_data), axis=0)
+    unused_indxs = get_unused_dataset_indxs(full_dataset, 10, int(len(full_dataset) * 0.3))
+    
+    full_dataset = PreprocessData.reduce_dataset(dataset, unused_indxs)
+    features = PreprocessData.reduce_features(features, unused_indxs)
+
+    full_dataset = np.append(full_dataset, labels, axis=1)
+    print(full_dataset.shape)
+    features_test, features_train, labels_test, labels_train = split_to_train_test(full_dataset)
+    
+    features_test  = TfidfTransformer().fit_transform(features_test).toarray()
+    features_train = TfidfTransformer().fit_transform(features_train).toarray()
 
     features_test, features_train, labels_test, labels_train = split_to_train_test(full_dataset, test_set_percent=0.2,
                                                                                    shuffle=True)
@@ -143,51 +170,40 @@ def preprocess_data():
     clf = RandomForestClassifier()
     clf.fit(features_train, labels_train)
 
-    indx_to_delete = get_unused_features(clf.feature_importances_)
-    dataset = PreprocessData.reduce_dataset(full_dataset, indx_to_delete)
+    indx_to_delete = get_unused_features(clf.feature_importances_ )
+    full_dataset = PreprocessData.reduce_dataset(full_dataset, indx_to_delete)
+    features = PreprocessData.reduce_features(features, indx_to_delete)
 
-    preprocess.dataset = full_dataset
-    preprocess.save_dataset('reduced_data_nonhatespeech.pickle')
-
-    preprocess.load_dataset("hatespeech_dataset.pickle")
-    hatespeech_data = preprocess.get_dataset()
-    hatespeech_data = preprocess.balance_dataset()
-
-    hatespeech_data = PreprocessHateData.reduce_dataset(hatespeech_data, indx_to_delete)
-
-    return np.array(hatespeech_data)
+    return (full_dataset, features)
 
 
 def main():
-    preprocess = PreprocessData([],[])
-    preprocess.load_dataset("dataset_review_w_reduced_full_features.pickle")
-    preprocess.balance_dataset()
-    hs_dataset = preprocess.get_dataset()
-    preprocess.load_dataset("dataset_hs_w_reduced_full_features.pickle")
-    review_datset = preprocess.get_dataset()
+    full_dataset, features = preprocess_data()
+    
+    features_test, features_train, labels_test, labels_train =\
+        split_to_train_test(full_dataset, test_set_percent=0.2)
 
-    full_dataset = np.concatenate((hs_dataset, review_datset), axis=0)
-
-    features_test, features_train, labels_test, labels_train = split_to_train_test(full_dataset)
-
+    print(len(features_test), len(features_train))
     train_classifiers(features_test, features_train, labels_test, labels_train)
 
     from sklearn.ensemble import RandomForestClassifier
     time_start = time.time()
+    
     clf = RandomForestClassifier(n_estimators=100 , n_jobs=-1)
     clf.fit(features_train, labels_train)
     time_end = time.time()
+    
     pred_train = clf.predict(features_train)
     pred_test = clf.predict(features_test)
+    
     log_classifier(clf, pred_train, labels_train, pred_test, labels_test,
                    time_start, time_end)
-    print(len(full_dataset[0]))
-    plot(clf.feature_importances_)
-    preprocess.load_features("reduced_full_features.pickle")
-    print(len(preprocess.get_features()))
-    with open('classifier.pickle', 'wb') as f:
-        pickle.dump(clf, f)
-    terminal_testing(clf, preprocess.get_features())
+    # plot(clf.feature_importances_)
+
+    # with open('classifier.pickle', 'wb') as f:
+    #     pickle.dump(clf, f)
+    
+    # terminal_testing(clf, features)
 
 
 if __name__ == "__main__":
