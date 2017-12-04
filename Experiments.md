@@ -1,6 +1,7 @@
 # Writing down the process through which I've gone:
 <img src="http://i.imgur.com/Xedui4H.jpg" width="100%"></img>
 ## Features for the hatespeech classifier:
+### All the Tables of results are on the RandomForestClassifier
 I started learning the model only on Amazon review dataset which resulted in features taken only from there.
 In the very begining they were all the words from the reviews which were around 300k words(features).
 Than I hugely reduced them by stemming and ended up with about 25k words(features).
@@ -83,3 +84,26 @@ Table of results:
 As you can see the precision is a bit on the lower side and to me this means that it predicts with an ease the negatives
 so I think that the labels should be changed in order to have better precision as the idea of the classifier is mostly to
 get the negative examples right!
+
+-----------------------------------------
+
+Using TF IDF in order to reduce the impact of the size of the comment.
+So after my last tests with the Bag of words features I saw the pattern that short comments tend to lead into being negative
+even though that they were strongly positive. So I implemented the TF.IDF over the BagOfWords and it has improved the models accuracy on paper also in practice.
+
+Table of results:
+<table>
+<tr><td>Test Accuracy   </td><td> 0.8423715867863281</td></tr>
+<tr><td>Train Accuracy  </td><td> 0.9931976036470391</td></tr>
+<tr><td>Test precision  </td><td> 0.8653890923746133</td></tr>
+<tr><td>Train  precision</td><td> 0.9952123962300639</td></tr>
+<tr><td>Test recall     </td><td> 0.8484093241460197</td></tr>
+<tr><td>Train recall    </td><td> 0.9915920704526511</td></tr>
+<tr><td>Test f1         </td><td> 0.8751606805293005</td></tr>
+<tr><td>Train f1        </td><td> 0.9948188412383878</td></tr>
+</table>
+
+Therefore one of the examples lastly shown still doesn't pass:
+```
+I am in love with your product!
+```
