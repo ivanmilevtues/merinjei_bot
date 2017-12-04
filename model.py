@@ -1,16 +1,17 @@
-from PreprocessData import PreprocessData
-from LineParser import LineParser
-from PreprocessHateData import PreprocessHateData
+import time
 import pickle
+import numpy as np
+import matplotlib.pyplot as plt
 from sklearn.naive_bayes import GaussianNB
 from sklearn.metrics import accuracy_score
-import numpy as np
-import time
-from sklearn.metrics import average_precision_score, recall_score, f1_score
-import matplotlib.pyplot as plt
-from preprocessing_utilities import get_unused_dataset_indxs, get_unused_features
 from sklearn.feature_extraction.text import  TfidfTransformer
+from sklearn.metrics import average_precision_score, recall_score, f1_score
+from LineParser import LineParser
+from PreprocessData import PreprocessData
 from failed_test_examples import FAILED_EXAMPLES
+from PreprocessHateData import PreprocessHateData
+from preprocessing_utilities import get_unused_dataset_indxs, get_unused_features
+
 
 def split_to_train_test(features_and_labels: list, test_set_percent=0.4, shuffle=True) -> tuple:
     if shuffle:
@@ -58,7 +59,7 @@ Train f1        : {}
         f.write(log_text)
 
 
-def train_and_log(clf_class, features_train, labels_train, features_test, labels_test):
+def train_and_log(clf_class, features_train, labels_train, features_test, labels_test, features):
     print(clf_class.__name__ + " has started training.")
     clf = clf_class()
     time_start = time.time()
@@ -66,7 +67,7 @@ def train_and_log(clf_class, features_train, labels_train, features_test, labels
     time_end = time.time()
     pred_test = clf.predict(features_test)
     pred_train = clf.predict(features_train)
-    lp = LineParser()
+    lp = LineParser(features)
     for example in FAILED_EXAMPLES:
         ds = lp.parse_line(example)
         print(str(clf.predict_proba(ds)) + ' <- ' + example)
@@ -75,37 +76,37 @@ def train_and_log(clf_class, features_train, labels_train, features_test, labels
                    time_start, time_end)
 
 
-def train_classifiers(features_test, features_train, labels_test, labels_train):
+def train_classifiers(features_test, features_train, labels_test, labels_train, features):
     ## Logistic regresion
     from sklearn.linear_model import LogisticRegression
-    train_and_log(LogisticRegression, features_train, labels_train, features_test, labels_test)
+    train_and_log(LogisticRegression, features_train, labels_train, features_test, labels_test, features)
 
     ### Nayve bayes
-    train_and_log(GaussianNB, features_train, labels_train, features_test, labels_test)
+    train_and_log(GaussianNB, features_train, labels_train, features_test, labels_test, features)
 
     ### SVM
     # from sklearn.svm import SVC
-    # train_and_log(SVC, features_train, labels_train, features_test, labels_test)
+    # train_and_log(SVC, features_train, labels_train, features_test, labels_test, features)
 
     ### DecisionTree
     from sklearn import tree
-    train_and_log(tree.DecisionTreeClassifier, features_train, labels_train, features_test, labels_test)
+    train_and_log(tree.DecisionTreeClassifier, features_train, labels_train, features_test, labels_test, features)
 
     ### RandomForest
     from sklearn.ensemble import RandomForestClassifier
-    train_and_log(RandomForestClassifier, features_train, labels_train, features_test, labels_test)
+    train_and_log(RandomForestClassifier, features_train, labels_train, features_test, labels_test, features)
 
     from sklearn.ensemble import AdaBoostClassifier
-    train_and_log(AdaBoostClassifier, features_train, labels_train, features_test, labels_test)
+    train_and_log(AdaBoostClassifier, features_train, labels_train, features_test, labels_test, features)
 
     from sklearn.ensemble import BaggingClassifier
-    train_and_log(BaggingClassifier, features_train, labels_train, features_test, labels_test)
+    train_and_log(BaggingClassifier, features_train, labels_train, features_test, labels_test, features)
 
     from sklearn.ensemble import GradientBoostingClassifier
-    train_and_log(GradientBoostingClassifier, features_train, labels_train, features_test, labels_test)
+    train_and_log(GradientBoostingClassifier, features_train, labels_train, features_test, labels_test, features)
 
-    from sklearn.ensemble import VotingClassifier
-    train_and_log(VotingClassifier, features_train, labels_train, features_test, labels_test)
+    # from sklearn.ensemble import VotingClassifier
+    # train_and_log(VotingClassifier, features_train, labels_train, features_test, labels_test, features)
 
 
 def plot(data):
@@ -181,15 +182,15 @@ def main():
     full_dataset, features = preprocess_data()
     
     features_test, features_train, labels_test, labels_train =\
-        split_to_train_test(full_dataset, test_set_percent=0.2)
+        split_to_train_test(full_dataset, test_set_percent=0.4)
 
     print(len(features_test), len(features_train))
-    train_classifiers(features_test, features_train, labels_test, labels_train)
+    train_classifiers(features_test, features_train, labels_test, labels_train, features)
 
-    from sklearn.ensemble import RandomForestClassifier
+    from sklearn.ensemble import AdaBoostClassifier
     time_start = time.time()
     
-    clf = RandomForestClassifier(n_estimators=100 , n_jobs=-1)
+    clf = AdaBoostClassifier(n_estimators=100)
     clf.fit(features_train, labels_train)
     time_end = time.time()
     
@@ -198,12 +199,12 @@ def main():
     
     log_classifier(clf, pred_train, labels_train, pred_test, labels_test,
                    time_start, time_end)
-    # plot(clf.feature_importances_)
+    plot(clf.feature_importances_)
 
-    # with open('classifier.pickle', 'wb') as f:
-    #     pickle.dump(clf, f)
+    with open('classifier.pickle', 'wb') as f:
+        pickle.dump(clf, f)
     
-    # terminal_testing(clf, features)
+    terminal_testing(clf, features)
 
 
 if __name__ == "__main__":
