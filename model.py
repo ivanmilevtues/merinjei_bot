@@ -6,11 +6,11 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.metrics import accuracy_score
 from sklearn.feature_extraction.text import  TfidfTransformer
 from sklearn.metrics import average_precision_score, recall_score, f1_score
-from LineParser import LineParser
-from PreprocessData import PreprocessData
-from failed_test_examples import FAILED_EXAMPLES
-from PreprocessHateData import PreprocessHateData
-from preprocessing_utilities import get_unused_dataset_indxs, get_unused_features
+from data.failed_test_examples import FAILED_EXAMPLES
+from preprocess.LineParser import LineParser
+from preprocess.PreprocessData import PreprocessData
+from preprocess.PreprocessHateData import PreprocessHateData
+from preprocess.preprocessing_utilities import get_unused_dataset_indxs, get_unused_features
 
 
 def split_to_train_test(features_and_labels: list, test_set_percent=0.4, shuffle=True) -> tuple:
@@ -137,14 +137,14 @@ def terminal_testing(clf, features):
 def preprocess_data():
     preprocess = PreprocessData("", "")
     
-    preprocess.load_features("reduced_full_features.pickle")
+    preprocess.load_features("./data/processed_data/reduced_full_features.pickle")
     features = preprocess.get_features()
 
-    preprocess.load_dataset("dataset_review_w_reduced_full_features.pickle")
+    preprocess.load_dataset("./data/processed_data/dataset_review_w_reduced_full_features.pickle")
     preprocess.balance_dataset()
     hs_dataset = preprocess.get_dataset()
 
-    preprocess.load_dataset("dataset_hs_w_reduced_full_features.pickle")
+    preprocess.load_dataset("./data/processed_data/dataset_hs_w_reduced_full_features.pickle")
     review_datset = preprocess.get_dataset()
 
     full_dataset = np.concatenate((hs_dataset, review_datset), axis=0)
@@ -187,10 +187,10 @@ def main():
     print(len(features_test), len(features_train))
     train_classifiers(features_test, features_train, labels_test, labels_train, features)
 
-    from sklearn.ensemble import AdaBoostClassifier
+    from sklearn.ensemble import RandomForestClassifier
     time_start = time.time()
     
-    clf = AdaBoostClassifier(n_estimators=100)
+    clf = RandomForestClassifier(n_estimators=100, n_jobs=-1)
     clf.fit(features_train, labels_train)
     time_end = time.time()
     
