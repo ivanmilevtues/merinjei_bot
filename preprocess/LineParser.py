@@ -1,6 +1,6 @@
 import numpy as np
 import re
-from preprocessing_utilities import add_to_array
+from preprocess.preprocessing_utilities import add_to_array
 from collections import Counter
 from nltk.stem import SnowballStemmer
 from sklearn.feature_extraction.text import TfidfTransformer

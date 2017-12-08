@@ -3,24 +3,22 @@ import numpy as np
 from nltk.stem import SnowballStemmer
 import pickle
 from nltk.corpus import stopwords
-from preprocessing_utilities import add_to_array, concat_features
-from decorators import not_none
+from preprocess.preprocessing_utilities import add_to_array, concat_features
+from preprocess.decorators import not_none
+from preprocess.FileOpenerMixin import FileOpenerMixin
 
 
-class PreprocessData:
+class PreprocessData(FileOpenerMixin):
     """
     PreprocessData -> A class which preprocess a bag of words to a simple
     Numpy vector which can be used for machine learning tasks
     """
 
     def __init__(self, sub_directories: list, file_names: list, main_dir='main'):
-        self.sub_directories = sub_directories
-        self.file_names = file_names
-        self.main_dir = main_dir
+        self.paths = {'main_dir': main_dir, 'sub_directories': sub_directories, 'file_names': file_names}
         self.features = None
         self.dataset = None
         self.stemmer = SnowballStemmer("english")
-        self.files = []
 
     @not_none('dataset')
     def balance_dataset(self):
@@ -28,7 +26,7 @@ class PreprocessData:
         labels_sum = np.sum(labels)
         balance = labels_sum if labels_sum < len(labels) // 2 else len(labels) - labels_sum
         # sort the dataset by its labels
-        self.dataset[self.dataset[:, -1:].argsort()]
+        self.dataset = self.dataset[self.dataset[:, -1].argsort()]
 
         negatives = self.dataset[0: balance,: ]
         postives = self.dataset[-balance: -1, :]
@@ -53,6 +51,11 @@ class PreprocessData:
     def load_features(self, file="features.pickle"):
         with open(file, "rb") as f:
             self.features = pickle.load(f)
+    
+    def load_and_get_features(self, file="features.pickle"):
+        with open(file, "rb") as f:
+            self.features = pickle.load(f)
+        return self.features
 
     @abstractmethod
     @not_none('features')
@@ -62,6 +65,11 @@ class PreprocessData:
     def load_dataset(self, file='dataset.pickle'):
         with open(file, 'rb') as f:
             self.dataset = pickle.load(f)
+    
+    def load_and_get_dataset(self, file='dataset.pickle'):
+        with open(file, 'rb') as f:
+            self.dataset = pickle.load(f)
+        return self.dataset
 
     @staticmethod
     def reduce_dataset(dataset, indx_to_delete):
@@ -104,33 +112,10 @@ class PreprocessData:
         dataset = np.append(dataset.T, dataset_lens, axis=0).T
         self.dataset = np.append(dataset, labels, axis=1)
 
-
-    def __generate_file_path(self, path):
-        return '/'.join(path.split('//'))
-
     def _reduce_tokens(self, tokens: list) -> list:
         tokens = [self.stemmer.stem(w) for w in tokens if w not in stopwords.words()]
         return tokens
 
-    def _open_files(self, paths=None):
-        if paths == None:
-            main_dir, sub_directories, file_names = self.main_dir, self.sub_directories, self.file_names
-        else:
-            main_dir, sub_directories, file_names = paths['main_dir'], paths['sub_directories'], paths['file_names']
-        for file in self.files:
-            if not file.closed:
-                file.close()
-
-        self.files = []
-        for sub_dir in sub_directories:
-            for file_name in file_names:
-                path = main_dir + "/" + sub_dir + "/" + file_name
-                path = self.__generate_file_path(path)
-                self.files.append(open(path))
-
-    def _close_files(self):
-        for file in self.files:
-            file.close()
 
 
 if __name__ == "__main__":

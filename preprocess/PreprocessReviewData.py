@@ -1,7 +1,7 @@
 import numpy as np
 from nltk.tokenize import RegexpTokenizer
-from decorators import not_none
-from PreprocessData import PreprocessData
+from preprocess.decorators import not_none
+from preprocess.PreprocessData import PreprocessData
 
 
 class PreprocessReviewData(PreprocessData):
@@ -14,12 +14,12 @@ class PreprocessReviewData(PreprocessData):
         super().__init__(sub_directories, file_names, main_dir)
 
     def init_features(self):
-        self._open_files()
+        files = self.open_files(self.paths)
         pattern = r"([a-z]+|_)"
         tokenizer = RegexpTokenizer(pattern)
         features = set()
 
-        for file in self.files:
+        for file in files:
             print('tokenizing for ' + file.name + ' started')
             tokens = tokenizer.tokenize(file.read())[:-2]
             print('tokenizing for ' + file.name + ' finished')
@@ -29,16 +29,16 @@ class PreprocessReviewData(PreprocessData):
 
         features.remove('_')
 
-        self._close_files()
+        self.close_files(files)
         self.features = list(features)
         return features
 
     @not_none('features')
     def init_dataset(self, pattern=r"([a-z]+.[a-z]+):(\d)"):
-        self._open_files()
+        files = self.open_files(self.paths)
         dataset = []
         tokenizer = RegexpTokenizer(pattern)
-        for file in self.files:
+        for file in files:
             print("dataset extraction for " + file.name + " started")
 
             file_lines = file.readlines()
@@ -48,17 +48,9 @@ class PreprocessReviewData(PreprocessData):
                 dataset.append(self._words_to_array(tokens, label))
 
             print("dataset extraction for " + file.name + " done")
-        self._close_files()
+        self.close_files(files)
         self.dataset = np.array(dataset)
         return self.dataset
-
-    @staticmethod
-    def reduce_dataset(dataset, indx_to_delete):
-        return np.delete(dataset, indx_to_delete, 1)
-
-    @staticmethod
-    def reduce_features(features, indx_to_delete):
-        return [features[i] for i in range(len(features)) if i not in indx_to_delete]
 
 
 if __name__ == '__main__':
