@@ -14,5 +14,5 @@ class FileOpenerMixin:
         for file in files:
             file.close()
 
-    def _generate_file_path(self, path):
+    def __generate_file_path(self, path):
         return '/'.join(path.split('//'))
