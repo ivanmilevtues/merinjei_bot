@@ -1,4 +1,5 @@
 import re
+import pickle
 import numpy as np
 from collections import Counter
 from preprocess.PreprocessData import PreprocessData
@@ -36,14 +37,25 @@ class PreprocessQuestions(PreprocessData):
                 tokens = re.split(pattern, line)
                 label, tokens = tokens[0], tokens[1:]
                 tokens = Counter(word for word in tokens)
-                label = self.__pick_label(label)
+                label = self.__pick_header_label(label)
                 dataset.append(self._words_to_array(tokens, label))
 
         self.close_files(files)
         self.dataset = np.array(dataset)
         return self.dataset
 
+    @not_none('labels')
+    def save_labels(self, file="data/processed_data/question_labels.pickle"):
+        with open('file', 'wb') as f:
+            pickle.dump(self.labels, f)
+
     def __pick_label(self, label):
+        if label not in self.labels:
+            self.labels.append(label)
+        return self.labels.index(label)
+
+    def __pick_header_label(self, label):
+        label = label.split(':')[0] # takes the base class of the label
         if label not in self.labels:
             self.labels.append(label)
         return self.labels.index(label)
