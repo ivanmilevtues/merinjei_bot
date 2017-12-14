@@ -86,13 +86,22 @@ def main():
     features_test, features_train, labels_test, labels_train =\
         split_to_train_test(full_dataset, test_set_percent=0.4)
 
-    print(len(features_test), len(features_train))
-    train_classifiers(features_test, features_train, labels_test, labels_train, features)
+    # print(len(features_test), len(features_train))
+    # train_classifiers(features_test, features_train, labels_test, labels_train, features)
 
     from sklearn.ensemble import RandomForestClassifier
+    from sklearn.model_selection import GridSearchCV
     time_start = time.time()
-    
-    clf = RandomForestClassifier(n_estimators=100, n_jobs=-1)
+    parameters = {
+        'n_estimators': [10, 30, 50],
+        'criterion': ['gini', 'entropy'],
+        # 'min_samples_split': [2, 5, 10, 30],
+        # 'min_samples_leaf': [1, 2, 5, 10],
+        # 'min_weight_fraction_leaf': [0, 0.2, 0.3, 0.5],
+        'n_jobs':[-1]
+    }
+    randomForest = RandomForestClassifier()
+    clf = GridSearchCV(randomForest, parameters)
     clf.fit(features_train, labels_train)
     time_end = time.time()
     
@@ -101,7 +110,6 @@ def main():
     
     log_classifier(clf, pred_train, labels_train, pred_test, labels_test,
                    time_start, time_end)
-    plot(clf.feature_importances_)
 
     with open('classifier.pickle', 'wb') as f:
         pickle.dump(clf, f)
