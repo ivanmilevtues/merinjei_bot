@@ -42,14 +42,15 @@ def preprocess_data():
     preprocess.load_features("./data/processed_data/reduced_full_features.pickle")
     features = preprocess.get_features()
 
-    preprocess.load_dataset("./data/processed_data/dataset_review_w_reduced_full_features.pickle")
+    preprocess.load_dataset("./data/processed_data/dataset_hs_w_reduced_full_features.pickle")
     preprocess.balance_dataset()
     hs_dataset = preprocess.get_dataset()
 
-    preprocess.load_dataset("./data/processed_data/dataset_hs_w_reduced_full_features.pickle")
-    review_datset = preprocess.get_dataset()
+    # preprocess.load_dataset("./data/processed_data/dataset_review_w_reduced_full_features.pickle")
+    # review_datset = preprocess.get_dataset()
 
-    full_dataset = np.concatenate((hs_dataset, review_datset), axis=0)
+    # full_dataset = np.concatenate((hs_dataset, review_datset), axis=0)
+    full_dataset = hs_dataset
     print(full_dataset.shape)
     dataset = full_dataset[:, :-1]
     labels = full_dataset[:, -1:]
@@ -87,7 +88,7 @@ def main():
         split_to_train_test(full_dataset, test_set_percent=0.4)
 
     # print(len(features_test), len(features_train))
-    # train_classifiers(features_test, features_train, labels_test, labels_train, features)
+    train_classifiers(features_test, features_train, labels_test, labels_train)
 
     from sklearn.ensemble import RandomForestClassifier
     from sklearn.model_selection import GridSearchCV

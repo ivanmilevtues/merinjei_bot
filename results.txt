@@ -2924,4 +2924,359 @@ Train recall    : 0.9897334334949578
 ---------------------------------
 Test f1         : 0.9553672809852389
 Train f1        : 0.9544905710083204
+==============================================
+Date: Thu Dec 14 10:00:19 2017
+Time taken to train: 917.1577618122101 seconds
+Classifier: GridSearchCV(cv=None, error_score='raise',
+       estimator=RandomForestClassifier(bootstrap=True, class_weight=None, criterion='gini',
+            max_depth=None, max_features='auto', max_leaf_nodes=None,
+            min_impurity_decrease=0.0, min_impurity_split=None,
+            min_samples_leaf=1, min_samples_split=2,
+            min_weight_fraction_leaf=0.0, n_estimators=10, n_jobs=1,
+            oob_score=False, random_state=None, verbose=0,
+            warm_start=False),
+       fit_params=None, iid=True, n_jobs=1,
+       param_grid={'n_estimators': [10, 30, 50], 'criterion': ['gini', 'entropy'], 'n_jobs': [-1]},
+       pre_dispatch='2*n_jobs', refit=True, return_train_score=True,
+       scoring=None, verbose=0)
+---------------------------------
+Test Accuracy   : 0.8691999236203933
+Train Accuracy  : 0.9994589950036598
+---------------------------------
+Test precision  : 0.8847201447025811
+Train precision : 0.9994323719393093
+---------------------------------
+Test recall     : 0.8824214202561118
+Train recall    : 0.9996129843742441
+---------------------------------
+Test f1         : 0.898503481997333
+Train f1        : 0.9995888058437946
+==============================================
+Date: Sun Dec 17 13:08:55 2017
+Time taken to train: 8.054007768630981 seconds
+Classifier: LogisticRegression(C=1.0, class_weight=None, dual=False, fit_intercept=True,
+          intercept_scaling=1, max_iter=100, multi_class='ovr', n_jobs=1,
+          penalty='l2', random_state=None, solver='liblinear', tol=0.0001,
+          verbose=0, warm_start=False)
+---------------------------------
+Test Accuracy   : 0.8340972222222223
+Train Accuracy  : 0.969168094069719
+---------------------------------
+Test precision  : 0.7840593489326979
+Train precision : 0.9591605494286604
+---------------------------------
+Test recall     : 0.816899460655511
+Train recall    : 0.9580497809266337
+---------------------------------
+Test f1         : 0.8317960994156164
+Train f1        : 0.9686145146088596
+==============================================
+Date: Sun Dec 17 13:09:11 2017
+Time taken to train: 7.06450080871582 seconds
+Classifier: GaussianNB(priors=None)
+---------------------------------
+Test Accuracy   : 0.6615277777777778
+Train Accuracy  : 0.7382065645109023
+---------------------------------
+Test precision  : 0.6032953173861941
+Train precision : 0.6622855221021968
+---------------------------------
+Test recall     : 0.7852302586087678
+Train recall    : 0.8638016220751376
+---------------------------------
+Test f1         : 0.6996919285274182
+Train f1        : 0.7661967172448011
+==============================================
+Date: Sun Dec 17 13:10:16 2017
+Time taken to train: 64.73748278617859 seconds
+Classifier: DecisionTreeClassifier(class_weight=None, criterion='gini', max_depth=None,
+            max_features=None, max_leaf_nodes=None,
+            min_impurity_decrease=0.0, min_impurity_split=None,
+            min_samples_leaf=1, min_samples_split=2,
+            min_weight_fraction_leaf=0.0, presort=False, random_state=None,
+            splitter='best')
+---------------------------------
+Test Accuracy   : 0.7706944444444445
+Train Accuracy  : 0.9994907643164669
+---------------------------------
+Test precision  : 0.7060989164708917
+Train precision : 0.9991139885907501
+---------------------------------
+Test recall     : 0.8001659521504633
+Train recall    : 0.9997203318728443
+---------------------------------
+Test f1         : 0.7780018824794944
+Train f1        : 0.9994873945663824
+==============================================
+Date: Sun Dec 17 13:10:26 2017
+Time taken to train: 8.299277782440186 seconds
+Classifier: RandomForestClassifier(bootstrap=True, class_weight=None, criterion='gini',
+            max_depth=None, max_features='auto', max_leaf_nodes=None,
+            min_impurity_decrease=0.0, min_impurity_split=None,
+            min_samples_leaf=1, min_samples_split=2,
+            min_weight_fraction_leaf=0.0, n_estimators=10, n_jobs=1,
+            oob_score=False, random_state=None, verbose=0,
+            warm_start=False)
+---------------------------------
+Test Accuracy   : 0.8169444444444445
+Train Accuracy  : 0.9926392296652933
+---------------------------------
+Test precision  : 0.764439274764532
+Train precision : 0.9905183537198695
+---------------------------------
+Test recall     : 0.7978149633522335
+Train recall    : 0.9892793884590286
+---------------------------------
+Test f1         : 0.814025680824044
+Train f1        : 0.992564186503297
+==============================================
+Date: Sun Dec 17 13:11:16 2017
+Time taken to train: 40.990540981292725 seconds
+Classifier: AdaBoostClassifier(algorithm='SAMME.R', base_estimator=None,
+          learning_rate=1.0, n_estimators=50, random_state=None)
+---------------------------------
+Test Accuracy   : 0.7834722222222222
+Train Accuracy  : 0.7866765427526503
+---------------------------------
+Test precision  : 0.7481245778409116
+Train precision : 0.7463640101408604
+---------------------------------
+Test recall     : 0.6687871663670308
+Train recall    : 0.6730679593548988
+---------------------------------
+Test f1         : 0.7562157935887411
+Train f1        : 0.7580848383032339
+==============================================
+Date: Sun Dec 17 13:19:02 2017
+Time taken to train: 454.91264271736145 seconds
+Classifier: BaggingClassifier(base_estimator=None, bootstrap=True,
+         bootstrap_features=False, max_features=1.0, max_samples=1.0,
+         n_estimators=10, n_jobs=1, oob_score=False, random_state=None,
+         verbose=0, warm_start=False)
+---------------------------------
+Test Accuracy   : 0.8063194444444445
+Train Accuracy  : 0.9891208740336096
+---------------------------------
+Test precision  : 0.7483442293228805
+Train precision : 0.9862257648973831
+---------------------------------
+Test recall     : 0.8070806250864334
+Train recall    : 0.9836860259159131
+---------------------------------
+Test f1         : 0.807136435931125
+Train f1        : 0.9889873002483716
+==============================================
+Date: Sun Dec 17 13:22:56 2017
+Time taken to train: 228.10618329048157 seconds
+Classifier: GradientBoostingClassifier(criterion='friedman_mse', init=None,
+              learning_rate=0.1, loss='deviance', max_depth=3,
+              max_features=None, max_leaf_nodes=None,
+              min_impurity_decrease=0.0, min_impurity_split=None,
+              min_samples_leaf=1, min_samples_split=2,
+              min_weight_fraction_leaf=0.0, n_estimators=100,
+              presort='auto', random_state=None, subsample=1.0, verbose=0,
+              warm_start=False)
+---------------------------------
+Test Accuracy   : 0.7827777777777778
+Train Accuracy  : 0.7946391370769872
+---------------------------------
+Test precision  : 0.7533290475620356
+Train precision : 0.7619124934373789
+---------------------------------
+Test recall     : 0.6472133868068041
+Train recall    : 0.6624405705229794
+---------------------------------
+Test f1         : 0.7495195387572069
+Train f1        : 0.7621192621192622
+==============================================
+Date: Sun Dec 17 13:30:39 2017
+Time taken to train: 461.39820671081543 seconds
+Classifier: GridSearchCV(cv=None, error_score='raise',
+       estimator=RandomForestClassifier(bootstrap=True, class_weight=None, criterion='gini',
+            max_depth=None, max_features='auto', max_leaf_nodes=None,
+            min_impurity_decrease=0.0, min_impurity_split=None,
+            min_samples_leaf=1, min_samples_split=2,
+            min_weight_fraction_leaf=0.0, n_estimators=10, n_jobs=1,
+            oob_score=False, random_state=None, verbose=0,
+            warm_start=False),
+       fit_params=None, iid=True, n_jobs=1,
+       param_grid={'n_estimators': [10, 30, 50], 'criterion': ['gini', 'entropy'], 'n_jobs': [-1]},
+       pre_dispatch='2*n_jobs', refit=True, return_train_score=True,
+       scoring=None, verbose=0)
+---------------------------------
+Test Accuracy   : 0.8454166666666667
+Train Accuracy  : 0.9993981760103698
+---------------------------------
+Test precision  : 0.7934771513692364
+Train precision : 0.999020131582365
+---------------------------------
+Test recall     : 0.8446964458581109
+Train recall    : 0.9995338864547404
+---------------------------------
+Test f1         : 0.8458662235147487
+Train f1        : 0.9993941371114322
+==============================================
+Date: Sun Dec 17 13:38:20 2017
+Time taken to train: 0.10399961471557617 seconds
+Classifier: LogisticRegression(C=1.0, class_weight=None, dual=False, fit_intercept=True,
+          intercept_scaling=1, max_iter=100, multi_class='ovr', n_jobs=1,
+          penalty='l2', random_state=None, solver='liblinear', tol=0.0001,
+          verbose=0, warm_start=False)
+---------------------------------
+Test Accuracy   : 0.9222222222222223
+Train Accuracy  : 0.9583583583583584
+---------------------------------
+Test precision  : 0.904331949395816
+Train precision : 0.9509235985184281
+---------------------------------
+Test recall     : 0.8826714801444043
+Train recall    : 0.9324270291883247
+---------------------------------
+Test f1         : 0.9188850610710931
+Train f1        : 0.9573070607553366
+==============================================
+Date: Sun Dec 17 13:38:21 2017
+Time taken to train: 0.21799778938293457 seconds
+Classifier: GaussianNB(priors=None)
+---------------------------------
+Test Accuracy   : 0.7642642642642643
+Train Accuracy  : 0.8032032032032032
+---------------------------------
+Test precision  : 0.6839487525534887
+Train precision : 0.7209739770787227
+---------------------------------
+Test recall     : 0.9320096269554753
+Train recall    : 0.968812475009996
+---------------------------------
+Test f1         : 0.7978367241823332
+Train f1        : 0.8313604391833934
+==============================================
+Date: Sun Dec 17 13:38:22 2017
+Time taken to train: 1.361511468887329 seconds
+Classifier: DecisionTreeClassifier(class_weight=None, criterion='gini', max_depth=None,
+            max_features=None, max_leaf_nodes=None,
+            min_impurity_decrease=0.0, min_impurity_split=None,
+            min_samples_leaf=1, min_samples_split=2,
+            min_weight_fraction_leaf=0.0, presort=False, random_state=None,
+            splitter='best')
+---------------------------------
+Test Accuracy   : 0.8918918918918919
+Train Accuracy  : 0.9971971971971972
+---------------------------------
+Test precision  : 0.8499170677013256
+Train precision : 0.9972050419071611
+---------------------------------
+Test recall     : 0.8892900120336944
+Train recall    : 0.9944022391043582
+---------------------------------
+Test f1         : 0.8914354644149578
+Train f1        : 0.9971932638331997
+==============================================
+Date: Sun Dec 17 13:38:23 2017
+Time taken to train: 0.41700077056884766 seconds
+Classifier: RandomForestClassifier(bootstrap=True, class_weight=None, criterion='gini',
+            max_depth=None, max_features='auto', max_leaf_nodes=None,
+            min_impurity_decrease=0.0, min_impurity_split=None,
+            min_samples_leaf=1, min_samples_split=2,
+            min_weight_fraction_leaf=0.0, n_estimators=10, n_jobs=1,
+            oob_score=False, random_state=None, verbose=0,
+            warm_start=False)
+---------------------------------
+Test Accuracy   : 0.9132132132132132
+Train Accuracy  : 0.9921921921921922
+---------------------------------
+Test precision  : 0.8857849416696922
+Train precision : 0.9910186623178711
+---------------------------------
+Test recall     : 0.8886883273164862
+Train recall    : 0.9868052778888444
+---------------------------------
+Test f1         : 0.9108849830403947
+Train f1        : 0.9921608040201005
+==============================================
+Date: Sun Dec 17 13:38:25 2017
+Time taken to train: 1.7620790004730225 seconds
+Classifier: AdaBoostClassifier(algorithm='SAMME.R', base_estimator=None,
+          learning_rate=1.0, n_estimators=50, random_state=None)
+---------------------------------
+Test Accuracy   : 0.921021021021021
+Train Accuracy  : 0.9355355355355356
+---------------------------------
+Test precision  : 0.9038895516540615
+Train precision : 0.923256408513314
+---------------------------------
+Test recall     : 0.8784596871239471
+Train recall    : 0.897640943622551
+---------------------------------
+Test f1         : 0.9173735469682689
+Train f1        : 0.9330839567747298
+==============================================
+Date: Sun Dec 17 13:38:36 2017
+Time taken to train: 10.190726280212402 seconds
+Classifier: BaggingClassifier(base_estimator=None, bootstrap=True,
+         bootstrap_features=False, max_features=1.0, max_samples=1.0,
+         n_estimators=10, n_jobs=1, oob_score=False, random_state=None,
+         verbose=0, warm_start=False)
+---------------------------------
+Test Accuracy   : 0.9075075075075075
+Train Accuracy  : 0.9893893893893894
+---------------------------------
+Test precision  : 0.8759259677095869
+Train precision : 0.9886208912404297
+---------------------------------
+Test recall     : 0.8886883273164862
+Train recall    : 0.9804078368652539
+---------------------------------
+Test f1         : 0.9055793991416309
+Train f1        : 0.9893080492233206
+==============================================
+Date: Sun Dec 17 13:38:44 2017
+Time taken to train: 8.381027698516846 seconds
+Classifier: GradientBoostingClassifier(criterion='friedman_mse', init=None,
+              learning_rate=0.1, loss='deviance', max_depth=3,
+              max_features=None, max_leaf_nodes=None,
+              min_impurity_decrease=0.0, min_impurity_split=None,
+              min_samples_leaf=1, min_samples_split=2,
+              min_weight_fraction_leaf=0.0, n_estimators=100,
+              presort='auto', random_state=None, subsample=1.0, verbose=0,
+              warm_start=False)
+---------------------------------
+Test Accuracy   : 0.9192192192192192
+Train Accuracy  : 0.9387387387387387
+---------------------------------
+Test precision  : 0.9057073052698194
+Train precision : 0.9342080753808886
+---------------------------------
+Test recall     : 0.8664259927797834
+Train recall    : 0.8872451019592164
+---------------------------------
+Test f1         : 0.914576055890759
+Train f1        : 0.9354974704890389
+==============================================
+Date: Sun Dec 17 13:38:58 2017
+Time taken to train: 13.412481546401978 seconds
+Classifier: GridSearchCV(cv=None, error_score='raise',
+       estimator=RandomForestClassifier(bootstrap=True, class_weight=None, criterion='gini',
+            max_depth=None, max_features='auto', max_leaf_nodes=None,
+            min_impurity_decrease=0.0, min_impurity_split=None,
+            min_samples_leaf=1, min_samples_split=2,
+            min_weight_fraction_leaf=0.0, n_estimators=10, n_jobs=1,
+            oob_score=False, random_state=None, verbose=0,
+            warm_start=False),
+       fit_params=None, iid=True, n_jobs=1,
+       param_grid={'n_estimators': [10, 30, 50], 'criterion': ['gini', 'entropy'], 'n_jobs': [-1]},
+       pre_dispatch='2*n_jobs', refit=True, return_train_score=True,
+       scoring=None, verbose=0)
+---------------------------------
+Test Accuracy   : 0.915015015015015
+Train Accuracy  : 0.9971971971971972
+---------------------------------
+Test precision  : 0.887577685715989
+Train precision : 0.9972050419071611
+---------------------------------
+Test recall     : 0.8922984356197352
+Train recall    : 0.9944022391043582
+---------------------------------
+Test f1         : 0.9128962757771621
+Train f1        : 0.9971932638331997
 =======================
