@@ -107,3 +107,21 @@ Therefore one of the examples lastly shown still doesn't pass:
 ```
 I am in love with your product!
 ```
+
+-----------------------------------------
+
+Using only the Twitter hatespeech dataset as I don't care for the examples which are positive. In this dataset specificly the examples are
+not only negative but they are offensive. In it there are no positive examples but as said above there is no need of them as the idea of
+the classifier is to destinguish the true offensive examples.
+
+Table of results:
+<table>
+<tr><td>Test Accuracy   </td><td> 0.915015015015015</td></tr>
+<tr><td>Train Accuracy  </td><td> 0.9971971971971972</td></tr>
+<tr><td>Test precision  </td><td> 0.887577685715989</td></tr>
+<tr><td>Train  precision</td><td> 0.9972050419071611</td></tr>
+<tr><td>Test recall     </td><td> 0.8922984356197352</td></tr>
+<tr><td>Train recall    </td><td> 0.9944022391043582</td></tr>
+<tr><td>Test f1         </td><td> 0.9128962757771621</td></tr>
+<tr><td>Train f1        </td><td> 0.9971932638331997</td></tr>
+</table>

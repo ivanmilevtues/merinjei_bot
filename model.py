@@ -39,19 +39,24 @@ def terminal_testing(clf, features):
 def preprocess_data():
     preprocess = PreprocessData("", "")
     
-    preprocess.load_features("./data/processed_data/reduced_full_features.pickle")
+    preprocess.load_features(
+        "./data/processed_data/reduced_full_features.pickle")
     features = preprocess.get_features()
 
-    preprocess.load_dataset("./data/processed_data/dataset_hs_w_reduced_full_features.pickle")
+    hs_dataset = preprocess.load_and_get_dataset(
+        "./data/processed_data/dataset_review_w_reduced_full_features.pickle")
+
+    review_dataset = preprocess.load_and_get_dataset(
+        "./data/processed_data/dataset_review_w_reduced_full_features.pickle")
+
+    full_dataset = np.concatenate((hs_dataset, review_dataset), axis=0)
+    # full_dataset = hs_dataset
+
+    preprocess.dataset = full_dataset
     preprocess.balance_dataset()
-    hs_dataset = preprocess.get_dataset()
-
-    # preprocess.load_dataset("./data/processed_data/dataset_review_w_reduced_full_features.pickle")
-    # review_datset = preprocess.get_dataset()
-
-    # full_dataset = np.concatenate((hs_dataset, review_datset), axis=0)
-    full_dataset = hs_dataset
     print(full_dataset.shape)
+    print(preprocess.get_dataset().shape)
+    full_dataset = preprocess.get_dataset()
     dataset = full_dataset[:, :-1]
     labels = full_dataset[:, -1:]
 
@@ -94,7 +99,7 @@ def main():
     from sklearn.model_selection import GridSearchCV
     time_start = time.time()
     parameters = {
-        'n_estimators': [10, 30, 50],
+        'n_estimators': [10, 30, 50, 100],
         'criterion': ['gini', 'entropy'],
         # 'min_samples_split': [2, 5, 10, 30],
         # 'min_samples_leaf': [1, 2, 5, 10],

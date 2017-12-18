@@ -5,16 +5,16 @@ from preprocess.preprocessing_utilities import split_to_train_test, train_classi
 
 
 def init_dataset():
-    pq = PreprocessCocoQuestions(['questions'], ['questions.txt'])
+    # pq = PreprocessCocoQuestions(['questions'], ['questions.txt'])
     # pq.init_features()
-    pq.load_features('data/processed_data/questions_cocoa_featues.pickle')
-    ds = pq.init_dataset()
-    pq.save_dataset('data/processed_data/dataset_questions_cocoa.pickle')
-    # pq = PreprocessQuestions(['questions'], ['question_types01.txt'])
-    # pq.load_features('data/processed_data/questions_full_features.pickle')
+    # pq.load_features('data/processed_data/questions_cocoa_featues.pickle')
     # ds = pq.init_dataset()
-    # pq.save_dataset('dataset_questions_header_labels.pickle')
-    # pq.save_labels()
+    # pq.save_dataset('data/processed_data/dataset_questions_cocoa.pickle')
+    pq = PreprocessQuestions(['questions'], ['question_types01.txt'])
+    pq.load_features('data/processed_data/questions_full_features.pickle')
+    ds = pq.init_dataset()
+    pq.save_dataset('dataset_questions_header_labels.pickle')
+    pq.save_labels()
     return ds
 
 def init_features():
