@@ -4,12 +4,16 @@ from preprocess.FileOpenerMixin import FileOpenerMixin
 from preprocess.decorators import not_none
 
 
+# TODO add to classes one for the slang and one for the spell correction
+# or add path changing method
+
+
 class AutoCorrect(FileOpenerMixin):
     def __init__(self, sub_dirs: list, files: list, main_dir='data'):
         self.paths = {'main_dir': main_dir, 'sub_directories': sub_dirs, 'file_names': files}
         self.slang_dict = None
         self.spell_correct_dict = None
-
+        
     def init_slang_dict(self):
         files = self.open_files(self.paths)
         slang_dict = {}
@@ -24,6 +28,7 @@ class AutoCorrect(FileOpenerMixin):
                 slang_dict[k] = v
         self.slang_dict = slang_dict
         self.close_files(files)
+        return self.slang_dict
 
     @not_none('slang_dict')
     def save_slang_dict(self, file='slang_correction.pkl'):
@@ -48,13 +53,13 @@ class AutoCorrect(FileOpenerMixin):
 
         for line in content:
             line = line.strip()
-            print(line.split(": "))
             v, k = line.split(': ')
             for key in k.split():
                 spell_correct_dict[key] = v
 
         self.close_files(files)
         self.spell_correct_dict = spell_correct_dict
+        return self.spell_correct_dict
 
     @not_none('spell_correct_dict')
     def save_spell_correction(self, file="spell_correct.pkl"):
