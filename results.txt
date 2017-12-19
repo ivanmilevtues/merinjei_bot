@@ -4072,4 +4072,23 @@ Train recall    : 0.5363735070575462
 ---------------------------------
 Test f1         : 0.6397849462365592
 Train f1        : 0.672108843537415
+==============================================
+Date: Tue Dec 19 12:09:14 2017
+Time taken to train: 46.74029898643494 seconds
+Classifier: LogisticRegression(C=1.0, class_weight=None, dual=False, fit_intercept=True,
+          intercept_scaling=1, max_iter=100, multi_class='ovr', n_jobs=1,
+          penalty='l2', random_state=None, solver='liblinear', tol=0.0001,
+          verbose=0, warm_start=False)
+---------------------------------
+Test Accuracy   : 0.9337233935236559
+Train Accuracy  : 0.9985876656130204
+---------------------------------
+Test precision  : 0.6828859926776684
+Train precision : 0.9924701998177454
+---------------------------------
+Test recall     : 0.761600928074246
+Train recall    : 0.993439934399344
+---------------------------------
+Test f1         : 0.7998781602193116
+Train f1        : 0.9956852270392439
 =======================

@@ -8,8 +8,8 @@ from data.failed_test_examples import FAILED_EXAMPLES
 from preprocess.LineParser import LineParser
 from preprocess.PreprocessData import PreprocessData
 from preprocess.PreprocessHateData import PreprocessHateData
-from preprocess.preprocessing_utilities import get_unused_dataset_indxs, get_unused_features, split_to_train_test,\
-                                               train_classifiers, log_classifier
+from preprocess.preprocessing_utilities import get_unused_dataset_indxs, get_unused_features,\
+                                               split_to_train_test, train_classifiers, log_classifier
 from preprocess.AutoCorrect import AutoCorrect
 
 def plot(data):
@@ -90,12 +90,19 @@ def preprocess_data():
 def main():
     preprocess = PreprocessData("", "")
 
-    full_dataset = preprocess.load_and_get_dataset('dataset+ques')
+    # we call todense so that we can transform the sparse scipi matrix to numpy matrix
+    dataset = preprocess.load_and_get_dataset('dataset_hs_w_bigrams.pkl')
+    dataset = dataset.todense()
+    dataset = dataset.A.astype(np.int8)
+
+    labels = preprocess.load_and_get_dataset('labels.pkl').astype(np.int8)
+    # full_dataset = np.concatenate((dataset, labels), axis=1)
     
     features_test, features_train, labels_test, labels_train =\
-        split_to_train_test(full_dataset, test_set_percent=0.4)
+        split_to_train_test(dataset, test_set_percent=0.4, shuffle=False, labels=labels)
 
-    # print(len(features_test), len(features_train))
+    print(features_test.shape, labels_test.shape)
+    print(features_train.shape, labels_train.shape)
     train_classifiers(features_test, features_train, labels_test, labels_train)
 
     from sklearn.ensemble import RandomForestClassifier
@@ -119,18 +126,30 @@ def main():
     
     log_classifier(clf, pred_train, labels_train, pred_test, labels_test,
                    time_start, time_end)
-
-    # with open('classifier.pickle', 'wb') as f:
-    #     pickle.dump(clf, f)
     
-    # terminal_testing(clf, features)
+    del features_test
+    del features_train
+    del labels_test
+    del labels_train
 
+    with open('classifier.pickle', 'wb') as f:
+        pickle.dump(clf, f)
+    
+    with open('vectorizer.pkl', 'rb') as f:
+        vectorizer = pickle.load(f)
+    analyzer = vectorizer.build_analyzer()
+    for _ in range(10):
+    # terminal_testing(clf, features)
+        a = input()
+        fs = analyzer(a)
+        print(clf.predict(fs))
+        print(clf.predict_proba(fs))
 
 if __name__ == "__main__":
-    # main()
-    ac = AutoCorrect([], [])
-    slang_dict = ac.load_and_get_slang_dict()
-    spell_correct = ac.load_and_get_slang_dict()
+    main()
+    # ac = AutoCorrect([], [])
+    # slang_dict = ac.load_and_get_slang_dict()
+    # spell_correct = ac.load_and_get_slang_dict()
     # print(len(spell_correct.items()))
     # ac.save_spell_correction()
 
@@ -139,13 +158,13 @@ if __name__ == "__main__":
     # print(len(slang_dict.items()))
     # ac.save_slang_dict()
 
-    pd = PreprocessHateData(
-        [''], ['twitter_hate_speech.csv'], slang_dict, spell_correct)
-    # pd.load_features('reduced_full_features.pickle')
-    sad = pd.init_dataset()
-    with open('labels.pkl', 'wb') as f:
-        pickle.dump(sad[1], f)
+    # pd = PreprocessHateData(
+    #     [''], ['twitter_hate_speech.csv'], slang_dict, spell_correct)
+    # # pd.load_features('reduced_full_features.pickle')
+    # sad = pd.init_dataset()
+    # with open('labels.pkl', 'wb') as f:
+    #     pickle.dump(sad[1], f)
 
-    pd.save_dataset("dataset_hs_w_bigrams.pickle")
+    # pd.save_dataset("dataset_hs_w_bigrams.pkl")
 
-    pd.save_ngram_vectorizer()
+    # pd.save_ngram_vectorizer()

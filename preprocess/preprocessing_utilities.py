@@ -38,11 +38,14 @@ def concat_features(features_a, features_b, file):
         pickle.dump(features_a, f)
 
 
-def split_to_train_test(features_and_labels: list, test_set_percent=0.4, shuffle=True) -> tuple:
+def split_to_train_test(features_and_labels: list, test_set_percent=0.4, shuffle=True, labels=None) -> tuple:
     if shuffle:
         np.random.shuffle(features_and_labels)
     features = features_and_labels[:, :-1]
-    labels = np.logical_xor(1, features_and_labels[:, -1:].ravel())
+    if labels is None:
+        labels = np.logical_xor(1, features_and_labels[:, -1:].ravel())
+    else:
+        labels = labels.ravel()
     return (features[:int(len(features) * test_set_percent)], features[-int(len(features) * (1. - test_set_percent)):],
             labels[:int(len(labels) * test_set_percent)], labels[-int(len(labels) * (1. - test_set_percent)):])
 
