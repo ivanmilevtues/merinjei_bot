@@ -18,41 +18,11 @@ class PreprocessHateData(PreprocessData):
         self.txt_indx = 6
         self.slang_dict = slang_dict
         self.spell_correct_dict = spell_correct_dict
-        self.ngram_vectorizer = TfidfVectorizer(use_idf=True,
-                                                min_df=5,
+        self.ngram_vectorizer = TfidfVectorizer(min_df=5,
                                                 max_df=0.501,
-                                                max_features=10000,
+                                                max_features=50000,
                                                 ngram_range=(1, ngrams),
                                                 token_pattern=r'\b\w+\b')
-
-    @not_none('slang_dict')
-    @not_none('spell_correct_dict')
-    def init_features(self):
-        files = self.open_files(self.paths)
-        pattern = r"\W+"
-        features = set()
-        csv_readers = []
-        for file in files:
-            csv_readers.append(csv.reader(file))
-
-        for reader in csv_readers:
-            skip_first = True
-            for row in reader:
-                if skip_first:
-                    skip_first = False
-                    continue
-                tokens = re.split(pattern, row[self.txt_indx].lower())
-                for indx in range(len(tokens)):
-                    word = tokens[indx]
-                    if word in self.slang_dict:
-                        tokens += self.slang_dict[word].split()
-                        del tokens[indx]
-                    if word in self.spell_correct_dict:
-                        tokens[indx] = self.spell_correct_dict[word]
-
-                features.update(self._reduce_tokens(tokens))
-        self.close_files(files)
-        self.features = list(features)
 
     @not_none('slang_dict')
     @not_none('spell_correct_dict')
@@ -75,7 +45,9 @@ class PreprocessHateData(PreprocessData):
                 label = 1 if int(row[self.label_indx]) == 2 else 0
                 labels.append(label)
 
-                tokens = re.split(pattern, row[self.txt_indx].lower())
+                tweet = row[self.txt_indx].lower()
+                tweet = self.__replace_mentions_urls(tweet)
+                tokens = re.split(pattern, tweet)
                 tokens = self.__spell_check(tokens)
                 tokens = self._reduce_tokens(tokens)
                 curr_row = ' '.join(tokens)
@@ -97,6 +69,24 @@ class PreprocessHateData(PreprocessData):
     def save_ngram_vectorizer(self, file='vectorizer.pkl'):
         with open(file, 'wb') as f:
             pickle.dump(self.ngram_vectorizer, f)
+
+    def __replace_mentions_urls(self, tweet):
+        url_regex = re.compile(
+            r'(?:http|ftp)s?://'
+            r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|'
+            r'localhost|'
+            r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})'
+            r'(?::\d+)?' 
+            r'(?:/?|[/?]\S+)', re.IGNORECASE)
+
+        mentions_regex = re.compile(r'@\w+')
+        hashtag_regex = re.compile(r'#\w+')
+
+        tweet = 'URL'.join(re.split(url_regex, tweet))
+        tweet = 'MENTION'.join(re.split(mentions_regex, tweet))
+        tweet = 'HASHTAG'.join(re.split(hashtag_regex, tweet))
+
+        return tweet
 
     def __spell_check(self, tokens):
         res = []

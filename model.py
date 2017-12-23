@@ -92,10 +92,10 @@ def main():
 
     # we call todense so that we can transform the sparse scipi matrix to numpy matrix
     dataset = preprocess.load_and_get_dataset('dataset_hs_w_bigrams.pkl')
-    dataset = dataset.todense()
-    dataset = dataset.A.astype(np.int8)
+    # dataset = dataset.todense()
+    # dataset = dataset.A.astype(np.int8)
 
-    labels = preprocess.load_and_get_dataset('labels.pkl').astype(np.int8)
+    labels = preprocess.load_and_get_dataset('labels.pkl')# .astype(np.int8)
     # full_dataset = np.concatenate((dataset, labels), axis=1)
     
     features_test, features_train, labels_test, labels_train =\
@@ -146,25 +146,25 @@ def main():
         print(clf.predict_proba(fs))
 
 if __name__ == "__main__":
+    ac = AutoCorrect([], [])
+    slang_dict = ac.load_and_get_slang_dict()
+    spell_correct = ac.load_and_get_slang_dict()
+    print(len(spell_correct.items()))
+    # ac.save_spell_correction()
+
+    ac = AutoCorrect(['spelling-corrector'], ['slang_dict.doc'])
+    slang_dict = ac.init_slang_dict()
+    print(len(slang_dict.items()))
+    # ac.save_slang_dict()
+
+    pd = PreprocessHateData(
+        [''], ['twitter_hate_speech.csv'], slang_dict, spell_correct)
+    # pd.load_features('reduced_full_features.pickle')
+    sad = pd.init_dataset()
+    with open('labels.pkl', 'wb') as f:
+        pickle.dump(sad[1], f)
+
+    pd.save_dataset("dataset_hs_w_bigrams.pkl")
+
+    pd.save_ngram_vectorizer()
     main()
-    # ac = AutoCorrect([], [])
-    # slang_dict = ac.load_and_get_slang_dict()
-    # spell_correct = ac.load_and_get_slang_dict()
-    # print(len(spell_correct.items()))
-    # # ac.save_spell_correction()
-
-    # ac = AutoCorrect(['spelling-corrector'], ['slang_dict.doc'])
-    # slang_dict = ac.init_slang_dict()
-    # print(len(slang_dict.items()))
-    # # ac.save_slang_dict()
-
-    # pd = PreprocessHateData(
-    #     [''], ['twitter_hate_speech.csv'], slang_dict, spell_correct)
-    # # pd.load_features('reduced_full_features.pickle')
-    # sad = pd.init_dataset()
-    # with open('labels.pkl', 'wb') as f:
-    #     pickle.dump(sad[1], f)
-
-    # pd.save_dataset("dataset_hs_w_bigrams.pkl")
-
-    # pd.save_ngram_vectorizer()
