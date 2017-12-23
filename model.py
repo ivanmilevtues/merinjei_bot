@@ -151,12 +151,12 @@ if __name__ == "__main__":
     # slang_dict = ac.load_and_get_slang_dict()
     # spell_correct = ac.load_and_get_slang_dict()
     # print(len(spell_correct.items()))
-    # ac.save_spell_correction()
+    # # ac.save_spell_correction()
 
     # ac = AutoCorrect(['spelling-corrector'], ['slang_dict.doc'])
     # slang_dict = ac.init_slang_dict()
     # print(len(slang_dict.items()))
-    # ac.save_slang_dict()
+    # # ac.save_slang_dict()
 
     # pd = PreprocessHateData(
     #     [''], ['twitter_hate_speech.csv'], slang_dict, spell_correct)

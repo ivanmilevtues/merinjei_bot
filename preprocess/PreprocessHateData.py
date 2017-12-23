@@ -6,19 +6,23 @@ import pickle
 from preprocess.decorators import not_none
 from preprocess.PreprocessData import PreprocessData
 from preprocess.AutoCorrect import AutoCorrect
-from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.feature_extraction.text import TfidfVectorizer
 
 
 class PreprocessHateData(PreprocessData):
 
     def __init__(self, sub_directories: list, file_names: list,\
-                 slang_dict: dict, spell_correct_dict: dict,  main_dir='data', ngrams=2):
+                 slang_dict: dict, spell_correct_dict: dict,  main_dir='data', ngrams=3):
         super().__init__(sub_directories, file_names, main_dir)
         self.label_indx = 5
         self.txt_indx = 6
         self.slang_dict = slang_dict
         self.spell_correct_dict = spell_correct_dict
-        self.ngram_vectorizer = CountVectorizer(ngram_range=(1, ngrams),
+        self.ngram_vectorizer = TfidfVectorizer(use_idf=True,
+                                                min_df=5,
+                                                max_df=0.501,
+                                                max_features=10000,
+                                                ngram_range=(1, ngrams),
                                                 token_pattern=r'\b\w+\b')
 
     @not_none('slang_dict')
@@ -84,8 +88,7 @@ class PreprocessHateData(PreprocessData):
         # Changes the array to be vector
         labels = np.array(labels).reshape((len(labels), 1))
 
-        self.dataset = self.ngram_vectorizer.fit_transform(dataset)
-        # self.dataset = np.append(dataset, labels, axis=1)
+        self.dataset = self.ngram_vectorizer.fit_transform(dataset).toarray()
         return (self.dataset, labels)
 
     def get_analizer(self):
