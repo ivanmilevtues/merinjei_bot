@@ -125,3 +125,48 @@ Table of results:
 <tr><td>Test f1         </td><td> 0.9128962757771621</td></tr>
 <tr><td>Train f1        </td><td> 0.9971932638331997</td></tr>
 </table>
+
+However the good onpaper results are not good in real life as the dataset is not balanced well. There are around 8000 positive examples and 17000 negatives. This is why we have good results as most of the data is predicted as negative.
+And thus ends up in good paper results. However in reality all the time the sentences are predicted as negative.
+
+-----------------------------------------
+
+The next thing to try is to use the words in context and this is why I've implemented the ngrams as features.
+Replacing the BagOfWords is the Trigram. I've used the CountVectorizer from sklearn. However I didn't get any  quite the highest of resusts,
+
+Table of results:
+<table>
+<tr><td>Test Accuracy   </td><td> 0.9337233935236559</td></tr>
+<tr><td>Train Accuracy  </td><td> 0.9985876656130204</td></tr>
+<tr><td>Test precision  </td><td> 0.6828859926776684</td></tr>
+<tr><td>Train  precision</td><td> 0.9924701998177454</td></tr>
+<tr><td>Test recall     </td><td> 0.761600928074246</td></tr>
+<tr><td>Train recall    </td><td> 0.993439934399344</td></tr>
+<tr><td>Test f1         </td><td> 0.7998781602193116</td></tr>
+<tr><td>Train f1        </td><td> 0.9956852270392439</td></tr>
+</table>
+
+As you can see the precision and recall are the worst yet they are not that bad. However it took too much RAM to get the classifier running.
+And the features were around 1 million.
+So I though that there should be better and easier way and found the following paper: https://aaai.org/ocs/index.php/ICWSM/ICWSM17/paper/view/15665/14843.
+It explains a good way to classify hatespeech with good results in my opinion.
+
+-----------------------------------------
+
+Following the steps written in the paper: https://aaai.org/ocs/index.php/ICWSM/ICWSM17/paper/view/15665/14843
+I first implemented the features to be the 3grams of the clean version of the words and to add the Part of speech too.
+
+Table of results:
+
+<table>
+<tr><td>Test Accuracy   </td><td> 0.905175022697468</td></tr>
+<tr><td>Train Accuracy  </td><td> 0.9944179164705091</td></tr>
+<tr><td>Test precision  </td><td> 0.5584087939007039</td></tr>
+<tr><td>Train  precision</td><td> 0.9702751109543708</td></tr>
+<tr><td>Test recall     </td><td> 0.6368909512761021</td></tr>
+<tr><td>Train recall    </td><td> 0.974169741697417</td></tr>
+<tr><td>Test f1         </td><td> 0.7002551020408163</td></tr>
+<tr><td>Train f1        </td><td> 0.9828335056876939</td></tr>
+</table>
+
+-----------------------------------------

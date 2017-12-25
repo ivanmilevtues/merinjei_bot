@@ -160,9 +160,9 @@ if __name__ == "__main__":
     pd = PreprocessHateData(
         [''], ['twitter_hate_speech.csv'], slang_dict, spell_correct)
     # pd.load_features('reduced_full_features.pickle')
-    sad = pd.init_dataset()
+    labels = pd.init_dataset()
     with open('labels.pkl', 'wb') as f:
-        pickle.dump(sad[1], f)
+        pickle.dump(labels[1], f)
 
     pd.save_dataset("dataset_hs_w_bigrams.pkl")
 
