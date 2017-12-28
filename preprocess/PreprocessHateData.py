@@ -30,8 +30,9 @@ class PreprocessHateData(PreprocessData):
     @not_none('spell_correct_dict')
     def init_dataset(self, pattern=r"\W+"):
         pos_data = self.init_pos_tags_ds()
+        additional_features = self.init_mentions_hashtags_urls_dataset()
         ngram_data, labels = self.init_ngrams_datset()
-        self.dataset = np.concatenate([pos_data, ngram_data], axis=1)
+        self.dataset = np.concatenate([pos_data, additional_features, ngram_data], axis=1)
         return (self.dataset, labels)
 
     def init_pos_tags_ds(self, pattern=r"\W+"):
@@ -71,6 +72,35 @@ class PreprocessHateData(PreprocessData):
                 dataset.append(curr_row)
         return pos_vectorizer.fit_transform(dataset).toarray()
 
+    def init_mentions_hashtags_urls_dataset(self):
+        files = self.open_files(self.paths)
+        dataset = []
+        csv_readers = []
+
+        for file in files:
+            csv_readers.append(csv.reader(file))
+
+        for reader in csv_readers:
+            skip_first = True
+            for row in reader:
+                if skip_first:
+                    skip_first = False
+                    continue
+
+                tweet = row[self.txt_indx].lower()
+                tweet = self.__replace_mentions_urls(tweet, "URL", "MENTION", "HASHTAG")
+                url_count = tweet.count("URL")
+                mention_count = tweet.count('MENTION')
+                hashtag_count = tweet.count("HASHTAG")
+                number_of_words = len(tweet.split())
+                number_of_syllables = len(re.split('[aeiouy]', tweet))
+                number_of_chars = len(re.split('[a-z]', tweet))
+
+                dataset.append([url_count, mention_count, hashtag_count, number_of_words,\
+                                number_of_syllables, number_of_chars])
+
+        self.close_files(files)
+        return np.array(dataset)
 
     def init_ngrams_datset(self, pattern=r"\W+"):
         files = self.open_files(self.paths)
@@ -111,7 +141,7 @@ class PreprocessHateData(PreprocessData):
 
     def get_analizer(self):
         return self.ngram_vectorizer.build_analyzer()
-    
+ 
     def save_ngram_vectorizer(self, file='vectorizer.pkl'):
         with open(file, 'wb') as f:
             pickle.dump(self.ngram_vectorizer, f)
