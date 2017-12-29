@@ -72,6 +72,7 @@ class PreprocessHateData(PreprocessData):
                 dataset.append(curr_row)
         return pos_vectorizer.fit_transform(dataset).toarray()
 
+    
     def init_mentions_hashtags_urls_dataset(self):
         files = self.open_files(self.paths)
         dataset = []
@@ -96,8 +97,14 @@ class PreprocessHateData(PreprocessData):
                 number_of_syllables = len(re.split('[aeiouy]', tweet))
                 number_of_chars = len(re.split('[a-z]', tweet))
 
+                # Flesch–Kincaid grade level
+                fkra_score = (0.39 * number_of_words) + ( 11.8 * number_of_syllables / number_of_words) - 15.59
+
+                # Flesch reading ease
+                fre_score = 206.835 - (1.015 * number_of_words) - (84.6 * number_of_syllables / number_of_words)
+
                 dataset.append([url_count, mention_count, hashtag_count, number_of_words,\
-                                number_of_syllables, number_of_chars])
+                                number_of_syllables, number_of_chars, fkra_score, fre_score])
 
         self.close_files(files)
         return np.array(dataset)
