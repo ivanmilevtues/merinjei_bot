@@ -9,6 +9,7 @@ from preprocess.decorators import not_none
 from preprocess.PreprocessData import PreprocessData
 from preprocess.AutoCorrect import AutoCorrect
 from sklearn.feature_extraction.text import TfidfVectorizer
+from nltk.stem import SnowballStemmer
 
 
 class PreprocessHateData(PreprocessData):
@@ -60,7 +61,7 @@ class PreprocessHateData(PreprocessData):
         self.close_files(files)
         return np.array(labels)
 
-    def init_dataset(self, pattern=r"\W+"):
+    def init_dataset(self):
         labels = self.generate_corpus_get_labels()
         additional_features = self.init_other_features()
         pos_data = self.init_pos_tags_ds()
@@ -69,7 +70,7 @@ class PreprocessHateData(PreprocessData):
         return (self.dataset, labels)
 
     @not_none('corpus')
-    def init_pos_tags_ds(self, pattern=r"\W+"):
+    def init_pos_tags_ds(self):
         dataset = []
         pos_vectorizer = TfidfVectorizer(
             use_idf=False,
@@ -134,10 +135,13 @@ class PreprocessHateData(PreprocessData):
         dataset = []
 
         ngram_vectorizer = TfidfVectorizer(use_idf=True,
+                                           tokenizer=PreprocessHateData.tokenize,
                                            stop_words=nltk.corpus.stopwords.words('english'),
+                                           decode_error='replace',
                                            min_df=5,
                                            max_df=0.501,
                                            max_features=10000,
+                                           smooth_idf=False,
                                            ngram_range=(1, 3),
                                            token_pattern=r'\b\w+\b')
 
@@ -164,9 +168,16 @@ class PreprocessHateData(PreprocessData):
 
         mentions_regex = re.compile(r'@\w+')
         hashtag_regex = re.compile(r'#\w+')
-
+        tweet = ' '.join(re.split(r'\s+', tweet))
         tweet = replace_url.join(re.split(url_regex, tweet))
         tweet = replace_mention.join(re.split(mentions_regex, tweet))
         tweet = replace_hashtag.join(re.split(hashtag_regex, tweet))
 
         return tweet
+    
+    @staticmethod
+    def tokenize(tweet: str) -> list:
+        stemmer = SnowballStemmer("english")
+        tokens = tweet.split()
+        tokens = [stemmer.stem(w) for w in tokens]
+        return tokens
