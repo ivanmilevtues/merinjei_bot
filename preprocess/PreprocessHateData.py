@@ -1,7 +1,7 @@
 import re
 import csv
 import nltk
-from nltk.sentiment.util import demo_vader_instance
+from nltk.sentiment import SentimentIntensityAnalyzer
 import numpy as np
 from collections import Counter
 import pickle
@@ -18,6 +18,24 @@ class PreprocessHateData(PreprocessData):
         self.label_indx = 5
         self.txt_indx = 6
         self.corpus = None
+
+    def get_labels(self):
+        files = self.open_files(self.paths)
+        csv_readers = []
+        self.corpus = []
+        labels = []
+        for file in files:
+            csv_readers.append(csv.reader(file))
+
+        for reader in csv_readers:
+            skip_first = True
+            for row in reader:
+                if skip_first:
+                    skip_first = False
+                    continue
+                label = int(row[self.label_indx])
+                labels.append(label)
+        return np.array(labels)
 
     def generate_corpus_get_labels(self):
         files = self.open_files(self.paths)
@@ -44,9 +62,9 @@ class PreprocessHateData(PreprocessData):
 
     def init_dataset(self, pattern=r"\W+"):
         labels = self.generate_corpus_get_labels()
-        ngram_data = self.init_ngrams_datset()
-        pos_data = self.init_pos_tags_ds()
         additional_features = self.init_other_features()
+        pos_data = self.init_pos_tags_ds()
+        ngram_data = self.init_ngrams_datset()
         self.dataset = np.concatenate([ngram_data, pos_data, additional_features], axis=1)
         return (self.dataset, labels)
 
@@ -75,6 +93,7 @@ class PreprocessHateData(PreprocessData):
     @not_none('corpus')
     def init_other_features(self):
         dataset = []
+        vader_analyzer = SentimentIntensityAnalyzer()
         for tweet in self.corpus:
             tweet = self.__replace_mentions_urls(tweet, "URL", "MENTION", "HASHTAG")
             
@@ -82,7 +101,7 @@ class PreprocessHateData(PreprocessData):
             mention_count = tweet.count('MENTION')
             hashtag_count = tweet.count("HASHTAG")
 
-            number_of_words = re.split(r'[a-z]+', tweet)
+            number_of_words = len(re.split(r'[a-z]+', tweet))
             number_of_terms = len(tweet.split())
             number_of_unique_terms = len(set(tweet.split()))
             number_of_syllables = len(re.split(r'[aeiouy]', tweet))
@@ -99,7 +118,7 @@ class PreprocessHateData(PreprocessData):
             tweet.replace('URL', '')
             tweet.replace('MENTION', '')
             tweet.replace('HASHTAG', '')
-            polarity = demo_vader_instance(tweet)
+            polarity = vader_analyzer.polarity_scores(tweet)
 
             dataset.append([url_count, mention_count, hashtag_count, number_of_words,\
                             number_of_terms, number_of_unique_terms,number_of_syllables,\
@@ -115,6 +134,7 @@ class PreprocessHateData(PreprocessData):
         dataset = []
 
         ngram_vectorizer = TfidfVectorizer(use_idf=True,
+                                           stop_words=nltk.corpus.stopwords.words('english'),
                                            min_df=5,
                                            max_df=0.501,
                                            max_features=10000,

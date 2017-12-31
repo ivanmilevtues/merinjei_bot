@@ -489,4 +489,30 @@ Train recall    : 0.994669946699467
 ---------------------------------
 Test f1         : 0.47162673392181587
 Train f1        : 0.9971228935470612
+==============================================
+Date: Sat Dec 30 19:09:47 2017
+Time taken to train: 16.04547643661499 seconds
+Classifier: GridSearchCV(cv=<generator object _BaseKFold.split at 0x000001F4FFC4C150>,
+       error_score='raise',
+       estimator=Pipeline(memory=None,
+     steps=[('select', SelectFromModel(estimator=LogisticRegression(C=0.01, class_weight='balanced', dual=False,
+          fit_intercept=True, intercept_scaling=1, max_iter=100,
+          multi_class='ovr', n_jobs=1, penalty='l1', random_state=None,
+          solver='liblinear', tol=0.0001, verbose=0, wa...ty='l2', random_state=None,
+          solver='liblinear', tol=0.0001, verbose=0, warm_start=False))]),
+       fit_params=None, iid=True, n_jobs=1, param_grid=[{}],
+       pre_dispatch='2*n_jobs', refit=True, return_train_score=True,
+       scoring=None, verbose=2)
+---------------------------------
+Test Accuracy   : 0.6716432966811258
+Train Accuracy  : 0.7463178424910888
+---------------------------------
+Test precision  : 0.3259025852963107
+Train precision : 0.37682922208885117
+---------------------------------
+Test recall     : 0.9263341067285383
+Train recall    : 0.949159491594916
+---------------------------------
+Test f1         : 0.49527058458675766
+Train f1        : 0.5510592716019995
 =======================

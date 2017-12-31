@@ -8,9 +8,15 @@ from data.failed_test_examples import FAILED_EXAMPLES
 from preprocess.LineParser import LineParser
 from preprocess.PreprocessData import PreprocessData
 from preprocess.PreprocessHateData import PreprocessHateData
+from sklearn.model_selection import StratifiedKFold, GridSearchCV
+from sklearn.pipeline import Pipeline
 from preprocess.preprocessing_utilities import get_unused_dataset_indxs, get_unused_features,\
                                                split_to_train_test, train_classifiers, log_classifier
 from preprocess.AutoCorrect import AutoCorrect
+from sklearn.metrics import classification_report
+from sklearn.linear_model import LogisticRegression
+from sklearn.feature_selection import SelectFromModel
+
 
 def plot(data):
     x = list(range(len(data)))
@@ -95,38 +101,40 @@ def main():
     # dataset = dataset.todense()
     # dataset = dataset.A.astype(np.int8)
 
-    labels = preprocess.load_and_get_dataset('labels.pkl')# .astype(np.int8)
+    labels = preprocess.load_and_get_dataset('labels1.pkl')# .astype(np.int8)
+    labels = np.array(labels)
     # full_dataset = np.concatenate((dataset, labels), axis=1)
     
     features_test, features_train, labels_test, labels_train =\
         split_to_train_test(dataset, test_set_percent=0.4, shuffle=False, labels=labels)
 
-    print(features_test.shape, labels_test.shape)
-    print(features_train.shape, labels_train.shape)
-    train_classifiers(features_test, features_train, labels_test, labels_train)
+    # print(features_test.shape, labels_test.shape)
+    # print(features_train.shape, labels_train.shape)
+    # train_classifiers(features_test, features_train, labels_test, labels_train)
 
-    from sklearn.ensemble import RandomForestClassifier
-    from sklearn.model_selection import GridSearchCV
     time_start = time.time()
-    parameters = {
-        'n_estimators': [10, 30, 50, 100],
-        'criterion': ['gini', 'entropy'],
-        # 'min_samples_split': [2, 5, 10, 30],
-        # 'min_samples_leaf': [1, 2, 5, 10],
-        # 'min_weight_fraction_leaf': [0, 0.2, 0.3, 0.5],
-        'n_jobs':[-1]
-    }
-    randomForest = RandomForestClassifier()
-    clf = GridSearchCV(randomForest, parameters)
+    pipe = Pipeline(
+        [('select', SelectFromModel(LogisticRegression(class_weight='balanced',
+                                                       penalty="l1", C=0.01))),
+         ('model', LogisticRegression(class_weight='balanced', penalty='l2'))])
+
+    param_grid = [{}]  # Optionally add parameters here
+
+    clf = GridSearchCV(pipe,param_grid, cv=StratifiedKFold(n_splits=5,
+                                        random_state=42).split(features_train, labels_train),
+                                        verbose=2)
+
     clf.fit(features_train, labels_train)
     time_end = time.time()
     
     pred_train = clf.predict(features_train)
     pred_test = clf.predict(features_test)
     
-    log_classifier(clf, pred_train, labels_train, pred_test, labels_test,
-                   time_start, time_end)
+    # log_classifier(clf, pred_train, labels_train, pred_test, labels_test,
+    #                time_start, time_end)
     
+    print(classification_report(pred_test, labels_test))
+
     del features_test
     del features_train
     del labels_test
@@ -146,25 +154,11 @@ def main():
         print(clf.predict_proba(fs))
 
 if __name__ == "__main__":
-    ac = AutoCorrect([], [])
-    slang_dict = ac.load_and_get_slang_dict()
-    spell_correct = ac.load_and_get_slang_dict()
-    print(len(spell_correct.items()))
-    # ac.save_spell_correction()
-
-    ac = AutoCorrect(['spelling-corrector'], ['slang_dict.doc'])
-    slang_dict = ac.init_slang_dict()
-    print(len(slang_dict.items()))
-    # ac.save_slang_dict()
-
     pd = PreprocessHateData(
-        [''], ['twitter_hate_speech.csv'], slang_dict, spell_correct)
+        [''], ['twitter_hate_speech.csv'])
     # pd.load_features('reduced_full_features.pickle')
     labels = pd.init_dataset()
     with open('labels.pkl', 'wb') as f:
-        pickle.dump(labels[1], f)
-
-    pd.save_dataset("dataset_hs_w_bigrams.pkl")
-
-    pd.save_ngram_vectorizer()
+        pickle.dump(labels, f)
+    pd.save_dataset("dataset_hs_w_trigrams.pkl")
     main()
