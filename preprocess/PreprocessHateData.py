@@ -73,11 +73,18 @@ class PreprocessHateData(PreprocessData):
     def init_pos_tags_ds(self):
         dataset = []
         pos_vectorizer = TfidfVectorizer(
-            use_idf=False,
-            ngram_range=(1, 3),
-            min_df=5,
-            max_df=0.75,
-            max_features=5000
+                tokenizer=None,
+                lowercase=False,
+                preprocessor=None,
+                ngram_range=(1, 3),
+                stop_words=None,
+                use_idf=False,
+                smooth_idf=False,
+                norm=None,
+                decode_error='replace',
+                max_features=5000,
+                min_df=5,
+                max_df=0.75
         )
 
         for tweet in self.corpus:
@@ -85,7 +92,7 @@ class PreprocessHateData(PreprocessData):
             tokens = nltk.word_tokenize(tweet)
             tokens_tagged = nltk.pos_tag(tokens)
             # Taking only the part of speech (Word, PartOfSpeech)
-            pos_tags = [pos[1] for pos in tokens_tagged]
+            pos_tags = [pos[1] for pos in tokens_tagged if re.match('\w+', pos[1])]
             curr_row = ' '.join(pos_tags)
             dataset.append(curr_row)
 
@@ -131,7 +138,6 @@ class PreprocessHateData(PreprocessData):
 
     @not_none('corpus')
     def init_ngrams_datset(self, pattern=r"\W+"):
-        files = self.open_files(self.paths)
         dataset = []
 
         ngram_vectorizer = TfidfVectorizer(use_idf=True,
@@ -139,22 +145,17 @@ class PreprocessHateData(PreprocessData):
                                            stop_words=nltk.corpus.stopwords.words('english'),
                                            decode_error='replace',
                                            min_df=5,
-                                           max_df=0.501,
+                                           max_df=0.75,
                                            max_features=10000,
                                            smooth_idf=False,
+                                           norm=None,
                                            ngram_range=(1, 3),
                                            token_pattern=r'\b\w+\b')
 
         for tweet in self.corpus:
             tweet = self.__replace_mentions_urls(tweet)
-            tokens = re.split(pattern, tweet)
-            tokens = self._reduce_tokens(tokens)
-            curr_row = ' '.join(tokens)
-
             # Adding the reduced sentence to the dataset(corpus)
-            dataset.append(curr_row)
-
-        self.close_files(files)
+            dataset.append(tweet)
         return ngram_vectorizer.fit_transform(dataset).toarray()
  
     def __replace_mentions_urls(self, tweet, replace_url='', replace_mention='', replace_hashtag=''):
@@ -168,13 +169,13 @@ class PreprocessHateData(PreprocessData):
 
         mentions_regex = re.compile(r'@\w+')
         hashtag_regex = re.compile(r'#\w+')
-        tweet = ' '.join(re.split(r'\s+', tweet))
         tweet = replace_url.join(re.split(url_regex, tweet))
         tweet = replace_mention.join(re.split(mentions_regex, tweet))
         tweet = replace_hashtag.join(re.split(hashtag_regex, tweet))
+        tweet = ' '.join(re.split(r'\s+', tweet))
 
         return tweet
-    
+ 
     @staticmethod
     def tokenize(tweet: str) -> list:
         stemmer = SnowballStemmer("english")

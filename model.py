@@ -97,11 +97,12 @@ def main():
     preprocess = PreprocessData("", "")
 
     # we call todense so that we can transform the sparse scipi matrix to numpy matrix
-    dataset = preprocess.load_and_get_dataset('dataset_hs_w_bigrams.pkl')
+    dataset = preprocess.load_and_get_dataset(
+        'dataset_hs_w_trigrams_stemmed.pkl')
     # dataset = dataset.todense()
     # dataset = dataset.A.astype(np.int8)
 
-    labels = preprocess.load_and_get_dataset('labels1.pkl')# .astype(np.int8)
+    labels = preprocess.load_and_get_dataset('labels.pkl')# .astype(np.int8)
     labels = np.array(labels)
     # full_dataset = np.concatenate((dataset, labels), axis=1)
     
@@ -154,11 +155,11 @@ def main():
         print(clf.predict_proba(fs))
 
 if __name__ == "__main__":
-    pd = PreprocessHateData(
-        [''], ['twitter_hate_speech.csv'])
-    # pd.load_features('reduced_full_features.pickle')
-    labels = pd.init_dataset()
-    with open('labels.pkl', 'wb') as f:
-        pickle.dump(labels, f)
-    pd.save_dataset("dataset_hs_w_trigrams.pkl")
+    # pd = PreprocessHateData(
+    #     [''], ['twitter_hate_speech.csv'])
+    # # pd.load_features('reduced_full_features.pickle')
+    # _, labels = pd.init_dataset()
+    # with open('labels.pkl', 'wb') as f:
+    #     pickle.dump(labels, f)
+    # pd.save_dataset("dataset_hs_w_trigrams_stemmed.pkl")
     main()
