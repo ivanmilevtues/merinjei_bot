@@ -16,9 +16,15 @@ class PreprocessHateData(PreprocessData):
 
     def __init__(self, sub_directories: list, file_names: list, main_dir='data'):
         super().__init__(sub_directories, file_names, main_dir)
+        self.vader_analyzer = SentimentIntensityAnalyzer()
         self.label_indx = 5
         self.txt_indx = 6
         self.corpus = None
+        self.pos_features = None
+        self.ngram_features = None
+        self.other_features = None
+        self.ngram_vectorizer = None
+        self.pos_vectorizer = None
 
     def get_labels(self):
         files = self.open_files(self.paths)
@@ -66,6 +72,10 @@ class PreprocessHateData(PreprocessData):
         additional_features = self.init_other_features()
         pos_data = self.init_pos_tags_ds()
         ngram_data = self.init_ngrams_datset()
+        print(labels.shape)
+        print(additional_features.shape)
+        print(pos_data.shape)
+        print(ngram_data.shape)
         self.dataset = np.concatenate([ngram_data, pos_data, additional_features], axis=1)
         return (self.dataset, labels)
 
@@ -96,43 +106,55 @@ class PreprocessHateData(PreprocessData):
             curr_row = ' '.join(pos_tags)
             dataset.append(curr_row)
 
-        return pos_vectorizer.fit_transform(dataset).toarray()
-  
+        dataset = pos_vectorizer.fit_transform(dataset).toarray()
+        vocab = {v:i for i, v in enumerate(pos_vectorizer.get_feature_names())}
+        self.pos_features = vocab
+        self.pos_vectorizer = pos_vectorizer
+        return dataset
+
+    
+    def get_other_features(self, tweet):
+        tweet = self.__replace_mentions_urls(tweet, "URL", "MENTION", "HASHTAG")
+            
+        url_count = tweet.count("URL")
+        mention_count = tweet.count('MENTION')
+        hashtag_count = tweet.count("HASHTAG")
+
+        number_of_words = len(re.split(r'[a-z]+', tweet))
+        number_of_terms = len(tweet.split())
+        number_of_unique_terms = len(set(tweet.split()))
+        number_of_syllables = len(re.split(r'[aeiouy]', tweet))
+        number_of_chars = len(re.split(r'[a-z]', tweet))
+        number_of_chars_total = len(re.split(r'[a-z]|\W', tweet))
+
+        avrg_syllables = number_of_syllables / number_of_words
+        # Flesch–Kincaid grade level
+        fkra_score = (0.39 * number_of_words) + ( 11.8 * number_of_syllables / number_of_words) - 15.59
+
+        # Flesch reading ease
+        fre_score = 206.835 - (1.015 * number_of_words) - (84.6 * number_of_syllables / number_of_words)
+
+        tweet.replace('URL', '')
+        tweet.replace('MENTION', '')
+        tweet.replace('HASHTAG', '')
+        polarity = self.vader_analyzer.polarity_scores(tweet)
+
+        return [url_count, mention_count, hashtag_count, number_of_words,\
+                number_of_terms, number_of_unique_terms,number_of_syllables,\
+                number_of_chars, number_of_chars_total, avrg_syllables,\
+                fkra_score, fre_score,\
+                polarity['neg'], polarity['neu'], polarity['pos'], polarity['compound']]
+
     @not_none('corpus')
     def init_other_features(self):
         dataset = []
-        vader_analyzer = SentimentIntensityAnalyzer()
         for tweet in self.corpus:
-            tweet = self.__replace_mentions_urls(tweet, "URL", "MENTION", "HASHTAG")
-            
-            url_count = tweet.count("URL")
-            mention_count = tweet.count('MENTION')
-            hashtag_count = tweet.count("HASHTAG")
+            dataset.append(self.get_other_features(tweet))
 
-            number_of_words = len(re.split(r'[a-z]+', tweet))
-            number_of_terms = len(tweet.split())
-            number_of_unique_terms = len(set(tweet.split()))
-            number_of_syllables = len(re.split(r'[aeiouy]', tweet))
-            number_of_chars = len(re.split(r'[a-z]', tweet))
-            number_of_chars_total = len(re.split(r'[a-z]|\W', tweet))
-
-            avrg_syllables = number_of_syllables / number_of_words
-            # Flesch–Kincaid grade level
-            fkra_score = (0.39 * number_of_words) + ( 11.8 * number_of_syllables / number_of_words) - 15.59
-
-            # Flesch reading ease
-            fre_score = 206.835 - (1.015 * number_of_words) - (84.6 * number_of_syllables / number_of_words)
-
-            tweet.replace('URL', '')
-            tweet.replace('MENTION', '')
-            tweet.replace('HASHTAG', '')
-            polarity = vader_analyzer.polarity_scores(tweet)
-
-            dataset.append([url_count, mention_count, hashtag_count, number_of_words,\
-                            number_of_terms, number_of_unique_terms,number_of_syllables,\
-                            number_of_chars, number_of_chars_total, avrg_syllables,\
-                            fkra_score, fre_score,\
-                            polarity['neg'], polarity['neu'], polarity['pos']])
+        self.other_features = ['URLCOUNT', 'MENTIONCOUNT', 'HASHTAGCOUNT', 'WORDSCOUNT',
+                               'TERMSCOUNT', 'UNIQUETERMSCOUNT', 'SYLLABLESCOUNT', 'CHARSCOUNT',
+                               'TOTALCHARSCOUNT', 'AVRGSYLLABLESCOUNT', 'FKRA', 'FRE',
+                               'POLARITYNEG', 'POLARITYNEU', 'POLARITYPOS', 'POLARITYCOMP']
 
         return np.array(dataset)
 
@@ -156,8 +178,27 @@ class PreprocessHateData(PreprocessData):
             tweet = self.__replace_mentions_urls(tweet)
             # Adding the reduced sentence to the dataset(corpus)
             dataset.append(tweet)
-        return ngram_vectorizer.fit_transform(dataset).toarray()
+        
+        dataset = ngram_vectorizer.fit_transform(dataset).toarray()
+
+        vocab = {v:i for i, v in enumerate(ngram_vectorizer.get_feature_names())}
+        self.ngram_features = {i:ngram_vectorizer.idf_[i] for i in vocab.values()}
+        self.ngram_vectorizer = ngram_vectorizer
+
+        return dataset
  
+    def get_features(self):
+        self.features = {
+            'ngram_features': self.ngram_features,
+            'pos_features': self.pos_features,
+            'other_features': self.other_features,
+            'ngram_vectorizer': self.ngram_vectorizer,
+            'pos_vectorizer': self.pos_vectorizer
+        }
+
+        return self.features
+        
+
     def __replace_mentions_urls(self, tweet, replace_url='', replace_mention='', replace_hashtag=''):
         url_regex = re.compile(
             r'(?:http|ftp)s?://'
@@ -175,7 +216,7 @@ class PreprocessHateData(PreprocessData):
         tweet = ' '.join(re.split(r'\s+', tweet))
 
         return tweet
- 
+
     @staticmethod
     def tokenize(tweet: str) -> list:
         stemmer = SnowballStemmer("english")

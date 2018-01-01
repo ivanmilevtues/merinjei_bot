@@ -1,33 +1,21 @@
 import numpy as np
 import re
+import nltk
 from preprocess.preprocessing_utilities import add_to_array
 from collections import Counter
 from nltk.stem import SnowballStemmer
 from sklearn.feature_extraction.text import TfidfTransformer
 
+
 class LineParser():
 
     def __init__(self, features):
         self.features = features
-        self.stemmer = SnowballStemmer('english')
+        self.pos_analyzer = self.features['ngram_vectorizer'].build_analyzer()
+        self.ngram_analyzer = self.features['pos_vectorizer'].build_analyzer()
 
-    def parse_line(self, line):
-        line = line.lower()
-        tokens = re.split(r"\W", line)
-        mapped_dataset = Counter(w for w in tokens)
-        dataset = self.__map_to_dataset(mapped_dataset)
-        dataset = np.array([dataset])
-        dataset = TfidfTransformer().fit_transform(dataset).toarray()
-        return dataset
+    def parse_line(self, tweet):
+        dataset = [0 for _ in range(len(self.features['ngram_features']) + 
+                               len(self.features['pos_features']) + 
+                               len(self.features['other_features']))]
 
-    def __map_to_dataset(self, data):
-        result = [0 for _ in self.features]
-        for k, v in data.items():
-            add_to_array(result, k, v, self.features, self.stemmer)
-        return result
-
-
-if __name__ == '__main__':
-    lp = LineParser(['averag', 'lame'])
-
-    print(lp.parse_line(input(':')))

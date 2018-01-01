@@ -155,11 +155,18 @@ def main():
         print(clf.predict_proba(fs))
 
 if __name__ == "__main__":
-    # pd = PreprocessHateData(
-    #     [''], ['twitter_hate_speech.csv'])
-    # # pd.load_features('reduced_full_features.pickle')
-    # _, labels = pd.init_dataset()
-    # with open('labels.pkl', 'wb') as f:
-    #     pickle.dump(labels, f)
-    # pd.save_dataset("dataset_hs_w_trigrams_stemmed.pkl")
+    pd = PreprocessHateData(
+        [''], ['twitter_hate_speech.csv'])
+    # pd.load_features('reduced_full_features.pickle')
+    _, labels = pd.init_dataset()
+    with open('labels.pkl', 'wb') as f:
+        pickle.dump(labels, f)
+    pd.save_dataset("dataset_hs_w_trigrams_stemmed.pkl")
+    features = pd.get_features()
+    pd.save_features()
+    from pprint import pprint
+    pprint(features['ngram_features'])
+    pprint(features['pos_features'])
+    pprint(features['other_features'])
+
     main()
