@@ -98,7 +98,7 @@ class PreprocessHateData(PreprocessData):
         )
 
         for tweet in self.corpus:
-            tweet = self.__replace_mentions_urls(tweet)
+            tweet = self.replace_mentions_urls(tweet)
             tokens = nltk.word_tokenize(tweet)
             tokens_tagged = nltk.pos_tag(tokens)
             # Taking only the part of speech (Word, PartOfSpeech)
@@ -114,7 +114,7 @@ class PreprocessHateData(PreprocessData):
 
     
     def get_other_features(self, tweet):
-        tweet = self.__replace_mentions_urls(tweet, "URL", "MENTION", "HASHTAG")
+        tweet = self.replace_mentions_urls(tweet, "URL", "MENTION", "HASHTAG")
             
         url_count = tweet.count("URL")
         mention_count = tweet.count('MENTION')
@@ -175,31 +175,30 @@ class PreprocessHateData(PreprocessData):
                                            token_pattern=r'\b\w+\b')
 
         for tweet in self.corpus:
-            tweet = self.__replace_mentions_urls(tweet)
+            tweet = self.replace_mentions_urls(tweet)
             # Adding the reduced sentence to the dataset(corpus)
             dataset.append(tweet)
         
         dataset = ngram_vectorizer.fit_transform(dataset).toarray()
 
-        vocab = {v:i for i, v in enumerate(ngram_vectorizer.get_feature_names())}
+        vocab = self.ngram_scores = {v:i for i, v in enumerate(ngram_vectorizer.get_feature_names())}
         self.ngram_features = {i:ngram_vectorizer.idf_[i] for i in vocab.values()}
         self.ngram_vectorizer = ngram_vectorizer
 
         return dataset
  
-    def get_features(self):
+    def init_features(self):
         self.features = {
+            'ngram_scores': self.ngram_scores,
             'ngram_features': self.ngram_features,
             'pos_features': self.pos_features,
             'other_features': self.other_features,
             'ngram_vectorizer': self.ngram_vectorizer,
             'pos_vectorizer': self.pos_vectorizer
         }
+        return self.features        
 
-        return self.features
-        
-
-    def __replace_mentions_urls(self, tweet, replace_url='', replace_mention='', replace_hashtag=''):
+    def replace_mentions_urls(self, tweet, replace_url='', replace_mention='', replace_hashtag=''):
         url_regex = re.compile(
             r'(?:http|ftp)s?://'
             r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|'

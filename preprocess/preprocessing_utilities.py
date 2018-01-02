@@ -39,11 +39,12 @@ def concat_features(features_a, features_b, file):
 
 
 def split_to_train_test(features_and_labels: list, test_set_percent=0.4, shuffle=True, labels=None) -> tuple:
+    features = features_and_labels
     if shuffle:
         np.random.shuffle(features_and_labels)
-    features = features_and_labels[:, :-1]
     if labels is None:
         labels = np.logical_xor(1, features_and_labels[:, -1:].ravel())
+        features = features_and_labels[:, :-1]
     else:
         labels = labels.ravel()
     return (features[:int(len(features) * test_set_percent)], features[-int(len(features) * (1. - test_set_percent)):],

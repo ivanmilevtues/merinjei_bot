@@ -99,6 +99,7 @@ def main():
     # we call todense so that we can transform the sparse scipi matrix to numpy matrix
     dataset = preprocess.load_and_get_dataset(
         'dataset_hs_w_trigrams_stemmed.pkl')
+    print(dataset.shape)
     # dataset = dataset.todense()
     # dataset = dataset.A.astype(np.int8)
 
@@ -135,38 +136,30 @@ def main():
     #                time_start, time_end)
     
     print(classification_report(pred_test, labels_test))
-
+    print(features_test.shape)
     del features_test
     del features_train
     del labels_test
     del labels_train
 
-    with open('classifier.pickle', 'wb') as f:
-        pickle.dump(clf, f)
-    
-    with open('vectorizer.pkl', 'rb') as f:
-        vectorizer = pickle.load(f)
-    analyzer = vectorizer.build_analyzer()
+    features = preprocess.load_and_get_features()
+    lp = LineParser(features)
     for _ in range(10):
-    # terminal_testing(clf, features)
-        a = input()
-        fs = analyzer(a)
-        print(clf.predict(fs))
-        print(clf.predict_proba(fs))
+        sentence = input('HATE> ')
+        result = lp.parse_line(sentence)
+        print(result.shape)
+        print(clf.predict(result))
+        print(clf.predict_proba(result))
 
 if __name__ == "__main__":
-    pd = PreprocessHateData(
-        [''], ['twitter_hate_speech.csv'])
-    # pd.load_features('reduced_full_features.pickle')
-    _, labels = pd.init_dataset()
-    with open('labels.pkl', 'wb') as f:
-        pickle.dump(labels, f)
-    pd.save_dataset("dataset_hs_w_trigrams_stemmed.pkl")
-    features = pd.get_features()
-    pd.save_features()
-    from pprint import pprint
-    pprint(features['ngram_features'])
-    pprint(features['pos_features'])
-    pprint(features['other_features'])
-
+    # pd = PreprocessHateData(
+    #     [''], ['twitter_hate_speech.csv'])
+    # # pd.load_features('reduced_full_features.pickle')
+    # _, labels = pd.init_dataset()
+    # with open('labels.pkl', 'wb') as f:
+    #     pickle.dump(labels, f)
+    # pd.save_dataset("dataset_hs_w_trigrams_stemmed.pkl")
+    # features = pd.init_features()
+    # features = pd.get_features()
+    # pd.save_features()
     main()
