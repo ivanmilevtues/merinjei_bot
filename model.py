@@ -11,7 +11,8 @@ from preprocess.PreprocessHateData import PreprocessHateData
 from sklearn.model_selection import StratifiedKFold, GridSearchCV
 from sklearn.pipeline import Pipeline
 from preprocess.preprocessing_utilities import get_unused_dataset_indxs, get_unused_features,\
-                                               split_to_train_test, train_classifiers, log_classifier
+                                               split_to_train_test
+from training.train_and_log import train_classifiers, log_classifier
 from preprocess.AutoCorrect import AutoCorrect
 from sklearn.metrics import classification_report
 from sklearn.linear_model import LogisticRegression
