@@ -9,7 +9,7 @@ class PreprocessQuestions(PreprocessData):
 
     def __init__(self, sub_dirs: list, file_names: list, main_dir='data'):
         super().__init__(sub_dirs, file_names, main_dir )
-        self.labels = []
+        self.labels = ['ABBR', 'DESC', 'PROCEDURE', 'HUM', 'LOC', 'NUM']
     
 
     def init_features(self):
@@ -36,8 +36,10 @@ class PreprocessQuestions(PreprocessData):
             for line in lines:
                 tokens = re.split(pattern, line)
                 label, tokens = tokens[0], tokens[1:]
+                label = self._pick_label(label)
+                if label is None:
+                    continue
                 tokens = Counter(word for word in tokens)
-                label = self.__pick_header_label(label)
                 dataset.append(self._words_to_array(tokens, label))
 
         self.close_files(files)
@@ -49,13 +51,7 @@ class PreprocessQuestions(PreprocessData):
         with open('file', 'wb') as f:
             pickle.dump(self.labels, f)
 
-    def __pick_label(self, label):
-        if label not in self.labels:
-            self.labels.append(label)
-        return self.labels.index(label)
-
-    def __pick_header_label(self, label):
-        label = label.split(':')[0] # takes the base class of the label
-        if label not in self.labels:
-            self.labels.append(label)
-        return self.labels.index(label)
+    def _pick_label(self, label):
+        for indx in range(len(self.labels)):
+            if self.labels[indx] in label:
+                return indx
