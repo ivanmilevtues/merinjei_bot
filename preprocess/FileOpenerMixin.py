@@ -7,7 +7,7 @@ class FileOpenerMixin:
             for file_name in file_names:
                 path = main_dir + "/" + sub_dir + "/" + file_name
                 path = self.__generate_file_path(path)
-                files.append(open(path))
+                files.append(open(path, encoding='utf-8'))
         return files
 
     def close_files(self, files):
