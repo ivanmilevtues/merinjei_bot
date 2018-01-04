@@ -14,7 +14,7 @@ class PreprocessQuestions(PreprocessData):
 
     def init_features(self):
         files = self.open_files(self.paths)
-        pattern = r'([^a-zA-Z0-9_'])+'
+        pattern = r'([^a-zA-Z0-9_\'])+'
         features = set()
 
         for file in files:
@@ -29,7 +29,7 @@ class PreprocessQuestions(PreprocessData):
     @not_none('features')
     def init_dataset(self):
         files = self.open_files(self.paths)
-        pattern = r'([^a-zA-Z0-9_'])+'
+        pattern = r'([^a-zA-Z0-9_\'])+'
         dataset = []
         for file in files:
             lines = file.readlines()
