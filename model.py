@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 from sklearn.naive_bayes import GaussianNB
 from sklearn.feature_extraction.text import  TfidfTransformer
 from data.failed_test_examples import FAILED_EXAMPLES
-from preprocess.LineParser import LineParser
+from preprocess.HateLineParser import HateLineParser
 from preprocess.PreprocessData import PreprocessData
 from preprocess.PreprocessHateData import PreprocessHateData
 from sklearn.model_selection import StratifiedKFold, GridSearchCV
@@ -34,7 +34,7 @@ def plot(data):
 
 
 def terminal_testing(clf, features):
-    lp = LineParser(features)
+    lp = HateLineParser(features)
 
     for _ in range(10):
         inp = input("Your hate here:")
@@ -144,7 +144,7 @@ def main():
     del labels_train
 
     features = preprocess.load_and_get_features()
-    lp = LineParser(features)
+    lp = HateLineParser(features)
     for _ in range(10):
         sentence = input('HATE> ')
         result = lp.parse_line(sentence)

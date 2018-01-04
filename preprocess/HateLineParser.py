@@ -8,7 +8,7 @@ from sklearn.feature_extraction.text import TfidfTransformer
 from preprocess.PreprocessHateData import PreprocessHateData
 
 
-class LineParser():
+class HateLineParser:
 
     def __init__(self, features):
         self.features = features
