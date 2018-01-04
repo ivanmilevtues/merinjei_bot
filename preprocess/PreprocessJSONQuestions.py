@@ -13,7 +13,7 @@ class PreprocessJSONQuestions(PreprocessQuestions):
 
     def init_features(self):
         files = self.open_files(self.paths)
-        pattern = r'\s+'
+        pattern = r'([^a-zA-Z0-9_'])+'
         features = set()
         data_dicts = []
 
@@ -33,7 +33,8 @@ class PreprocessJSONQuestions(PreprocessQuestions):
     @not_none('features')
     def init_dataset(self):
         files = self.open_files(self.paths)
-        pattern = r'\s+'
+        # all non character chars
+        pattern = r'([^a-zA-Z0-9_'])+'
         dataset = []
         data_dicts = []
 
