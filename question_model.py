@@ -16,25 +16,26 @@ import pickle
 def init_dataset():
     
     pjson_q = PreprocessJSONQuestions(['questions'], ['question_types.json'])
-    fs_json_q = pjson_q.init_features()
-    pjson_q.save_features('data/processed_data/questions_json_features.pkl')
+    fs_json_q = pjson_q.load_and_get_features('data/processed_data/questions_json_features.pkl')
 
-    pq = PreprocessQuestions(['questions'], ['question_types01.txt'])
-    fs_q = pq.init_features()
-    pq.save_features('data/processed_data/questions_types01_features.pkl')
+    pq = PreprocessQuestions(['questions'], ['question_types01.txt'])   
+    fs_q = pq.load_and_get_features('data/processed_data/questions_types01_features.pkl')
     
     with open('data/processed_data/questions_full_features.pkl', 'wb') as f:
-        fs = set(fs_json_q).update(fs_q)
-        pickle.dump(fs, f)
+        fs = set(fs_json_q)
+        fs.update(fs_q)
+        pickle.dump(list(fs), f)
     
     pq.load_features('data/processed_data/questions_full_features.pkl')
     pjson_q.load_features('data/processed_data/questions_full_features.pkl')
+    print(pjson_q.features)
 
     ds_json_q = pjson_q.init_dataset()
-    pjson_q.save_dataset('data/process_data/dataset_questions_json_full_fs.pkl')
+    pjson_q.save_dataset('data/processed_data/dataset_questions_json_full_fs.pkl')
+
 
     ds_q = pq.init_dataset()
-    pq.save_dataset('data/process_data/dataset_questions_types_full_fs.pkl')
+    pq.save_dataset('data/processed_data/dataset_questions_types_full_fs.pkl')
 
     return np.concatenate([ds_q, ds_json_q])
 
