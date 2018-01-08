@@ -1608,4 +1608,47 @@ Train:
 
 avg / total       1.00      1.00      1.00      3914
 
+==============================================
+Date: Mon Jan  8 21:55:24 2018
+Time taken to train: 2.747523546218872 seconds
+Classifier: GridSearchCV(cv=<generator object _BaseKFold.split at 0x0000026747CF99E8>,
+       error_score='raise',
+       estimator=Pipeline(memory=None,
+     steps=[('select', SelectFromModel(estimator=LogisticRegression(C=0.01, class_weight='balanced', dual=False,
+          fit_intercept=True, intercept_scaling=1, max_iter=100,
+          multi_class='ovr', n_jobs=1, penalty='l1', random_state=None,
+          solver='liblinear', tol=0.0001, verbose=0, wa...ty='l2', random_state=None,
+          solver='liblinear', tol=0.0001, verbose=0, warm_start=False))]),
+       fit_params=None, iid=True, n_jobs=1, param_grid=[{}],
+       pre_dispatch='2*n_jobs', refit=True, return_train_score='warn',
+       scoring=None, verbose=2)
+---------------------------------
+Test:
+             precision    recall  f1-score   support
+
+          0       0.89      0.68      0.77        25
+          1       0.77      0.81      0.79       233
+          2       1.00      0.17      0.29         6
+          3       0.84      0.76      0.80       313
+          4       0.79      0.83      0.81       191
+          5       0.59      0.76      0.67       169
+          6       0.77      0.25      0.38        40
+          7       1.00      1.00      1.00         1
+
+avg / total       0.77      0.76      0.75       978
+
+Train:
+             precision    recall  f1-score   support
+
+          0       0.87      0.56      0.68       103
+          1       0.77      0.78      0.78       905
+          2       1.00      0.47      0.64        17
+          3       0.85      0.74      0.79      1329
+          4       0.78      0.85      0.82       757
+          5       0.51      0.75      0.61       599
+          6       0.71      0.24      0.36       198
+          7       1.00      1.00      1.00         6
+
+avg / total       0.76      0.74      0.74      3914
+
 =======================

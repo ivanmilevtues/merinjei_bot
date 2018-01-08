@@ -94,6 +94,33 @@ def preprocess_data():
     return (full_dataset, features)
 
 
+def hatespeech_model_init():
+     preprocess = PreprocessData("", "")
+    dataset = preprocess.load_and_get_dataset(
+        'dataset_hs_w_trigrams_stemmed.pkl')
+    labels = preprocess.load_and_get_dataset('labels.pkl')
+    labels = np.array(labels)
+    
+    features_test, features_train, labels_test, labels_train =\
+        split_to_train_test(dataset, test_set_percent=0.4, shuffle=False, labels=labels)
+
+    time_start = time.time()
+    pipe = Pipeline(
+        [('select', SelectFromModel(LogisticRegression(class_weight='balanced',
+                                                       penalty="l1", C=0.01))),
+         ('model', LogisticRegression(class_weight='balanced', penalty='l2'))])
+
+    param_grid = [{}]
+
+    clf = GridSearchCV(pipe,param_grid, cv=StratifiedKFold(n_splits=5,
+                                        random_state=42).split(features_train, labels_train),
+                                        verbose=2)
+
+    clf.fit(features_train, labels_train)
+
+    return clf
+
+
 def main():
     preprocess = PreprocessData("", "")
 

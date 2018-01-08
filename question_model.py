@@ -45,6 +45,16 @@ def init_dataset():
     return np.concatenate([ds_q, ds_json_q])
 
 
+def quesition_model_init():
+    ds = init_dataset()
+    pq = PreprocessQuestions([''], [''])
+    features_test, features_train, labels_test, labels_train = split_to_train_test(ds, test_set_percent=0.2)
+    
+    clf = RandomForestClassifier()
+    clf.fit(features_train, labels_train)
+    return clf
+
+
 def main():
     ds = init_dataset()
     
@@ -65,6 +75,7 @@ def main():
     log_classifier(clf, pred_train, labels_train, pred_test, labels_test,
                    time_start, time_end)
     
+
     print(classification_report(pred_test, labels_test))
     print(features_test.shape)
     del features_test
