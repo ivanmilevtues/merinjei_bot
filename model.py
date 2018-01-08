@@ -95,9 +95,8 @@ def preprocess_data():
 
 
 def hatespeech_model_init():
-     preprocess = PreprocessData("", "")
-    dataset = preprocess.load_and_get_dataset(
-        'dataset_hs_w_trigrams_stemmed.pkl')
+    preprocess = PreprocessData("", "")
+    dataset = preprocess.load_and_get_dataset('dataset_hs_w_trigrams_stemmed.pkl')
     labels = preprocess.load_and_get_dataset('labels.pkl')
     labels = np.array(labels)
     
@@ -116,9 +115,10 @@ def hatespeech_model_init():
                                         random_state=42).split(features_train, labels_train),
                                         verbose=2)
 
+
     clf.fit(features_train, labels_train)
 
-    return clf
+    return clf.best_estimator_
 
 
 def main():
@@ -155,6 +155,7 @@ def main():
                                         verbose=2)
 
     clf.fit(features_train, labels_train)
+    clf = clf.best_estimator_
     time_end = time.time()
     
     pred_train = clf.predict(features_train)
@@ -171,7 +172,6 @@ def main():
     del labels_train
 
     features = preprocess.load_and_get_features()
-    print(clf.best_params_)
     lp = HateLineParser(features)
     for _ in range(10):
         sentence = input('HATE> ')
