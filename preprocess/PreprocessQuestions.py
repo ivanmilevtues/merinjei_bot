@@ -1,4 +1,5 @@
 import re
+import nltk
 import pickle
 import numpy as np
 from collections import Counter
@@ -21,7 +22,10 @@ class PreprocessQuestions(PreprocessData):
             lines = file.readlines()
             for line in lines:
                 tokens = re.split(pattern, line)[1:] # we take everything without the label
+                tokens = list(filter(None, tokens))
+                tags = [pos for _, pos in nltk.pos_tag(tokens)]
                 features.update(self._reduce_tokens(tokens))
+                features.update(tags)
         self.close_files(files)
         self.features = list(features)
         return self.features
@@ -39,6 +43,10 @@ class PreprocessQuestions(PreprocessData):
                 label = self._pick_label(label)
                 if label is None:
                     continue
+                tokens = list(filter(None, tokens))
+                print(tokens)
+                pos_tags = [pos for _, pos in nltk.pos_tag(tokens)]
+                tokens += pos_tags
                 tokens = Counter(word for word in tokens)
                 dataset.append(self._words_to_array(tokens, label))
 
