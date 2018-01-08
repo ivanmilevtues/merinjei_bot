@@ -114,18 +114,10 @@ def main():
     # print(features_test.shape, labels_test.shape)
     # print(features_train.shape, labels_train.shape)
     # train_classifiers(features_test, features_train, labels_test, labels_train)
-
+    param_grid = {"penalty":['l2', 'l1'], 'max_iter': [10, 100, 1000, 10000]}
     time_start = time.time()
-    pipe = Pipeline(
-        [('select', SelectFromModel(LogisticRegression(class_weight='balanced',
-                                                       penalty="l1", C=0.01))),
-         ('model', LogisticRegression(class_weight='balanced', penalty='l2'))])
-
-    param_grid = [{}]  # Optionally add parameters here
-
-    clf = GridSearchCV(pipe,param_grid, cv=StratifiedKFold(n_splits=5,
-                                        random_state=42).split(features_train, labels_train),
-                                        verbose=2)
+    lgr = LogisticRegression()
+    clf = GridSearchCV(lgr, param_grid, scoring='accuracy',verbose=10)
 
     clf.fit(features_train, labels_train)
     time_end = time.time()
@@ -133,8 +125,8 @@ def main():
     pred_train = clf.predict(features_train)
     pred_test = clf.predict(features_test)
     
-    # log_classifier(clf, pred_train, labels_train, pred_test, labels_test,
-    #                time_start, time_end)
+    log_classifier(clf, pred_train, labels_train, pred_test, labels_test,
+                   time_start, time_end)
     
     print(classification_report(pred_test, labels_test))
     print(features_test.shape)
@@ -144,6 +136,7 @@ def main():
     del labels_train
 
     features = preprocess.load_and_get_features()
+    print(clf.best_params_)
     lp = HateLineParser(features)
     for _ in range(10):
         sentence = input('HATE> ')

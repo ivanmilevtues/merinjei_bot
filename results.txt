@@ -515,3 +515,605 @@ Train recall    : 0.949159491594916
 ---------------------------------
 Test f1         : 0.49527058458675766
 Train f1        : 0.5510592716019995
+=======================
+Date: Fri Jan  5 20:38:40 2018
+Time taken to train: 5.286388158798218 seconds
+Classifier: LogisticRegression(C=1.0, class_weight=None, dual=False, fit_intercept=True,
+          intercept_scaling=1, max_iter=100, multi_class='ovr', n_jobs=1,
+          penalty='l2', random_state=None, solver='liblinear', tol=0.0001,
+          verbose=0, warm_start=False)
+---------------------------------
+Test:
+             precision    recall  f1-score   support
+
+          0       0.94      0.95      0.95      8145
+          1       0.76      0.74      0.75      1768
+
+avg / total       0.91      0.91      0.91      9913
+
+Train:
+             precision    recall  f1-score   support
+
+          0       1.00      1.00      1.00     12429
+          1       1.00      1.00      1.00      2440
+
+avg / total       1.00      1.00      1.00     14869
+
+==============================================
+Date: Fri Jan  5 20:38:50 2018
+Time taken to train: 3.354702949523926 seconds
+Classifier: GaussianNB(priors=None)
+---------------------------------
+Test:
+             precision    recall  f1-score   support
+
+          0       0.85      0.89      0.87      7748
+          1       0.52      0.42      0.46      2165
+
+avg / total       0.77      0.79      0.78      9913
+
+Train:
+             precision    recall  f1-score   support
+
+          0       0.90      1.00      0.95     11229
+          1       1.00      0.67      0.80      3640
+
+avg / total       0.93      0.92      0.91     14869
+
+==============================================
+Date: Fri Jan  5 20:40:39 2018
+Time taken to train: 107.39478850364685 seconds
+Classifier: DecisionTreeClassifier(class_weight=None, criterion='gini', max_depth=None,
+            max_features=None, max_leaf_nodes=None,
+            min_impurity_decrease=0.0, min_impurity_split=None,
+            min_samples_leaf=1, min_samples_split=2,
+            min_weight_fraction_leaf=0.0, presort=False, random_state=None,
+            splitter='best')
+---------------------------------
+Test:
+             precision    recall  f1-score   support
+
+          0       0.93      0.92      0.92      8206
+          1       0.64      0.64      0.64      1707
+
+avg / total       0.88      0.88      0.88      9913
+
+Train:
+             precision    recall  f1-score   support
+
+          0       1.00      1.00      1.00     12434
+          1       1.00      1.00      1.00      2435
+
+avg / total       1.00      1.00      1.00     14869
+
+==============================================
+Date: Fri Jan  5 20:40:54 2018
+Time taken to train: 14.254605531692505 seconds
+Classifier: RandomForestClassifier(bootstrap=True, class_weight=None, criterion='gini',
+            max_depth=None, max_features='auto', max_leaf_nodes=None,
+            min_impurity_decrease=0.0, min_impurity_split=None,
+            min_samples_leaf=1, min_samples_split=2,
+            min_weight_fraction_leaf=0.0, n_estimators=10, n_jobs=1,
+            oob_score=False, random_state=None, verbose=0,
+            warm_start=False)
+---------------------------------
+Test:
+             precision    recall  f1-score   support
+
+          0       0.99      0.86      0.92      9466
+          1       0.21      0.81      0.33       447
+
+avg / total       0.95      0.85      0.89      9913
+
+Train:
+             precision    recall  f1-score   support
+
+          0       1.00      0.99      0.99     12564
+          1       0.94      1.00      0.97      2305
+
+avg / total       0.99      0.99      0.99     14869
+
+==============================================
+Date: Fri Jan  5 20:48:18 2018
+Time taken to train: 430.94112038612366 seconds
+Classifier: AdaBoostClassifier(algorithm='SAMME.R', base_estimator=None,
+          learning_rate=1.0, n_estimators=50, random_state=None)
+---------------------------------
+Test:
+             precision    recall  f1-score   support
+
+          0       0.95      0.93      0.94      8436
+          1       0.64      0.75      0.69      1477
+
+avg / total       0.91      0.90      0.90      9913
+
+Train:
+             precision    recall  f1-score   support
+
+          0       0.96      0.95      0.96     12505
+          1       0.76      0.78      0.77      2364
+
+avg / total       0.93      0.92      0.93     14869
+
+==============================================
+Date: Fri Jan  5 20:54:08 2018
+Time taken to train: 228.3321886062622 seconds
+Classifier: BaggingClassifier(base_estimator=None, bootstrap=True,
+         bootstrap_features=False, max_features=1.0, max_samples=1.0,
+         n_estimators=10, n_jobs=1, oob_score=False, random_state=None,
+         verbose=0, warm_start=False)
+---------------------------------
+Test:
+             precision    recall  f1-score   support
+
+          0       0.95      0.92      0.93      8445
+          1       0.61      0.71      0.65      1468
+
+avg / total       0.90      0.89      0.89      9913
+
+Train:
+             precision    recall  f1-score   support
+
+          0       1.00      0.99      1.00     12508
+          1       0.96      0.99      0.98      2361
+
+avg / total       0.99      0.99      0.99     14869
+
+==============================================
+Date: Fri Jan  5 21:28:56 2018
+Time taken to train: 2086.0732502937317 seconds
+Classifier: GradientBoostingClassifier(criterion='friedman_mse', init=None,
+              learning_rate=0.1, loss='deviance', max_depth=3,
+              max_features=None, max_leaf_nodes=None,
+              min_impurity_decrease=0.0, min_impurity_split=None,
+              min_samples_leaf=1, min_samples_split=2,
+              min_weight_fraction_leaf=0.0, n_estimators=100,
+              presort='auto', random_state=None, subsample=1.0, verbose=0,
+              warm_start=False)
+---------------------------------
+Test:
+             precision    recall  f1-score   support
+
+          0       0.98      0.90      0.94      8899
+          1       0.49      0.84      0.62      1014
+
+avg / total       0.93      0.90      0.91      9913
+
+Train:
+             precision    recall  f1-score   support
+
+          0       0.98      0.93      0.96     13198
+          1       0.61      0.89      0.72      1671
+
+avg / total       0.94      0.92      0.93     14869
+
+==============================================
+Date: Sun Jan  7 01:08:10 2018
+Time taken to train: 0.8355557918548584 seconds
+Classifier: LogisticRegression(C=1.0, class_weight=None, dual=False, fit_intercept=True,
+          intercept_scaling=1, max_iter=100, multi_class='ovr', n_jobs=1,
+          penalty='l2', random_state=None, solver='liblinear', tol=0.0001,
+          verbose=0, warm_start=False)
+---------------------------------
+Test:
+             precision    recall  f1-score   support
+
+          0       1.00      1.00      1.00        13
+          1       1.00      1.00      1.00       248
+          2       0.33      1.00      0.50         1
+          3       0.98      0.97      0.97       289
+          4       0.97      0.95      0.96       188
+          5       0.98      0.96      0.97       229
+          6       0.50      0.90      0.64        10
+          7       0.00      0.00      0.00         0
+
+avg / total       0.98      0.97      0.97       978
+
+Train:
+             precision    recall  f1-score   support
+
+          0       1.00      1.00      1.00        73
+          1       1.00      1.00      1.00       915
+          2       1.00      1.00      1.00         6
+          3       1.00      0.99      1.00      1151
+          4       1.00      1.00      1.00       842
+          5       1.00      1.00      1.00       865
+          6       0.93      1.00      0.97        57
+          7       1.00      1.00      1.00         5
+
+avg / total       1.00      1.00      1.00      3914
+
+==============================================
+Date: Sun Jan  7 01:08:15 2018
+Time taken to train: 0.55950927734375 seconds
+Classifier: GaussianNB(priors=None)
+---------------------------------
+Test:
+             precision    recall  f1-score   support
+
+          0       0.77      1.00      0.87        10
+          1       0.85      0.76      0.80       277
+          2       0.33      1.00      0.50         1
+          3       0.63      0.78      0.70       233
+          4       0.64      0.58      0.61       204
+          5       0.81      0.76      0.78       242
+          6       0.39      0.64      0.48        11
+          7       0.00      0.00      0.00         0
+
+avg / total       0.74      0.73      0.73       978
+
+Train:
+             precision    recall  f1-score   support
+
+          0       1.00      1.00      1.00        73
+          1       1.00      0.97      0.99       939
+          2       1.00      1.00      1.00         6
+          3       0.94      1.00      0.97      1080
+          4       0.99      0.94      0.97       889
+          5       0.98      0.98      0.98       861
+          6       1.00      1.00      1.00        61
+          7       1.00      1.00      1.00         5
+
+avg / total       0.98      0.98      0.98      3914
+
+==============================================
+Date: Sun Jan  7 01:08:20 2018
+Time taken to train: 4.564074516296387 seconds
+Classifier: DecisionTreeClassifier(class_weight=None, criterion='gini', max_depth=None,
+            max_features=None, max_leaf_nodes=None,
+            min_impurity_decrease=0.0, min_impurity_split=None,
+            min_samples_leaf=1, min_samples_split=2,
+            min_weight_fraction_leaf=0.0, presort=False, random_state=None,
+            splitter='best')
+---------------------------------
+Test:
+             precision    recall  f1-score   support
+
+          0       1.00      1.00      1.00        13
+          1       1.00      1.00      1.00       249
+          2       0.33      1.00      0.50         1
+          3       0.93      0.93      0.93       286
+          4       0.93      0.92      0.92       185
+          5       0.96      0.93      0.94       231
+          6       0.28      0.38      0.32        13
+          7       0.00      0.00      0.00         0
+
+avg / total       0.94      0.94      0.94       978
+
+Train:
+             precision    recall  f1-score   support
+
+          0       1.00      1.00      1.00        73
+          1       1.00      1.00      1.00       914
+          2       1.00      1.00      1.00         6
+          3       1.00      1.00      1.00      1147
+          4       1.00      1.00      1.00       842
+          5       1.00      1.00      1.00       866
+          6       1.00      1.00      1.00        61
+          7       1.00      1.00      1.00         5
+
+avg / total       1.00      1.00      1.00      3914
+
+==============================================
+Date: Sun Jan  7 01:08:22 2018
+Time taken to train: 1.642526388168335 seconds
+Classifier: RandomForestClassifier(bootstrap=True, class_weight=None, criterion='gini',
+            max_depth=None, max_features='auto', max_leaf_nodes=None,
+            min_impurity_decrease=0.0, min_impurity_split=None,
+            min_samples_leaf=1, min_samples_split=2,
+            min_weight_fraction_leaf=0.0, n_estimators=10, n_jobs=1,
+            oob_score=False, random_state=None, verbose=0,
+            warm_start=False)
+---------------------------------
+Test:
+             precision    recall  f1-score   support
+
+          0       0.92      1.00      0.96        12
+          1       1.00      0.96      0.98       258
+          2       0.33      1.00      0.50         1
+          3       0.91      0.90      0.90       291
+          4       0.90      0.85      0.88       194
+          5       0.93      0.96      0.95       217
+          6       0.11      0.40      0.17         5
+          7       0.00      0.00      0.00         0
+
+avg / total       0.93      0.92      0.92       978
+
+Train:
+             precision    recall  f1-score   support
+
+          0       1.00      1.00      1.00        73
+          1       1.00      1.00      1.00       915
+          2       1.00      1.00      1.00         6
+          3       1.00      1.00      1.00      1147
+          4       1.00      1.00      1.00       845
+          5       1.00      1.00      1.00       865
+          6       0.95      1.00      0.97        58
+          7       1.00      1.00      1.00         5
+
+avg / total       1.00      1.00      1.00      3914
+
+==============================================
+Date: Sun Jan  7 01:09:14 2018
+Time taken to train: 50.08367967605591 seconds
+Classifier: AdaBoostClassifier(algorithm='SAMME.R', base_estimator=None,
+          learning_rate=1.0, n_estimators=50, random_state=None)
+---------------------------------
+Test:
+             precision    recall  f1-score   support
+
+          0       1.00      1.00      1.00        13
+          1       0.08      0.91      0.15        23
+          2       0.00      0.00      0.00         0
+          3       0.54      0.98      0.70       158
+          4       0.00      0.00      0.00         0
+          5       1.00      0.29      0.45       784
+          6       0.00      0.00      0.00         0
+          7       0.00      0.00      0.00         0
+
+avg / total       0.90      0.42      0.49       978
+
+Train:
+             precision    recall  f1-score   support
+
+          0       1.00      1.00      1.00        73
+          1       0.09      0.94      0.16        87
+          2       0.00      0.00      0.00         0
+          3       0.49      0.98      0.65       569
+          4       0.00      0.00      0.00         0
+          5       1.00      0.27      0.43      3185
+          6       0.00      0.00      0.00         0
+          7       0.00      0.00      0.00         0
+
+avg / total       0.91      0.40      0.46      3914
+
+==============================================
+Date: Sun Jan  7 01:09:35 2018
+Time taken to train: 12.007514238357544 seconds
+Classifier: BaggingClassifier(base_estimator=None, bootstrap=True,
+         bootstrap_features=False, max_features=1.0, max_samples=1.0,
+         n_estimators=10, n_jobs=1, oob_score=False, random_state=None,
+         verbose=0, warm_start=False)
+---------------------------------
+Test:
+             precision    recall  f1-score   support
+
+          0       1.00      1.00      1.00        13
+          1       1.00      1.00      1.00       249
+          2       0.33      1.00      0.50         1
+          3       0.95      0.93      0.94       294
+          4       0.93      0.94      0.94       182
+          5       0.96      0.94      0.95       229
+          6       0.39      0.78      0.52         9
+          7       0.50      1.00      0.67         1
+
+avg / total       0.96      0.95      0.95       978
+
+Train:
+             precision    recall  f1-score   support
+
+          0       1.00      1.00      1.00        73
+          1       1.00      1.00      1.00       914
+          2       0.83      1.00      0.91         5
+          3       1.00      0.99      1.00      1154
+          4       0.99      1.00      0.99       839
+          5       0.99      1.00      0.99       865
+          6       0.97      1.00      0.98        59
+          7       1.00      1.00      1.00         5
+
+avg / total       1.00      1.00      1.00      3914
+
+==============================================
+Date: Sun Jan  7 01:37:04 2018
+Time taken to train: 1649.332149028778 seconds
+Classifier: GradientBoostingClassifier(criterion='friedman_mse', init=None,
+              learning_rate=0.1, loss='deviance', max_depth=3,
+              max_features=None, max_leaf_nodes=None,
+              min_impurity_decrease=0.0, min_impurity_split=None,
+              min_samples_leaf=1, min_samples_split=2,
+              min_weight_fraction_leaf=0.0, n_estimators=100,
+              presort='auto', random_state=None, subsample=1.0, verbose=0,
+              warm_start=False)
+---------------------------------
+Test:
+             precision    recall  f1-score   support
+
+          0       1.00      1.00      1.00        13
+          1       1.00      1.00      1.00       249
+          2       0.33      1.00      0.50         1
+          3       0.97      0.93      0.95       298
+          4       0.93      0.93      0.93       183
+          5       0.97      0.97      0.97       225
+          6       0.44      0.89      0.59         9
+          7       0.00      0.00      0.00         0
+
+avg / total       0.97      0.96      0.96       978
+
+Train:
+             precision    recall  f1-score   support
+
+          0       1.00      1.00      1.00        73
+          1       1.00      1.00      1.00       914
+          2       1.00      1.00      1.00         6
+          3       1.00      0.98      0.99      1165
+          4       0.98      1.00      0.99       829
+          5       0.99      1.00      1.00       861
+          6       1.00      1.00      1.00        61
+          7       1.00      1.00      1.00         5
+
+avg / total       0.99      0.99      0.99      3914
+
+==============================================
+Date: Mon Jan  8 19:33:18 2018
+Time taken to train: 4.948707580566406 seconds
+Classifier: LogisticRegression(C=1.0, class_weight=None, dual=False, fit_intercept=True,
+          intercept_scaling=1, max_iter=100, multi_class='ovr', n_jobs=1,
+          penalty='l2', random_state=None, solver='liblinear', tol=0.0001,
+          verbose=0, warm_start=False)
+---------------------------------
+Test:
+             precision    recall  f1-score   support
+
+          0       0.94      0.95      0.95      8145
+          1       0.76      0.74      0.75      1768
+
+avg / total       0.91      0.91      0.91      9913
+
+Train:
+             precision    recall  f1-score   support
+
+          0       1.00      1.00      1.00     12429
+          1       1.00      1.00      1.00      2440
+
+avg / total       1.00      1.00      1.00     14869
+
+==============================================
+Date: Mon Jan  8 19:33:29 2018
+Time taken to train: 3.71863055229187 seconds
+Classifier: GaussianNB(priors=None)
+---------------------------------
+Test:
+             precision    recall  f1-score   support
+
+          0       0.85      0.89      0.87      7748
+          1       0.52      0.42      0.46      2165
+
+avg / total       0.77      0.79      0.78      9913
+
+Train:
+             precision    recall  f1-score   support
+
+          0       0.90      1.00      0.95     11229
+          1       1.00      0.67      0.80      3640
+
+avg / total       0.93      0.92      0.91     14869
+
+==============================================
+Date: Mon Jan  8 19:35:34 2018
+Time taken to train: 123.73520731925964 seconds
+Classifier: DecisionTreeClassifier(class_weight=None, criterion='gini', max_depth=None,
+            max_features=None, max_leaf_nodes=None,
+            min_impurity_decrease=0.0, min_impurity_split=None,
+            min_samples_leaf=1, min_samples_split=2,
+            min_weight_fraction_leaf=0.0, presort=False, random_state=None,
+            splitter='best')
+---------------------------------
+Test:
+             precision    recall  f1-score   support
+
+          0       0.92      0.93      0.92      8137
+          1       0.65      0.63      0.64      1776
+
+avg / total       0.87      0.87      0.87      9913
+
+Train:
+             precision    recall  f1-score   support
+
+          0       1.00      1.00      1.00     12434
+          1       1.00      1.00      1.00      2435
+
+avg / total       1.00      1.00      1.00     14869
+
+==============================================
+Date: Mon Jan  8 19:35:58 2018
+Time taken to train: 22.251198768615723 seconds
+Classifier: RandomForestClassifier(bootstrap=True, class_weight=None, criterion='gini',
+            max_depth=None, max_features='auto', max_leaf_nodes=None,
+            min_impurity_decrease=0.0, min_impurity_split=None,
+            min_samples_leaf=1, min_samples_split=2,
+            min_weight_fraction_leaf=0.0, n_estimators=10, n_jobs=1,
+            oob_score=False, random_state=None, verbose=0,
+            warm_start=False)
+---------------------------------
+Test:
+             precision    recall  f1-score   support
+
+          0       0.99      0.85      0.92      9464
+          1       0.20      0.77      0.32       449
+
+avg / total       0.95      0.85      0.89      9913
+
+Train:
+             precision    recall  f1-score   support
+
+          0       1.00      0.99      0.99     12570
+          1       0.94      1.00      0.97      2299
+
+avg / total       0.99      0.99      0.99     14869
+
+==============================================
+Date: Mon Jan  8 19:44:44 2018
+Time taken to train: 513.0815985202789 seconds
+Classifier: AdaBoostClassifier(algorithm='SAMME.R', base_estimator=None,
+          learning_rate=1.0, n_estimators=50, random_state=None)
+---------------------------------
+Test:
+             precision    recall  f1-score   support
+
+          0       0.95      0.93      0.94      8436
+          1       0.64      0.75      0.69      1477
+
+avg / total       0.91      0.90      0.90      9913
+
+Train:
+             precision    recall  f1-score   support
+
+          0       0.96      0.95      0.96     12505
+          1       0.76      0.78      0.77      2364
+
+avg / total       0.93      0.92      0.93     14869
+
+==============================================
+Date: Mon Jan  8 19:49:08 2018
+Time taken to train: 181.0506947040558 seconds
+Classifier: BaggingClassifier(base_estimator=None, bootstrap=True,
+         bootstrap_features=False, max_features=1.0, max_samples=1.0,
+         n_estimators=10, n_jobs=1, oob_score=False, random_state=None,
+         verbose=0, warm_start=False)
+---------------------------------
+Test:
+             precision    recall  f1-score   support
+
+          0       0.95      0.92      0.94      8455
+          1       0.61      0.72      0.66      1458
+
+avg / total       0.90      0.89      0.90      9913
+
+Train:
+             precision    recall  f1-score   support
+
+          0       1.00      0.99      1.00     12480
+          1       0.97      0.99      0.98      2389
+
+avg / total       0.99      0.99      0.99     14869
+
+==============================================
+Date: Mon Jan  8 20:17:08 2018
+Time taken to train: 66.57974147796631 seconds
+Classifier: GridSearchCV(cv=None, error_score='raise',
+       estimator=LogisticRegression(C=1.0, class_weight=None, dual=False, fit_intercept=True,
+          intercept_scaling=1, max_iter=100, multi_class='ovr', n_jobs=1,
+          penalty='l2', random_state=None, solver='liblinear', tol=0.0001,
+          verbose=0, warm_start=False),
+       fit_params=None, iid=True, n_jobs=1,
+       param_grid={'penalty': ['l2', 'l1'], 'max_iter': [10, 100, 1000, 10000]},
+       pre_dispatch='2*n_jobs', refit=True, return_train_score='warn',
+       scoring='accuracy', verbose=10)
+---------------------------------
+Test:
+             precision    recall  f1-score   support
+
+          0       0.95      0.96      0.95      8109
+          1       0.80      0.76      0.78      1804
+
+avg / total       0.92      0.92      0.92      9913
+
+Train:
+             precision    recall  f1-score   support
+
+          0       1.00      1.00      1.00     12426
+          1       0.99      0.99      0.99      2443
+
+avg / total       1.00      1.00      1.00     14869
+
+=======================
