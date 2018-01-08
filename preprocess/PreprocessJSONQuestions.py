@@ -4,6 +4,7 @@ import numpy as np
 from preprocess.PreprocessQuestions import PreprocessQuestions
 from preprocess.decorators import not_none
 from collections import Counter
+import nltk
 
 class PreprocessJSONQuestions(PreprocessQuestions):
 
@@ -13,7 +14,7 @@ class PreprocessJSONQuestions(PreprocessQuestions):
 
     def init_features(self):
         files = self.open_files(self.paths)
-        pattern = r'([^a-zA-Z0-9_\'])+'
+        pattern = r'[^a-zA-Z0-9_\']'
         features = set()
         data_dicts = []
 
@@ -23,8 +24,10 @@ class PreprocessJSONQuestions(PreprocessQuestions):
         for data_dict in data_dicts:
             for entry in data_dict:
                 tokens = re.split(pattern, entry['q_en'])
-                tokens = Counter(word for word in tokens)
+                tokens = list(filter(None, tokens))
+                tags = [pos for _, pos in nltk.pos_tag(tokens)]
                 features.update(self._reduce_tokens(tokens))
+                # features.update(tags)
 
         self.close_files(files)
         self.features = list(features)
@@ -49,8 +52,10 @@ class PreprocessJSONQuestions(PreprocessQuestions):
                 label = self._pick_label(entry['q_type'])
                 if label is None:
                     continue
-
                 tokens = re.split(pattern, entry['q_en'])
+                tokens = list(filter(None, tokens))
+                pos_tags = [pos for _, pos in nltk.pos_tag(tokens)]
+                tokens += pos_tags
                 tokens = Counter(word for word in tokens)
                 dataset.append(self._words_to_array(tokens, label))
 

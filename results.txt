@@ -1116,4 +1116,64 @@ Train:
 
 avg / total       1.00      1.00      1.00     14869
 
+==============================================
+Date: Mon Jan  8 20:22:41 2018
+Time taken to train: 74.85789251327515 seconds
+Classifier: GridSearchCV(cv=None, error_score='raise',
+       estimator=LogisticRegression(C=1.0, class_weight=None, dual=False, fit_intercept=True,
+          intercept_scaling=1, max_iter=100, multi_class='ovr', n_jobs=1,
+          penalty='l2', random_state=None, solver='liblinear', tol=0.0001,
+          verbose=0, warm_start=False),
+       fit_params=None, iid=True, n_jobs=1,
+       param_grid={'penalty': ['l2', 'l1'], 'max_iter': [10, 100, 1000, 10000]},
+       pre_dispatch='2*n_jobs', refit=True, return_train_score='warn',
+       scoring='accuracy', verbose=10)
+---------------------------------
+Test:
+             precision    recall  f1-score   support
+
+          0       0.95      0.96      0.95      8142
+          1       0.79      0.77      0.78      1771
+
+avg / total       0.92      0.92      0.92      9913
+
+Train:
+             precision    recall  f1-score   support
+
+          0       1.00      1.00      1.00     12425
+          1       0.99      0.99      0.99      2444
+
+avg / total       1.00      1.00      1.00     14869
+
+==============================================
+Date: Mon Jan  8 20:28:52 2018
+Time taken to train: 26.22763466835022 seconds
+Classifier: GridSearchCV(cv=<generator object _BaseKFold.split at 0x000001E2084006D0>,
+       error_score='raise',
+       estimator=Pipeline(memory=None,
+     steps=[('select', SelectFromModel(estimator=LogisticRegression(C=0.01, class_weight='balanced', dual=False,
+          fit_intercept=True, intercept_scaling=1, max_iter=100,
+          multi_class='ovr', n_jobs=1, penalty='l1', random_state=None,
+          solver='liblinear', tol=0.0001, verbose=0, wa...ty='l2', random_state=None,
+          solver='liblinear', tol=0.0001, verbose=0, warm_start=False))]),
+       fit_params=None, iid=True, n_jobs=1, param_grid=[{}],
+       pre_dispatch='2*n_jobs', refit=True, return_train_score='warn',
+       scoring=None, verbose=2)
+---------------------------------
+Test:
+             precision    recall  f1-score   support
+
+          0       0.85      0.99      0.91      7028
+          1       0.96      0.57      0.72      2885
+
+avg / total       0.88      0.87      0.86      9913
+
+Train:
+             precision    recall  f1-score   support
+
+          0       0.89      0.99      0.94     11118
+          1       0.97      0.63      0.76      3751
+
+avg / total       0.91      0.90      0.89     14869
+
 =======================

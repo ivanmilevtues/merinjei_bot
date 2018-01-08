@@ -56,8 +56,8 @@ def train_classifiers(features_test, features_train, labels_test, labels_train):
     from sklearn.ensemble import BaggingClassifier
     train_and_log(BaggingClassifier, features_train, labels_train, features_test, labels_test)
 
-    # from sklearn.ensemble import GradientBoostingClassifier
-    # train_and_log(GradientBoostingClassifier, features_train, labels_train, features_test, labels_test)
+    from sklearn.ensemble import GradientBoostingClassifier
+    train_and_log(GradientBoostingClassifier, features_train, labels_train, features_test, labels_test)
 
     # from sklearn.ensemble import VotingClassifier
     # train_and_log(VotingClassifier, features_train, labels_train, features_test, labels_test, features)
