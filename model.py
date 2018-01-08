@@ -114,10 +114,18 @@ def main():
     # print(features_test.shape, labels_test.shape)
     # print(features_train.shape, labels_train.shape)
     # train_classifiers(features_test, features_train, labels_test, labels_train)
-    param_grid = {"penalty":['l2', 'l1'], 'max_iter': [10, 100, 1000, 10000]}
+    # param_grid = {"penalty":['l2', 'l1'], 'max_iter': [10, 100, 1000, 10000]}
     time_start = time.time()
-    lgr = LogisticRegression()
-    clf = GridSearchCV(lgr, param_grid, scoring='accuracy',verbose=10)
+    pipe = Pipeline(
+        [('select', SelectFromModel(LogisticRegression(class_weight='balanced',
+                                                       penalty="l1", C=0.01))),
+         ('model', LogisticRegression(class_weight='balanced', penalty='l2'))])
+
+    param_grid = [{}]  # Optionally add parameters here
+
+    clf = GridSearchCV(pipe,param_grid, cv=StratifiedKFold(n_splits=5,
+                                        random_state=42).split(features_train, labels_train),
+                                        verbose=2)
 
     clf.fit(features_train, labels_train)
     time_end = time.time()
