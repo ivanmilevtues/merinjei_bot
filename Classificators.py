@@ -17,12 +17,17 @@ class Classificators:
         try:
             self.question_classifer = self.__load_file(question_classifier_path)
             self.hs_classifier = self.__load_file(hs_classifier_path)
+        except FileNotFoundError as e:
+            print("One of your files for classifier was not loaded properly! {}".format(e))
+        
+        try:
             hs_features = self.__load_file(hs_features_path)
             question_features = self.__load_file(question_features_path)
-        except:
-            print("Could not load smth")
-        self.hlp = HateLineParser(hs_features)
-        self.qlp = QuestionLineParser(question_features)
+            self.hlp = HateLineParser(hs_features)
+            self.qlp = QuestionLineParser(question_features)
+        except FileNotFoundError as e:
+            print("Could not open feature file! {}".format(e))
+
 
     def __load_file(self, path):
         with open(path, 'rb') as f:
@@ -56,17 +61,20 @@ class Classificators:
         return self.hs_classifier
 
     def predict_question_type(self, question):
-        data = self.qlp(question)
+        data = self.qlp.parse_line(question)
         return self.question_classifer.predict(data)
 
     def predict_tweet_type(self, tweet):
-        data = self.hlp(tweet)
-        return self.hs_classifier(data)
+        data = self.hlp.parse_line(tweet)
+        return self.hs_classifier.predict(data)
 
 
 if __name__ == '__main__':
-    clfs = Classificators("", "" ,"" ,"")
-    clfs.init_hatespeech_classifier()
-    clfs.save_hatespeech_classifer()
-    clfs.init_question_classifier()
-    clfs.save_question_classifier()
+    clfs = Classificators("hatespeech_clf.pkl", "features.pickle" ,"question_clf.pkl" ,"data/processed_data/questions_full_features.pkl")
+    for _ in range(10):
+        question = clfs.predict_question_type(input("Ask me:"))
+        hate = clfs.predict_tweet_type(input("Hate me:"))
+        print("Question")
+        print(question)
+        print("Hate")
+        print(hate)
