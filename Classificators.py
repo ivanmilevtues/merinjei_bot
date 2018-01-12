@@ -1,13 +1,28 @@
 import pickle
 from model import hatespeech_model_init
 from question_model import quesition_model_init
+from preprocess.HateLineParser import HateLineParser
+from preprocess.QuestionLineParser import QuestionLineParser
 
 
 class Classificators:
     
-    def __init__(self):
+    def __init__(self, hs_classifier_path, hs_features_path, question_classifier_path, question_features_path):
         self.hs_classifier = None
         self.question_classifer = None
+        self.hlp = None
+        self.qlp = None
+        hs_features = None
+        question_features = None
+        try:
+            self.question_classifer = self.__load_file(question_classifier_path)
+            self.hs_classifier = self.__load_file(hs_classifier_path)
+            hs_features = self.__load_file(hs_features_path)
+            question_features = self.__load_file(question_features_path)
+        except:
+            print("Could not load smth")
+        self.hlp = HateLineParser(hs_features)
+        self.qlp = QuestionLineParser(question_features)
 
     def __load_file(self, path):
         with open(path, 'rb') as f:
@@ -40,9 +55,17 @@ class Classificators:
         self.hs_classifier = hatespeech_model_init()
         return self.hs_classifier
 
+    def predict_question_type(self, question):
+        data = self.qlp(question)
+        return self.question_classifer.predict(data)
+
+    def predict_tweet_type(self, tweet):
+        data = self.hlp(tweet)
+        return self.hs_classifier(data)
+
 
 if __name__ == '__main__':
-    clfs = Classificators()
+    clfs = Classificators("", "" ,"" ,"")
     clfs.init_hatespeech_classifier()
     clfs.save_hatespeech_classifer()
     clfs.init_question_classifier()
