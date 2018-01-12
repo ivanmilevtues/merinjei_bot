@@ -1,7 +1,7 @@
 import numpy as np
 from nltk.tokenize import RegexpTokenizer
-from preprocess.decorators import not_none
-from preprocess.PreprocessData import PreprocessData
+from merinjei_classification.preprocess.decorators import not_none
+from merinjei_classification.preprocess.PreprocessData import PreprocessData
 
 
 class PreprocessReviewData(PreprocessData):

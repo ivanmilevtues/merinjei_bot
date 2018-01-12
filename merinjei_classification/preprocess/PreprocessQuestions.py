@@ -3,8 +3,8 @@ import nltk
 import pickle
 import numpy as np
 from collections import Counter
-from preprocess.PreprocessData import PreprocessData
-from preprocess.decorators import not_none
+from merinjei_classification.preprocess.PreprocessData import PreprocessData
+from merinjei_classification.preprocess.decorators import not_none
 
 class PreprocessQuestions(PreprocessData):
 

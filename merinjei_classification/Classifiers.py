@@ -1,11 +1,11 @@
 import pickle
-from model import hatespeech_model_init
-from question_model import quesition_model_init
-from preprocess.HateLineParser import HateLineParser
-from preprocess.QuestionLineParser import QuestionLineParser
+from merinjei_classification.model import hatespeech_model_init
+from merinjei_classification.question_model import quesition_model_init
+from merinjei_classification.preprocess.HateLineParser import HateLineParser
+from merinjei_classification.preprocess.QuestionLineParser import QuestionLineParser
 
 
-class Classificators:
+class Classifiers:
     
     def __init__(self, hs_classifier_path, hs_features_path, question_classifier_path, question_features_path):
         self.hs_classifier = None
@@ -31,8 +31,8 @@ class Classificators:
 
     def __load_file(self, path):
         with open(path, 'rb') as f:
-            classifier = pickle.load(f)
-        return classifier
+            obj = pickle.load(f)
+        return obj
 
     def __save_clf_file(self, path, obj):
         with open(path, 'wb') as f:
@@ -63,14 +63,13 @@ class Classificators:
     def predict_question_type(self, question):
         data = self.qlp.parse_line(question)
         return self.question_classifer.predict(data)
-
     def predict_tweet_type(self, tweet):
         data = self.hlp.parse_line(tweet)
         return self.hs_classifier.predict(data)
 
 
 if __name__ == '__main__':
-    clfs = Classificators("hatespeech_clf.pkl", "features.pickle" ,"question_clf.pkl" ,"data/processed_data/questions_full_features.pkl")
+    clfs = Classifiers("hatespeech_clf.pkl", "features.pickle" ,"question_clf.pkl" ,"data/processed_data/questions_full_features.pkl")
     for _ in range(10):
         question = clfs.predict_question_type(input("Ask me:"))
         hate = clfs.predict_tweet_type(input("Hate me:"))

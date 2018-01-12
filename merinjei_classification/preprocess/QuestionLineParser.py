@@ -1,6 +1,6 @@
 import numpy as np
 from nltk.stem import SnowballStemmer
-from preprocess.preprocessing_utilities import add_to_array
+from merinjei_classification.preprocess.preprocessing_utilities import add_to_array
 from collections import Counter
 import nltk
 import re

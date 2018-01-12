@@ -1,11 +1,11 @@
 import numpy as np
 import re
 import nltk
-from preprocess.preprocessing_utilities import add_to_array
+from merinjei_classification.preprocess.preprocessing_utilities import add_to_array
 from collections import Counter
 from nltk.stem import SnowballStemmer
 from sklearn.feature_extraction.text import TfidfTransformer
-from preprocess.PreprocessHateData import PreprocessHateData
+from merinjei_classification.preprocess.PreprocessHateData import PreprocessHateData
 
 
 class HateLineParser:

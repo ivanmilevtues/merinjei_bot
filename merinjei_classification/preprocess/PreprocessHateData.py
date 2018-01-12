@@ -5,9 +5,9 @@ from nltk.sentiment import SentimentIntensityAnalyzer
 import numpy as np
 from collections import Counter
 import pickle
-from preprocess.decorators import not_none
-from preprocess.PreprocessData import PreprocessData
-from preprocess.AutoCorrect import AutoCorrect
+from merinjei_classification.preprocess.decorators import not_none
+from merinjei_classification.preprocess.PreprocessData import PreprocessData
+from merinjei_classification.preprocess.AutoCorrect import AutoCorrect
 from sklearn.feature_extraction.text import TfidfVectorizer
 from nltk.stem import SnowballStemmer
 

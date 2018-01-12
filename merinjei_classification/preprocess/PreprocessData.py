@@ -3,9 +3,9 @@ import numpy as np
 from nltk.stem import SnowballStemmer
 import pickle
 from nltk.corpus import stopwords
-from preprocess.preprocessing_utilities import add_to_array, concat_features
-from preprocess.decorators import not_none
-from preprocess.FileOpenerMixin import FileOpenerMixin
+from merinjei_classification.preprocess.preprocessing_utilities import add_to_array, concat_features
+from merinjei_classification.preprocess.decorators import not_none
+from merinjei_classification.preprocess.FileOpenerMixin import FileOpenerMixin
 
 
 class PreprocessData(FileOpenerMixin):
@@ -44,15 +44,15 @@ class PreprocessData(FileOpenerMixin):
         return self.features
 
     @not_none('features')
-    def save_features(self, file="features.pickle"):
+    def save_features(self, file="features.pkl"):
         with open(file, "wb") as f:
             pickle.dump(self.features, f)
 
-    def load_features(self, file="features.pickle"):
+    def load_features(self, file="features.pkl"):
         with open(file, "rb") as f:
             self.features = pickle.load(f)
     
-    def load_and_get_features(self, file="features.pickle"):
+    def load_and_get_features(self, file="features.pkl"):
         with open(file, "rb") as f:
             self.features = pickle.load(f)
         return self.features
@@ -62,11 +62,11 @@ class PreprocessData(FileOpenerMixin):
     def init_dataset(self, pattern=r"([a-z]+.[a-z]+):(\d)"):
        pass
 
-    def load_dataset(self, file='dataset.pickle'):
+    def load_dataset(self, file='dataset.pkl'):
         with open(file, 'rb') as f:
             self.dataset = pickle.load(f)
     
-    def load_and_get_dataset(self, file='dataset.pickle'):
+    def load_and_get_dataset(self, file='dataset.pkl'):
         with open(file, 'rb') as f:
             self.dataset = pickle.load(f)
         return self.dataset
@@ -85,7 +85,7 @@ class PreprocessData(FileOpenerMixin):
         return self.dataset
 
     @not_none('dataset')
-    def save_dataset(self, file='dataset.pickle'):
+    def save_dataset(self, file='dataset.pkl'):
         with open(file, 'wb') as f:
             pickle.dump(self.dataset, f)
 

@@ -1,8 +1,8 @@
-from preprocess.PreprocessJSONQuestions import PreprocessJSONQuestions
-from preprocess.PreprocessQuestions import PreprocessQuestions
-from preprocess.preprocessing_utilities import split_to_train_test
-from preprocess.QuestionLineParser import QuestionLineParser
-from training.train_and_log import train_classifiers, log_classifier
+from merinjei_classification.preprocess.PreprocessJSONQuestions import PreprocessJSONQuestions
+from merinjei_classification.preprocess.PreprocessQuestions import PreprocessQuestions
+from merinjei_classification.preprocess.preprocessing_utilities import split_to_train_test
+from merinjei_classification.preprocess.QuestionLineParser import QuestionLineParser
+from merinjei_classification.training.train_and_log import train_classifiers, log_classifier
 from sklearn.metrics import classification_report
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier

@@ -4,16 +4,15 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.naive_bayes import GaussianNB
 from sklearn.feature_extraction.text import  TfidfTransformer
-from data.failed_test_examples import FAILED_EXAMPLES
-from preprocess.HateLineParser import HateLineParser
-from preprocess.PreprocessData import PreprocessData
-from preprocess.PreprocessHateData import PreprocessHateData
+from merinjei_classification.preprocess.HateLineParser import HateLineParser
+from merinjei_classification.preprocess.PreprocessData import PreprocessData
+from merinjei_classification.preprocess.PreprocessHateData import PreprocessHateData
 from sklearn.model_selection import StratifiedKFold, GridSearchCV
 from sklearn.pipeline import Pipeline
-from preprocess.preprocessing_utilities import get_unused_dataset_indxs, get_unused_features,\
+from merinjei_classification.preprocess.preprocessing_utilities import get_unused_dataset_indxs, get_unused_features,\
                                                split_to_train_test
-from training.train_and_log import train_classifiers, log_classifier
-from preprocess.AutoCorrect import AutoCorrect
+from merinjei_classification.training.train_and_log import train_classifiers, log_classifier
+from merinjei_classification.preprocess.AutoCorrect import AutoCorrect
 from sklearn.metrics import classification_report
 from sklearn.linear_model import LogisticRegression
 from sklearn.feature_selection import SelectFromModel
@@ -95,7 +94,16 @@ def preprocess_data():
 
 
 def hatespeech_model_init():
-    preprocess = PreprocessData("", "")
+    preprocess = PreprocessHateData(
+        ['data'], ['twitter_hate_speech.csv'], main_dir='merinjei_classification')
+    # pd.load_features('reduced_full_features.pickle')
+    _, labels = preprocess.init_dataset()
+    with open('labels.pkl', 'wb') as f:
+        pickle.dump(labels, f)
+    preprocess.save_dataset("dataset_hs_w_trigrams_stemmed.pkl")
+    features = preprocess.init_features()
+    features = preprocess.get_features()
+    preprocess.save_features()
     dataset = preprocess.load_and_get_dataset('dataset_hs_w_trigrams_stemmed.pkl')
     labels = preprocess.load_and_get_dataset('labels.pkl')
     labels = np.array(labels)
@@ -122,12 +130,20 @@ def hatespeech_model_init():
 
 
 def main():
-    preprocess = PreprocessData("", "")
+    preprocess = PreprocessHateData(
+        [''], ['twitter_hate_speech.csv'])
+    # pd.load_features('reduced_full_features.pickle')
+    _, labels = preprocess.init_dataset()
+    with open('labels.pkl', 'wb') as f:
+        pickle.dump(labels, f)
+    preprocess.save_dataset("dataset_hs_w_trigrams_stemmed.pkl")
+    features = preprocess.init_features()
+    features = preprocess.get_features()
+    preprocess.save_features()
 
     # we call todense so that we can transform the sparse scipi matrix to numpy matrix
     dataset = preprocess.load_and_get_dataset(
         'dataset_hs_w_trigrams_stemmed.pkl')
-    print(dataset.shape)
     # dataset = dataset.todense()
     # dataset = dataset.A.astype(np.int8)
 

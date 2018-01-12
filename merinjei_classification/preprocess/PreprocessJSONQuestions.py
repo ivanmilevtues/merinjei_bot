@@ -1,8 +1,8 @@
 import re
 import json
 import numpy as np
-from preprocess.PreprocessQuestions import PreprocessQuestions
-from preprocess.decorators import not_none
+from merinjei_classification.preprocess.PreprocessQuestions import PreprocessQuestions
+from merinjei_classification.preprocess.decorators import not_none
 from collections import Counter
 import nltk
 

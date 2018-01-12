@@ -1,7 +1,7 @@
 import pickle
 
-from preprocess.FileOpenerMixin import FileOpenerMixin
-from preprocess.decorators import not_none
+from merinjei_classification.preprocess.FileOpenerMixin import FileOpenerMixin
+from merinjei_classification.preprocess.decorators import not_none
 
 
 # TODO add to classes one for the slang and one for the spell correction
