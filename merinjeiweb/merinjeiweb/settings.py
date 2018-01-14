@@ -74,7 +74,7 @@ ROOT_URLCONF = 'merinjeiweb.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': ['dashboard/templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

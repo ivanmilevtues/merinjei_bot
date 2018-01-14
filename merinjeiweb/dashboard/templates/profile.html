@@ -1,0 +1,15 @@
+<html>
+
+<head>
+    <title>Merinjei Bot | Profile</title>
+</head>
+
+<div class="user">
+    <h2> Hey {{ user }}</h2>
+
+    {% for key, value  in pages_with_perms.items %}
+    <p> {{ value }} </p>
+    {% endfor %}
+</div>
+
+</html>
