@@ -11,12 +11,11 @@ def profile_handler(request):
     access_token = access_token.token
     response = requests.get('https://graph.facebook.com/v2.11/me?access_token=' + access_token)
     data = json.loads(response._content)
-    print(data)
-    user_id =  data['id']
     user = data['name']
-    
-    response = requests.get('https://graph.facebook.com/v2.11/' + user_id + '/accounts?access_token=' + access_token)
-    print(access_token)
-    pages_with_perms = json.loads(response._content)['data']
-    print(pages_with_perms)
+
+    # This code will be enabled after facebook review for the application
+    # user_id =  data['id']
+    # response = requests.get('https://graph.facebook.com/v2.11/' + user_id + '/accounts?access_token=' + access_token)
+    # pages_with_perms = json.loads(response._content)['data']
+
     return render(request, 'profile.html', locals())
