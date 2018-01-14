@@ -63,9 +63,14 @@ class Classifiers:
     def predict_question_type(self, question):
         data = self.qlp.parse_line(question)
         return self.question_classifer.predict(data)
-    def predict_tweet_type(self, tweet):
-        data = self.hlp.parse_line(tweet)
+
+    def predict_comment_type(self, comment):
+        data = self.hlp.parse_line(comment)
         return self.hs_classifier.predict(data)
+
+    def predict_proba_comment_type(self, comment):
+        data = self.hlp.parse_line(comment)
+        return self.hs_classifier.predict_proba(data)
 
 
 if __name__ == '__main__':

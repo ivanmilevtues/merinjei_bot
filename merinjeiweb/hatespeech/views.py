@@ -26,6 +26,17 @@ def get_comments_for_post(posts, access_token):
     return comments
 
 
+def score_comments(comments):
+    clf = Classifiers("merinjei_classification/classifiers/hatespeech_clf.pkl",
+                      "merinjei_classification/data/features/hatespeech_features.pkl",
+                      "merinjei_classification/classifiers/question_clf.pkl",
+                      "merinjei_classification/data/features/questions_full_features.pkl")
+    for comment in comments:
+        if clf.predict_comment_type(comment['message'])[0] == 0: 
+            print(comment['message'])
+            print(clf.predict_proba_comment_type(comment['message']))
+
+
 def profile_handler(request):
     access_token = SocialToken.objects.get(
           account__user=request.user, account__provider='facebook')
