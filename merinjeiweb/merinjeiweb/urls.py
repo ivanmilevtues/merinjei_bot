@@ -21,5 +21,6 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^accounts/', include('allauth.urls')),
     url(r'^classify/', include('hatespeech.urls')),
-    url(r'^logged/', include('dashboard.urls'))
+    url(r'^logged/', include('dashboard.urls')),
+    url(r'^chatbot/', include('chatbot.urls'))
 ]
