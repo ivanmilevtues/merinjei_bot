@@ -12,10 +12,15 @@
 
 <label>Paste the link of your page below:</label>
 <br/>
-<input type="text" placeholder="https://www.facebook.com/YourPageName">
+<input  id="url-input" type="text" placeholder="https://www.facebook.com/YourPageName">
 <button id="hatespeech-check-btn">Check for hatespeech</button>
 
-<script src={% static "js/jquery.js" %}></script>
+<div id="comments-container">
+    
+</div>
+{% csrf_token %}
+
+<script src={% static "js/jquery.min.js" %}></script>
 <script src={% static "js/requests.js" %}></script>
 
 </html>
