@@ -30,9 +30,12 @@ class ChatBot(View):
         incoming_message = json.loads(self.request.body.decode('utf-8'))
 
         access_token = "EAAFiycyl6vIBAJeC4oTMOvHY8qLUImZBeZAG3NWZBoJAG50thvlXkT6d12ZBpZB4NhCT814t6kZAMmZCzWTyqcvmvK4XK84hOTKZCx6A4rKH9gdywLRKwWIWnS3IREGOCizxxCwvvi3cI0vKkMuvKUZARU4THYwZBv0mcdrZB0A8w8xxgZDZD"
-        incoming_message = incoming_message['entry'][0]['messaging'][0]
-        pprint(incoming_message)
         try:
+            incoming_message = incoming_message['entry'][0]['messaging'][0]
+            pprint(incoming_message)
+            if 'is_echo' in incoming_message['message'].keys():
+                return HttpResponse()
+
             recipient = incoming_message['sender']['id']
             message = incoming_message['message']['text']
             answer = process_message(message)
@@ -46,35 +49,36 @@ class ChatBot(View):
             response = requests.post(
                 "https://graph.facebook.com/v2.6/me/messages?access_token=" + access_token, json=data)
         except Exception as e:
-            print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+            print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
             print(e)
-            print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-
+            print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
 
         return HttpResponse()
 
 
 def process_message(message):
     answer = ""
-    request_url = "https://api.stackexchange.com/2.2/search/advanced?order=desc&sort=activity&title=" + message + "&site=stackoverflow"
+    request_url = "https://api.stackexchange.com/2.2/search/advanced?order=desc&sort=votes&title=" + message + "&site=stackoverflow"
 
     response = requests.get(request_url)
     
     items = json.loads(response._content)['items']
     response_thread = None
+    pprint(items)
     for thread in items:
         if thread['is_answered'] == True:
             response_thread = thread
             break
 
     answer_id = response_thread['accepted_answer_id']
-    request_url = 'https://api.stackexchange.com/2.2/answers/' + str(answer_id) + '?order=desc&sort=activity&site=stackoverflow&filter=withbody'
+    request_url = 'https://api.stackexchange.com/2.2/answers/' + str(answer_id) + '?order=desc&sort=votes&site=stackoverflow&filter=withbody'
     response = requests.get(request_url)
     answer = json.loads(response._content)['items'][0]['body']
     answer = html2text.html2text(answer)
-    print("RAW ANSWER:\n|" + answer + "|")
-    answer = '. '.join(re.split(r'\s{2,}', answer)).strip()
-    print('AFTER SPLIT:\n|' + answer + '|')
-    answer = summarize(answer)
-    print('SUMMERIZED:\n|' + answer + '|')
-    return answer
+    answer = ' '.join(re.split(r'\s{2,}|\n', answer)).strip()
+    summerized_answer = summarize(answer, ratio=0.5)
+    print('SUMMERIZED:\n|' + summerized_answer + '|')
+    if summerized_answer:
+        return summerized_answer
+    else:
+        return answer
