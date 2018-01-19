@@ -7,8 +7,15 @@
 {% load staticfiles %}
 
 <div class="user">
-    <h2> Hey {{ user }}</h2>
+    <h2> Hey {{ username }}</h2>
+    <img src="{{ user_pic }}">
 </div>
+
+{% for page in fb_pages %}
+
+<p> {{ page }} </p>
+
+{% endfor %}
 
 <label>Paste the link of your page below:</label>
 <br/>
