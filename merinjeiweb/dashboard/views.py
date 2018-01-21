@@ -16,15 +16,15 @@ def profile_handler(request):
 
     fb_pages_response = requests.get(
         'https://graph.facebook.com/v2.11/me/accounts?type=page&access_token=' + access_token)
-    
+
     user_data = json.loads(user_response._content)
     fb_page_data = json.loads(fb_pages_response._content)
     username = user_data['name']
     user_pic = user_data['picture']['data']['url']
 
-    fb_pages = []
+    fb_pages = {}
 
     for page in fb_page_data['data']:
-        fb_pages.append(page['name'])
-
+        fb_pages[page['name']] = {'id': page['id'], 'access_token': page['access_token']}
+    pprint(fb_pages)
     return render(request, 'profile.html', locals())

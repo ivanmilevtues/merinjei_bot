@@ -2,32 +2,39 @@
 
 <head>
     <title>Merinjei Bot | Profile</title>
+    {% load staticfiles %}
+    <script src={% static "js/jquery.min.js" %}></script>
+    <script src={% static "js/requests.js" %}></script>
 </head>
 
-{% load staticfiles %}
+<body>
 
-<div class="user">
-    <h2> Hey {{ username }}</h2>
-    <img src="{{ user_pic }}">
-</div>
+    <div class="user">
+        <h2> Hey {{ username }}</h2>
+        <img src="{{ user_pic }}">
+    </div>
 
-{% for page in fb_pages %}
-
-<p> {{ page }} </p>
-
-{% endfor %}
-
-<label>Paste the link of your page below:</label>
-<br/>
-<input  id="url-input" type="text" placeholder="https://www.facebook.com/YourPageName">
-<button id="hatespeech-check-btn">Check for hatespeech</button>
-
-<div id="comments-container">
     
-</div>
-{% csrf_token %}
+    <table>
+        <tr>
+            <th>Pages:</th>
+            <th>Comments subscribed</th>
+            <th>Messanger subscrbed</th>
+        </tr>
+        {% for page, value in fb_pages.items %}
+        <tr>
+            <td>{{ page }}</td>
+            <td>
+                <button data-id='{{ value.id }}' data-token='{{ value.access_token }}' onclick="subscribeToComments(this)">Subscribe</button>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
 
-<script src={% static "js/jquery.min.js" %}></script>
-<script src={% static "js/requests.js" %}></script>
 
+    {% csrf_token %}
+
+
+
+</body>
 </html>

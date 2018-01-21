@@ -13,7 +13,6 @@ import re
 from gensim.summarization import summarize
 from merinjei_classification.Classifiers import Classifiers
 
-# Create your views here.
 class ChatBot(View):
     def get(self, request, *args, **kwargs):
         if self.request.GET['hub.verify_token'] == '19990402':
@@ -26,9 +25,11 @@ class ChatBot(View):
 
         return View.dispatch(self, request, *args, **kwargs)
 
+    # The purpose of this method is to recieve the subscribed webhooks
+    # and call the needed handlers for certain messages
     def post(self, request, *args, **kwargs):
         incoming_message = json.loads(self.request.body.decode('utf-8'))
-
+        pprint(incoming_message)
         access_token = "EAAFiycyl6vIBAJeC4oTMOvHY8qLUImZBeZAG3NWZBoJAG50thvlXkT6d12ZBpZB4NhCT814t6kZAMmZCzWTyqcvmvK4XK84hOTKZCx6A4rKH9gdywLRKwWIWnS3IREGOCizxxCwvvi3cI0vKkMuvKUZARU4THYwZBv0mcdrZB0A8w8xxgZDZD"
         try:
             incoming_message = incoming_message['entry'][0]['messaging'][0]

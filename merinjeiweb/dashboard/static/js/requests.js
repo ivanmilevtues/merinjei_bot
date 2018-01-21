@@ -1,25 +1,21 @@
-function extractIdFromURL(url) {
-    // split the sting and take the name of the page
-    var result = "";
-
-    result = url.split("/")[3];
-    return result;
-}
-
-$('#hatespeech-check-btn').click(function () {
+function subscribeToComments(btn) {
     var pageUrl = $('#url-input').val();
-    var pageId = extractIdFromURL(pageUrl);
+    jqBtn = $(btn)
+    var pageId = jqBtn.attr('data-id');
+    var accessToken = jqBtn.attr('data-token');
 
     var CSRF = $('input[name="csrfmiddlewaretoken"]').val()
+ 
     $.ajax({
         type: "POST",
-        url: "/classify/scan_for_hatespeech/",
+        url: "/hatespeech/subscribe/",
         data: {
             csrfmiddlewaretoken: CSRF,
-            "pageId": pageId
+            "page_id": pageId,
+            "access_token": accessToken
         },
         success: function(data) {
             $('#comments-container').append(data);
         }
     });
-});
+}
