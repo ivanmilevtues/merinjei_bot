@@ -29,18 +29,6 @@ def get_comments_for_post(posts, access_token):
     return comments
 
 
-def score_comments(comments, access_token):
-    comments_to_delete = []
-    clf = Classifiers("merinjei_classification/classifiers/hatespeech_clf.pkl",
-                      "merinjei_classification/data/features/hatespeech_features.pkl",
-                      "merinjei_classification/classifiers/question_clf.pkl",
-                      "merinjei_classification/data/features/questions_full_features.pkl")
-    for comment in comments:
-        if clf.predict_comment_type(comment['message'])[0] == 0: 
-           comments_to_delete.append(comment['message'])
-    return comments_to_delete
-
-
 class CommentScanner(View):
     def get(self, request):
         print('I WAS CALLED')
@@ -110,5 +98,4 @@ class CommentScanner(View):
         }
         response = requests.post('https://graph.facebook.com/v2.11/' +
                                  page_id + '/subscriptions', data)
-        pprint(json.loads(response._content))
         return HttpResponse()

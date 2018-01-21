@@ -25,7 +25,10 @@
         <tr>
             <td>{{ page }}</td>
             <td>
-                <button data-id='{{ value.id }}' data-token='{{ value.access_token }}' onclick="subscribeToComments(this)">Subscribe</button>
+                <button data-id='{{ value.id }}' data-token='{{ value.access_token }}' onclick="subscribeToComments(this)">Subscribe to comments</button>
+            </td>
+            <td>
+                <button data-id='{{ value.id }}' data-token='{{ value.access_token }}' onclick="subscribeToMessenger(this)">Subscribe to Messenger</button>
             </td>
         </tr>
         {% endfor %}

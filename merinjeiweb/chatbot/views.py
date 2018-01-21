@@ -11,7 +11,8 @@ import requests
 import re
 
 from gensim.summarization import summarize
-from merinjei_classification.Classifiers import Classifiers
+from merinjei_classification.Classifiers import CLASSIFIERS
+from CONSTANTS import APP_ID, VERIFY_TOKEN, APP_SECRET, DOMAIN, MESSENGER_CALLBACK
 
 class ChatBot(View):
     def get(self, request, *args, **kwargs):
@@ -56,6 +57,32 @@ class ChatBot(View):
 
         return HttpResponse()
 
+    @staticmethod
+    def subscribe(request):
+        page_id = request.POST.get('page_id')
+        # GET THE APP ACCESS_TOKEN
+        response = requests.get(
+            'https://graph.facebook.com/oauth/access_token?client_id=' +
+            APP_ID + '&client_secret=' + APP_SECRET +
+            '&grant_type=client_credentials')
+        response1 = requests.get(
+            'https://graph.facebook.com/endpoint?key=value&access_token={}|{}'.format(APP_ID, APP_SECRET))
+        # Take the access token from the json result
+        access_token_page = request.POST.get('access_token')
+        access_token = APP_ID + '|' + APP_SECRET
+        data = {
+            'object': 'page',
+            'callback_url': MESSENGER_CALLBACK,
+            'fields': ['messages'],
+            'verify_token': VERIFY_TOKEN,
+            'access_token': access_token,
+            'active': True
+
+        }
+        response = requests.post('https://graph.facebook.com/v2.11/' +
+                                 page_id + '/subscriptions', data)
+        pprint(json.loads(response._content))
+        return HttpResponse()
 
 def process_message(message):
     answer = ""
