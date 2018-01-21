@@ -73,11 +73,16 @@ class Classifiers:
         return self.hs_classifier.predict_proba(data)
 
 
+CLASSIFIERS = Classifiers("merinjei_classification/classifiers/hatespeech_clf.pkl",
+                          "merinjei_classification/data/features/hatespeech_features.pkl",
+                          "merinjei_classification/classifiers/question_clf.pkl",
+                          "merinjei_classification/data/features/questions_full_features.pkl")
+
 if __name__ == '__main__':
     clfs = Classifiers("hatespeech_clf.pkl", "features.pickle" ,"question_clf.pkl" ,"data/processed_data/questions_full_features.pkl")
     for _ in range(10):
         question = clfs.predict_question_type(input("Ask me:"))
-        hate = clfs.predict_tweet_type(input("Hate me:"))
+        hate = clfs.predict_comment_type(input("Hate me:"))
         print("Question")
         print(question)
         print("Hate")

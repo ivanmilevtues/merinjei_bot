@@ -3,7 +3,7 @@ from allauth.socialaccount.models import SocialToken
 from pprint import pprint
 import requests
 import json
-from merinjei_classification.Classifiers import Classifiers
+from merinjei_classification.Classifiers import CLASSIFIERS
 from django.http import HttpResponse
 from django.views.generic import View
 
@@ -72,8 +72,18 @@ class CommentScanner(View):
     # and call the needed handlers for certain messages
     def post(self, request):
         incoming_message = json.loads(self.request.body.decode('utf-8'))
-
-        pprint(incoming_message)
+        entries = incoming_message['entry']
+        messages = []
+        for entry in entries:
+            changes = entry['changes']
+            for change in changes:
+                if change['field'] == 'feed':
+                    messages.append(change['value']['message'])
+        print(messages)
+        print([CLASSIFIERS.predict_proba_comment_type(message)
+               for message in messages])
+        print([CLASSIFIERS.predict_comment_type(message)
+               for message in messages])
         return HttpResponse()
 
     @staticmethod

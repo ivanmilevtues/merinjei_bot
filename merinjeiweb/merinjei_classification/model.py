@@ -98,14 +98,15 @@ def hatespeech_model_init():
         ['data'], ['twitter_hate_speech.csv'], main_dir='merinjei_classification')
     # pd.load_features('reduced_full_features.pickle')
     _, labels = preprocess.init_dataset()
-    with open('labels.pkl', 'wb') as f:
+    with open('merinjei_classification/data/processed_data/labels.pkl', 'wb') as f:
         pickle.dump(labels, f)
-    preprocess.save_dataset("dataset_hs_w_trigrams_stemmed.pkl")
+    preprocess.save_dataset("merinjei_classification/data/processed_data/dataset_hs_w_trigrams_stemmed.pkl")
     features = preprocess.init_features()
     features = preprocess.get_features()
     preprocess.save_features()
-    dataset = preprocess.load_and_get_dataset('dataset_hs_w_trigrams_stemmed.pkl')
-    labels = preprocess.load_and_get_dataset('labels.pkl')
+    dataset = preprocess.load_and_get_dataset(
+        'merinjei_classification/data/processed_data/dataset_hs_w_trigrams_stemmed.pkl')
+    labels = preprocess.load_and_get_dataset('merinjei_classification/data/processed_data/labels.pkl')
     labels = np.array(labels)
     
     features_test, features_train, labels_test, labels_train =\
