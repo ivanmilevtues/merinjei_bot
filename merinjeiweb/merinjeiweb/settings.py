@@ -46,7 +46,8 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.facebook',
     # my apps
     'chatbot',
-    'hatespeech'
+    'hatespeech',
+    'dashboard'
 ]
 
 AUTHENTICATION_BACKENDS = (

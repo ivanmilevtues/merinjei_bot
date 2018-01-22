@@ -9,7 +9,9 @@ from django.views.generic import View
 
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
-from CONSTANTS import APP_ID, COMMENTS_CALLBACK, VERIFY_TOKEN, APP_SECRET, DOMAIN, access_tokens
+from hatespeech.models import AccessTokens
+from CONSTANTS import APP_ID, COMMENTS_CALLBACK, VERIFY_TOKEN, APP_SECRET, DOMAIN
+
 
 def get_page_posts(access_token, page_id):
     response = requests.get(
@@ -40,16 +42,14 @@ def get_comments_for_post(posts, access_token):
 def delete_comments(comments_to_del):
     print(comments_to_del)
     for page_id, comments in comments_to_del.items():
-        print(page_id)
-        print(access_tokens)
-        if page_id in access_tokens.keys():
-            access_token = access_tokens[page_id]
-            for comment in comments:
-                response = requests.delete('https://graph.facebook.com/v2.11/' + 
-                    comment['comment_id'] + '?access_token=' + access_token)
-                print(json.loads(response._content))
-                    
-
+        access_token = AccessTokens.objects.filter(id = page_id)
+        if access_token.count() == 0:
+            continue
+        access_token = access_token.first().access_token
+        for comment in comments:
+            response = requests.delete('https://graph.facebook.com/v2.11/' + 
+                comment['comment_id'] + '?access_token=' + access_token)
+            print(json.loads(response._content))
 
 
 class CommentScanner(View):
@@ -77,16 +77,13 @@ class CommentScanner(View):
         comments_to_del[page_id] = score_comments(comments)
 
         for page_id, comments in comments_to_del.items():
-            print(page_id, access_tokens)
-            if page_id in access_tokens.keys():
-                access_token = access_tokens[page_id]
-                for comment in comments:
-                    response = requests.delete('https://graph.facebook.com/v2.11/' + 
-                        comment['id'] + '?access_token=' + access_token)
-                    print(json.loads(response._content))
+            access_token = [page_id]
+            for comment in comments:
+                response = requests.delete('https://graph.facebook.com/v2.11/' + 
+                    comment['id'] + '?access_token=' + access_token)
+                print(json.loads(response._content))
         return HttpResponse()
         
-
     # The purpose of this method is to recieve the subscribed webhooks
     # and call the needed handlers for certain messages
     def post(self, request):

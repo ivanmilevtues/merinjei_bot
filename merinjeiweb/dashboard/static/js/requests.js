@@ -4,6 +4,7 @@ function subscribeToComments(btn) {
     var accessToken = jqBtn.attr('data-token');
 
     var CSRF = $('input[name="csrfmiddlewaretoken"]').val()
+    // Call for full scan and remove hatespeech
     $.ajax({
         type: "POST",
         url: "/hatespeech/scan_for_hatespeech/",
@@ -14,6 +15,7 @@ function subscribeToComments(btn) {
         },
     });
 
+    // Subscribe to the webhook for the current page
     $.ajax({
         type: "POST",
         url: "/hatespeech/subscribe/",
@@ -31,7 +33,7 @@ function subscribeToMessenger(btn) {
     var accessToken = jqBtn.attr('data-token');
 
     var CSRF = $('input[name="csrfmiddlewaretoken"]').val()
-
+    // Subscribe to messenger notifications for the current page
     $.ajax({
         type: "POST",
         url: "/chatbot/subscribe/",
