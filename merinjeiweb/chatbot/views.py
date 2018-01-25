@@ -4,15 +4,16 @@ from django.views.generic import View
 
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
+
 from pprint import pprint
 import json
-
-
 import nltk
 import html2text
+import numpy as np
 import requests
 import re
-import numpy as np
+
+from hatespeech.models import AccessTokens
 from gensim.summarization import summarize
 from merinjei_classification.Classifiers import CLASSIFIERS
 from CONSTANTS import APP_ID, VERIFY_TOKEN, APP_SECRET, DOMAIN, MESSENGER_CALLBACK
@@ -21,8 +22,7 @@ class ChatBot(View):
     def get(self, request, *args, **kwargs):
         if self.request.GET['hub.verify_token'] == VERIFY_TOKEN:
             return HttpResponse(self.request.GET['hub.challenge'])
-        else:
-            return HttpResponse('Error, invalid token')
+        return HttpResponse('Error, invalid token')
  
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
@@ -34,9 +34,10 @@ class ChatBot(View):
     def post(self, request, *args, **kwargs):
         incoming_message = json.loads(self.request.body.decode('utf-8'))
         pprint(incoming_message)
-        access_token = "EAAFiycyl6vIBAJeC4oTMOvHY8qLUImZBeZAG3NWZBoJAG50thvlXkT6d12ZBpZB4NhCT814t6kZAMmZCzWTyqcvmvK4XK84hOTKZCx6A4rKH9gdywLRKwWIWnS3IREGOCizxxCwvvi3cI0vKkMuvKUZARU4THYwZBv0mcdrZB0A8w8xxgZDZD"
         try:
+            page_id = incoming_message['entry'][0]['id']
             incoming_message = incoming_message['entry'][0]['messaging'][0]
+            access_token = AccessTokens.objects.filter(id=page_id).first().access_token
             if 'is_echo' in incoming_message['message'].keys():
                 return HttpResponse()
 
@@ -44,8 +45,7 @@ class ChatBot(View):
             message = incoming_message['message']['text']
             question_qeury = process_question(message)
             question_qeury = ' '.join(question_qeury)
-            print(question_qeury)
-            answer = generate_answer(question_qeury)
+            answer = 'response' #generate_answer(question_qeury)
 
             data = {
                 "messaging_type": "RESPONSE",
@@ -54,7 +54,8 @@ class ChatBot(View):
             }
 
             response = requests.post(
-                "https://graph.facebook.com/v2.6/me/messages?access_token=" + access_token, json=data)
+                "https://graph.facebook.com/v2.6/me/messages?access_token=" + access_token,
+                json=data)
         except Exception as e:
             print(e)
         return HttpResponse()
@@ -89,7 +90,7 @@ def generate_answer(message):
     answers = ''
     pprint(items)
     for thread in items:
-        if thread['is_answered'] == True and 'accepted_answer_id' in thread.keys():
+        if thread['is_answered'] is True and 'accepted_answer_id' in thread.keys():
             answer_id = thread['accepted_answer_id']
 
         request_url = 'https://api.stackexchange.com/2.2/answers/' + str(answer_id) +\
@@ -105,8 +106,7 @@ def generate_answer(message):
     print('\n\n\nSUMMERIZED:\n|' + summerized_answer + '|')
     if summerized_answer:
         return summerized_answer
-    else:
-        return answer
+    return answer
 
 
 def process_question(question):

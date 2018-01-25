@@ -1,9 +1,10 @@
-from django.shortcuts import render
-from allauth.socialaccount.models import SocialToken, SocialApp
-import requests
-from pprint import pprint
-from hatespeech.models import AccessTokens
 import json
+import requests
+
+from django.shortcuts import render
+
+from allauth.socialaccount.models import SocialToken
+from hatespeech.models import AccessTokens
 
 
 def profile_handler(request):
@@ -27,8 +28,9 @@ def profile_handler(request):
 
     for page in fb_page_data['data']:
         fb_pages[page['name']] = {'id': page['id'], 'access_token': page['access_token']}
-        obj, created = AccessTokens.objects.update_or_create(id = page['id'],
-            defaults = {'access_token': page['access_token']})
+        obj, _ = AccessTokens.objects.update_or_create(
+            id=page['id'],
+            defaults={'access_token': page['access_token']})
+
         obj.save()
     return render(request, 'profile.html', locals())
-
