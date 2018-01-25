@@ -1,5 +1,5 @@
 APP_ID = '390093838084850'
-DOMAIN = 'https://e3311a1f.ngrok.io'
+DOMAIN = 'https://14f49164.ngrok.io'
 COMMENTS_CALLBACK = DOMAIN + \
     '/hatespeech/handle_comments/715aec20c75a416ca2385210013c9cb3'
 MESSENGER_CALLBACK = DOMAIN + \

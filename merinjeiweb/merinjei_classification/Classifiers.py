@@ -64,6 +64,10 @@ class Classifiers:
         data = self.qlp.parse_line(question)
         return self.question_classifer.predict(data)
 
+    def predict_proba_question_type(self, question):
+        data = self.qlp.parse_line(question)
+        return self.question_classifer.predict_proba(data)
+
     def predict_comment_type(self, comment):
         data = self.hlp.parse_line(comment)
         return self.hs_classifier.predict(data)

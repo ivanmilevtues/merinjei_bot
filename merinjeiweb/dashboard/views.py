@@ -11,8 +11,7 @@ def profile_handler(request):
     access_token = SocialToken.objects.get(
         account__user=user, account__provider='facebook')
     access_token = access_token.token
-    print(request.user)
-    print(request.user.__dict__)
+
     user_response = requests.get(
         'https://graph.facebook.com/v2.11/me?fields=picture,name&access_token=' + access_token)
 
@@ -28,8 +27,8 @@ def profile_handler(request):
 
     for page in fb_page_data['data']:
         fb_pages[page['name']] = {'id': page['id'], 'access_token': page['access_token']}
-        at = AccessTokens.objects.update_or_create(id = page['id'], access_token = page['access_token'])
-        at.save()
-    pprint(fb_pages)
+        obj, created = AccessTokens.objects.update_or_create(id = page['id'],
+            defaults = {'access_token': page['access_token']})
+        obj.save()
     return render(request, 'profile.html', locals())
 
