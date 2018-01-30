@@ -16,8 +16,11 @@ Including another URLconf
 from django.conf.urls import url
 from django.contrib import admin
 from django.conf.urls import include
+from merinjeiweb.views import redirect_to_login
+
 
 urlpatterns = [
+    url(r'^$', redirect_to_login),
     url(r'^admin/', admin.site.urls),
     url(r'^accounts/', include('allauth.urls')),
     url(r'^hatespeech/', include('hatespeech.urls')),

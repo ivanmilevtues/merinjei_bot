@@ -1,15 +1,17 @@
 import re
 import csv
 import nltk
-from nltk.sentiment import SentimentIntensityAnalyzer
+import pickle
 import numpy as np
 from collections import Counter
-import pickle
+from nltk.util import trigrams, bigrams
+from nltk.stem import SnowballStemmer
+from nltk.sentiment import SentimentIntensityAnalyzer
+from sklearn.feature_extraction.text import TfidfVectorizer
 from merinjei_classification.preprocess.decorators import not_none
 from merinjei_classification.preprocess.PreprocessData import PreprocessData
 from merinjei_classification.preprocess.AutoCorrect import AutoCorrect
-from sklearn.feature_extraction.text import TfidfVectorizer
-from nltk.stem import SnowballStemmer
+from merinjei_classification.preprocess.Lexicon import Lexicon
 
 
 class PreprocessHateData(PreprocessData):
@@ -25,6 +27,7 @@ class PreprocessHateData(PreprocessData):
         self.other_features = None
         self.ngram_vectorizer = None
         self.pos_vectorizer = None
+        self.lexicon = None
 
     def get_labels(self):
         files = self.open_files(self.paths)
@@ -72,11 +75,13 @@ class PreprocessHateData(PreprocessData):
         additional_features = self.init_other_features()
         pos_data = self.init_pos_tags_ds()
         ngram_data = self.init_ngrams_datset()
+        lexicon = self.init_lexicon_data()
         print(labels.shape)
         print(additional_features.shape)
         print(pos_data.shape)
         print(ngram_data.shape)
-        self.dataset = np.concatenate([ngram_data, pos_data, additional_features], axis=1)
+        print(lexicon.shape, np.sum(lexicon))
+        self.dataset = np.concatenate([ngram_data, pos_data, additional_features, lexicon], axis=1)
         return (self.dataset, labels)
 
     @not_none('corpus')
@@ -187,12 +192,33 @@ class PreprocessHateData(PreprocessData):
 
         return dataset
  
+    @not_none('corpus')
+    def init_lexicon_data(self):
+        lx = Lexicon([''], ['refined_ngram_dict.csv'],
+                     'merinjei_classification/data')
+        lx.init_lexicon()
+        self.lexicon = lx.get_lexicon()
+        dataset = []
+
+        for tweet in self.corpus:
+            row = [0 for _ in range(len(self.lexicon))]
+            tweet_ngrams = tweet.split() + list(trigrams(tweet.split())) + list(bigrams(tweet.split()))
+            for ngram in tweet_ngrams:
+                ngram = ' '.join(ngram)
+                if ngram in self.lexicon:
+                    # Add it to the dataset on its correct position
+                    indx = list(self.lexicon.keys()).index(ngram)
+                    row[indx] = self.lexicon[ngram]
+            dataset.append(row)
+        return np.array(dataset)
+
     def init_features(self):
         self.features = {
             'ngram_scores': self.ngram_scores,
             'ngram_features': self.ngram_features,
             'pos_features': self.pos_features,
             'other_features': self.other_features,
+            'lexicon': self.lexicon,
             'ngram_vectorizer': self.ngram_vectorizer,
             'pos_vectorizer': self.pos_vectorizer
         }
@@ -215,7 +241,7 @@ class PreprocessHateData(PreprocessData):
         tweet = ' '.join(re.split(r'\s+', tweet))
 
         return tweet
-
+    
     @staticmethod
     def tokenize(tweet: str) -> list:
         stemmer = SnowballStemmer("english")

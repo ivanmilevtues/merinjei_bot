@@ -76,6 +76,12 @@ class Classifiers:
         data = self.hlp.parse_line(comment)
         return self.hs_classifier.predict_proba(data)
 
+    def predict_parsed_comments(self, comment_np):
+        return self.hs_classifier.predict(comment_np)
+    
+    def get_hs_parser(self):
+        return self.hlp
+
 
 CLASSIFIERS = Classifiers("merinjei_classification/classifiers/hatespeech_clf.pkl",
                           "merinjei_classification/data/features/hatespeech_features.pkl",

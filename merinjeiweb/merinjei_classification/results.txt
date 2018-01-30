@@ -1176,4 +1176,159 @@ Train:
 
 avg / total       0.91      0.90      0.89     14869
 
+==================================================
+Date: Thu Jan 25 23:49:59 2018
+Time taken to train: 25.70432710647583 seconds
+Classifier: GridSearchCV(cv=<generator object _BaseKFold.split at 0x0000017002F89F10>,
+       error_score='raise',
+       estimator=Pipeline(memory=None,
+     steps=[('select', SelectFromModel(estimator=LogisticRegression(C=0.01, class_weight='balanced', dual=False,
+          fit_intercept=True, intercept_scaling=1, max_iter=100,
+          multi_class='ovr', n_jobs=1, penalty='l1', random_state=None,
+          solver='liblinear', tol=0.0001, verbose=0, wa...ty='l2', random_state=None,
+          solver='liblinear', tol=0.0001, verbose=0, warm_start=False))]),
+       fit_params=None, iid=True, n_jobs=1, param_grid=[{}],
+       pre_dispatch='2*n_jobs', refit=True, return_train_score='warn',
+       scoring=None, verbose=2)
+---------------------------------
+Test:
+             precision    recall  f1-score   support
+
+          0       0.85      0.99      0.91      7028
+          1       0.96      0.57      0.72      2885
+
+avg / total       0.88      0.87      0.86      9913
+
+Train:
+             precision    recall  f1-score   support
+
+          0       0.89      0.99      0.94     11118
+          1       0.97      0.63      0.76      3751
+
+avg / total       0.91      0.90      0.89     14869
+
+==============================================
+Date: Fri Jan 26 00:20:19 2018
+Time taken to train: 27.1200692653656 seconds
+Classifier: GridSearchCV(cv=<generator object _BaseKFold.split at 0x000002612015A200>,
+       error_score='raise',
+       estimator=Pipeline(memory=None,
+     steps=[('select', SelectFromModel(estimator=LogisticRegression(C=0.01, class_weight='balanced', dual=False,
+          fit_intercept=True, intercept_scaling=1, max_iter=100,
+          multi_class='ovr', n_jobs=1, penalty='l1', random_state=None,
+          solver='liblinear', tol=0.0001, verbose=0, wa...ty='l2', random_state=None,
+          solver='liblinear', tol=0.0001, verbose=0, warm_start=False))]),
+       fit_params=None, iid=True, n_jobs=1, param_grid=[{}],
+       pre_dispatch='2*n_jobs', refit=True, return_train_score='warn',
+       scoring=None, verbose=2)
+---------------------------------
+Test:
+             precision    recall  f1-score   support
+
+          0       0.85      0.99      0.91      7028
+          1       0.96      0.57      0.72      2885
+
+avg / total       0.88      0.87      0.86      9913
+
+Train:
+             precision    recall  f1-score   support
+
+          0       0.89      0.99      0.94     11118
+          1       0.97      0.63      0.76      3751
+
+avg / total       0.91      0.90      0.89     14869
+
+==============================================
+Date: Fri Jan 26 00:22:32 2018
+Time taken to train: 25.70075750350952 seconds
+Classifier: GridSearchCV(cv=<generator object _BaseKFold.split at 0x00000211D378A200>,
+       error_score='raise',
+       estimator=Pipeline(memory=None,
+     steps=[('select', SelectFromModel(estimator=LogisticRegression(C=0.01, class_weight='balanced', dual=False,
+          fit_intercept=True, intercept_scaling=1, max_iter=100,
+          multi_class='ovr', n_jobs=1, penalty='l1', random_state=None,
+          solver='liblinear', tol=0.0001, verbose=0, wa...ty='l2', random_state=None,
+          solver='liblinear', tol=0.0001, verbose=0, warm_start=False))]),
+       fit_params=None, iid=True, n_jobs=1, param_grid=[{}],
+       pre_dispatch='2*n_jobs', refit=True, return_train_score='warn',
+       scoring=None, verbose=2)
+---------------------------------
+Test:
+             precision    recall  f1-score   support
+
+          0       0.85      0.99      0.91      7028
+          1       0.96      0.57      0.72      2885
+
+avg / total       0.88      0.87      0.86      9913
+
+Train:
+             precision    recall  f1-score   support
+
+          0       0.89      0.99      0.94     11118
+          1       0.97      0.63      0.76      3751
+
+avg / total       0.91      0.90      0.89     14869
+
+==============================================
+Date: Sat Jan 27 00:19:14 2018
+Time taken to train: 15.518726110458374 seconds
+Classifier: GridSearchCV(cv=<generator object _BaseKFold.split at 0x000001F2D3EFB1A8>,
+       error_score='raise',
+       estimator=Pipeline(memory=None,
+     steps=[('select', SelectFromModel(estimator=LogisticRegression(C=0.01, class_weight='balanced', dual=False,
+          fit_intercept=True, intercept_scaling=1, max_iter=100,
+          multi_class='ovr', n_jobs=1, penalty='l1', random_state=None,
+          solver='liblinear', tol=0.0001, verbose=0, wa...ty='l2', random_state=None,
+          solver='liblinear', tol=0.0001, verbose=0, warm_start=False))]),
+       fit_params=None, iid=True, n_jobs=1, param_grid=[{}],
+       pre_dispatch='2*n_jobs', refit=True, return_train_score='warn',
+       scoring=None, verbose=2)
+---------------------------------
+Test:
+             precision    recall  f1-score   support
+
+          0       0.84      0.99      0.91      6980
+          1       0.96      0.57      0.71      2933
+
+avg / total       0.88      0.87      0.85      9913
+
+Train:
+             precision    recall  f1-score   support
+
+          0       0.89      0.99      0.94     11081
+          1       0.97      0.63      0.76      3788
+
+avg / total       0.91      0.90      0.89     14869
+
+==============================================
+Date: Sat Jan 27 00:28:04 2018
+Time taken to train: 10.36238694190979 seconds
+Classifier: GridSearchCV(cv=<generator object _BaseKFold.split at 0x0000015374659200>,
+       error_score='raise',
+       estimator=Pipeline(memory=None,
+     steps=[('select', SelectFromModel(estimator=LogisticRegression(C=0.01, class_weight='balanced', dual=False,
+          fit_intercept=True, intercept_scaling=1, max_iter=100,
+          multi_class='ovr', n_jobs=1, penalty='l1', random_state=None,
+          solver='liblinear', tol=0.0001, verbose=0, wa...ty='l2', random_state=None,
+          solver='liblinear', tol=0.0001, verbose=0, warm_start=False))]),
+       fit_params=None, iid=True, n_jobs=1, param_grid=[{}],
+       pre_dispatch='2*n_jobs', refit=True, return_train_score='warn',
+       scoring=None, verbose=2)
+---------------------------------
+Test:
+             precision    recall  f1-score   support
+
+          0       0.84      0.99      0.91      6951
+          1       0.97      0.56      0.71      2962
+
+avg / total       0.88      0.86      0.85      9913
+
+Train:
+             precision    recall  f1-score   support
+
+          0       0.89      0.99      0.94     11095
+          1       0.97      0.63      0.76      3774
+
+avg / total       0.91      0.90      0.89     14869
+
 =======================

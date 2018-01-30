@@ -1,5 +1,6 @@
 import json
 import requests
+import numpy as np
 
 from django.http import HttpResponse
 from django.views.generic import View
@@ -15,17 +16,27 @@ from merinjei_classification.Classifiers import CLASSIFIERS
 
 
 def get_page_posts(access_token, page_id):
+    print('=  = = = = = == = = = = =')
+    print(page_id)
+    print(access_token)
+    print('== = = = = == = = = = = = = =')
     response = requests.get(
-        'https://graph.facebook.com/v2.11/' + page_id + '/posts?access_token=' + access_token)
+        'https://graph.facebook.com/v2.11/' + page_id + '/posts?access_token='
+        + access_token)
     page_posts = json.loads(response._content)['data']
     return page_posts
 
 
 def score_comments(comments):
+    data = []
     comments_to_delete = []
+    hlp = CLASSIFIERS.get_hs_parser()
     for comment in comments:
-        if CLASSIFIERS.predict_comment_type(comment['message'])[0] == 0:
-            comments_to_delete.append(comment)
+        data.append(hlp.parse_line(comment['message'])[0])
+    data = np.array(data)
+    scored_comments = CLASSIFIERS.predict_parsed_comments(data)
+    comments_to_delete = [comments[i] for i in range(len(scored_comments))\
+                          if scored_comments[i] == 0]
     return comments_to_delete
 
 
@@ -34,8 +45,8 @@ def get_comments_for_post(posts, access_token):
     for post in posts:
         post_id = post['id']
         response = requests.get(
-            'https://graph.facebook.com/v2.11/' + post_id + '/comments?access_token=' +
-            access_token)
+            'https://graph.facebook.com/v2.11/' + post_id +
+            '/comments?access_token=' + access_token)
         data = json.loads(response._content)['data']
         comments += data
     return comments
@@ -49,8 +60,16 @@ def delete_comments(comments_to_del):
             continue
         access_token = access_token.first().access_token
         for comment in comments:
-            response = requests.delete('https://graph.facebook.com/v2.11/' +
-                                       comment['comment_id'] + '?access_token=' + access_token)
+            from pprint import pprint
+            pprint(comment)
+            try:
+                response = requests.delete('https://graph.facebook.com/v2.11/' +
+                                           comment['id'] + '?access_token=' +
+                                           access_token)
+            except KeyError:
+                response = requests.delete('https://graph.facebook.com/v2.11/' +
+                                           comment['comment_id'] + '?access_token=' +
+                                           access_token)
             print(json.loads(response._content))
 
 
@@ -67,36 +86,33 @@ class CommentScanner(View):
     # This will scan the page at first.
     @staticmethod
     def scan_page(request):
-        access_token = SocialToken.objects.get(
-            account__user=request.user, account__provider='facebook')
-        access_token = access_token.token
+        access_token = str(SocialToken.objects.get(
+            account__user=request.user, account__provider='facebook'))
         page_id = request.POST.get('page_id')
 
         posts = get_page_posts(access_token, page_id)
         comments = get_comments_for_post(posts, access_token)
         comments_to_del = {}
         comments_to_del[page_id] = score_comments(comments)
-
-        for page_id, comments in comments_to_del.items():
-            access_token = [page_id]
-            for comment in comments:
-                response = requests.delete('https://graph.facebook.com/v2.11/' +
-                                           comment['id'] + '?access_token=' + access_token)
-                print(json.loads(response._content))
+        delete_comments(comments_to_del)
         return HttpResponse()
 
     # The purpose of this method is to recieve the subscribed webhooks
     # and call the needed handlers for certain messages
     def post(self, request):
         incoming_message = json.loads(self.request.body.decode('utf-8'))
+        from pprint import pprint
+        pprint(incoming_message)
         entries = incoming_message['entry']
         messages = []
         comments_to_del = {}
         for entry in entries:
-            page_id = entry['id']
             changes = entry['changes']
+            page_id = entry['id']
             messages = []
             for change in changes:
+                if change['value']['verb'] == 'remove':
+                    return HttpResponse()
                 if change['field'] == 'feed':
                     messages.append(change['value'])
             if page_id not in comments_to_del.keys():
