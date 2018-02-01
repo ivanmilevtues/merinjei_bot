@@ -3,40 +3,62 @@
 <head>
     <title>Merinjei Bot | Profile</title>
     {% load staticfiles %}
-    <script src={% static "js/jquery.min.js" %}></script>
-    <script src={% static "js/requests.js" %}></script>
+    
+    <!-- Static files -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+        integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"
+        integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
 </head>
 
 <body>
-
-    <div class="user">
-        <h2> Hey {{ username }}</h2>
-        <img src="{{ user_pic }}">
+    <div>
+        <div class="container col-lg-2 col-md-2 col-sm-2" id="sidebar-container">
+            <div id="sidebar">
+                <ul id="sidebar-list">
+                    <li>
+                        <div>
+                            <img src="{{ user_pic }}" class="pull-left img-circle">
+                            <div><span class="label label-success">Online</span></div>
+                            <div class="center-block"><h4>{{ username }}</h4></div>
+                        </div>
+                    </li>
+                    <li id="logout">
+                        <a>Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+       
+        <div class="col-lg-10 col-md-10 col-sm-10 p-1">
+            <table class="table table-hover">
+                <tr>
+                    <th>Pages:</th>
+                    <th>Comments status</th>
+                    <th>Messenger status</th>
+                </tr>
+                {% for page, value in fb_pages.items %}
+                <tr>
+                    <td>{{ page }}</td>
+                    <td>
+                        <a title="Your subscription to the comments is UP" data-id='{{ value.id }}' data-token='{{ value.access_token }}' onclick="subscribeToComments(this)"><i class="glyphicon glyphicon-remove"></i></a>
+                    </td>
+                    <td>
+                        <a title="Your subscription to the comments is DOWN" data-id='{{ value.id }}' data-token='{{ value.access_token }}' onclick="subscribeToMessenger(this)"><i class="glyphicon glyphicon-remove"></i></a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
     </div>
 
-    
-    <table>
-        <tr>
-            <th>Pages:</th>
-            <th>Comments subscribed</th>
-            <th>Messanger subscrbed</th>
-        </tr>
-        {% for page, value in fb_pages.items %}
-        <tr>
-            <td>{{ page }}</td>
-            <td>
-                <button data-id='{{ value.id }}' data-token='{{ value.access_token }}' onclick="subscribeToComments(this)">Subscribe to comments</button>
-            </td>
-            <td>
-                <button data-id='{{ value.id }}' data-token='{{ value.access_token }}' onclick="subscribeToMessenger(this)">Subscribe to Messenger</button>
-            </td>
-        </tr>
-        {% endfor %}
-    </table>
-
-
     {% csrf_token %}
-
+    
+    <!-- Scripts and CSS -->
+    <script src={% static "js/jquery.min.js" %}></script>
+    <script src={% static "js/requests.js" %}></script>
+    <link rel="stylesheet" href={% static "css/site.css" %}>
 
 
 </body>

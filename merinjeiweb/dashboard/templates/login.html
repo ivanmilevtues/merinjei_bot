@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Login</title>
+</head>
+<body>
+    {% load socialaccount %}
+    {% providers_media_js %}
+    <a href="{% provider_login_url "facebook" method="js_sdk" %}">Facebook</a>
+</body>
+</html>

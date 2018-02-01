@@ -1,6 +1,7 @@
 import json
 import requests
 
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
 
 from allauth.socialaccount.models import SocialToken
@@ -8,6 +9,8 @@ from hatespeech.models import AccessTokens
 
 
 def profile_handler(request):
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect('/logged/login');
     user = request.user
     access_token = SocialToken.objects.get(
         account__user=user, account__provider='facebook')
@@ -21,6 +24,7 @@ def profile_handler(request):
 
     user_data = json.loads(user_response._content)
     fb_page_data = json.loads(fb_pages_response._content)
+    from pprint import pprint
     username = user_data['name']
     user_pic = user_data['picture']['data']['url']
 
@@ -34,3 +38,7 @@ def profile_handler(request):
 
         obj.save()
     return render(request, 'profile.html', locals())
+
+
+def login(request):
+    return render(request, 'login.html', locals())

@@ -24,6 +24,11 @@ function subscribeToComments(btn) {
             "page_id": pageId,
             "access_token": accessToken
         },
+        success: function() {
+            console.log('I am here???');
+            jqBtn.empty();
+            jqBtn.append('<i class="glyphicon glyphicon-ok"></i>');
+        }
     });
 }
 
@@ -42,5 +47,27 @@ function subscribeToMessenger(btn) {
             "page_id": pageId,
             "access_token": accessToken
         },
+        success: function(result) {
+            console.log('I am here?>');
+            jqBtn.empty();
+            jqBtn.append('<i class="glyphicon glyphicon-ok"></i>');
+        }
     });
 }
+
+
+$('#logout a').click(
+    function() {
+        var CSRF = $('input[name="csrfmiddlewaretoken"]').val()
+        $.ajax({
+            type: "POST",
+            url: "/accounts/logout/",
+            data: {
+                csrfmiddlewaretoken: CSRF
+            },
+            success: function(result) {
+                window.location.replace("/account/login");
+            }
+        })
+    }
+);
