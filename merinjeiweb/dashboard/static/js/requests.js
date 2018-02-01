@@ -66,7 +66,7 @@ $('#logout a').click(
                 csrfmiddlewaretoken: CSRF
             },
             success: function(result) {
-                window.location.replace("/account/login");
+                window.location.replace("/logged/login");
             }
         })
     }

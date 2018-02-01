@@ -41,4 +41,6 @@ def profile_handler(request):
 
 
 def login(request):
+    if request.user.is_authenticated():
+        return HttpResponseRedirect('/logged/profile')
     return render(request, 'login.html', locals())
