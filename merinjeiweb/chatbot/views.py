@@ -12,6 +12,7 @@ import html2text
 import numpy as np
 import requests
 import re
+from collections import OrderedDict
 
 from hatespeech.models import AccessTokens
 from gensim.summarization import summarize
@@ -93,35 +94,45 @@ class ChatBot(View):
         return HttpResponse()
 
 
-def generate_summurized_answer(message):
-    answer = "Some answer?"
-    # request_url = "https://api.stackexchange.com/2.2/search/advanced?order=desc&sort=votes&title=" +\
-    #                message + "&site=stackoverflow"
+def generate_summurized_answer(user_question, question_type):
+    print('=====================================================',
+            user_question,
+          '=====================================================')
+    answers = ""
+    answers_ids = []
+    request_url = "https://api.stackexchange.com/2.2/search/advanced?order=desc&sort=votes&title=" +\
+        user_question + "&site=stackoverflow"
 
-    # response = requests.get(request_url)
-    # pprint(json.loads(response._content))
-    # items = json.loads(response._content)['items']
-    # answers = ''
-    # pprint(items)
-    # for thread in items:
-    #     if thread['is_answered'] is True and 'accepted_answer_id' in thread.keys():
-    #         answer_id = thread['accepted_answer_id']
-    #         break
+    response = requests.get(request_url)
+    questions = json.loads(response._content, object_pairs_hook=OrderedDict)['items']
+    pprint(questions)
+    for question in questions:
+        print(question_type, question['title'], CLASSIFIERS.predict_question_type(
+            question['title']))
+        if question['is_answered'] is True and 'accepted_answer_id' in question.keys() and \
+            CLASSIFIERS.predict_question_type(question['title']) == question_type:
+            answers_ids.append(question['accepted_answer_id'])
+        if len(answers_ids) >= 3:
+            break
+    print(answers_ids)
+    for answers_id in answers_ids:
+        request_url = 'https://api.stackexchange.com/2.2/answers/' + \
+            str(answers_id) + \
+            '?order=desc&sort=votes&site=stackoverflow&filter=withbody'
+        response = requests.get(request_url)
+        answer = answer = json.loads(response._content)['items'][0]['body']
+        answer = html2text.html2text(answer)
+        answer = ' '.join(re.split(r'\s{2,}|\n', answer)).strip()
+        answers += '\n' + answer
 
-    # request_url = 'https://api.stackexchange.com/2.2/answers/' + str(answer_id) +\
-    #             '?order=desc&sort=votes&site=stackoverflow&filter=withbody'
-    # response = requests.get(request_url)
-    # answer = json.loads(response._content)['items'][0]['body']
-    # answer = html2text.html2text(answer)
-    # answer = ' '.join(re.split(r'\s{2,}|\n', answer)).strip()
-    # answers += '\n' + answer
-
-    # print(answers)
-    # summerized_answer = summarize(answers, word_count=50)
-    # print('\n\n\nSUMMERIZED:\n|' + summerized_answer + '|')
-    # if summerized_answer:
-    #     return summerized_answer
-    return answer
+    print(answers)
+    summarized_answer = summarize(answers, word_count=50)
+    print('\n\n\nSUMMERIZED:\n|' + summarized_answer + '|')
+    if summarized_answer:
+        return summarized_answer
+    else:
+        summarized_answer = summarize(answers)
+    return summarized_answer if summarized_answer != '' else answers
 
 
 def process_question(question):
@@ -130,10 +141,11 @@ def process_question(question):
         raise Exception('Not a question')
     question_words = nltk.word_tokenize(question)
     pos_tagged = nltk.pos_tag(question_words)
-    print(pos_tagged)
+    question_list = []
     for w, t in pos_tagged:
-        if t not in ['WP', 'VBZ', 'DT']:
-            yield w
+        if t not in ['WP', 'VBZ', 'DT', '.']:
+            question_list.append(w)
+    return (' '.join(question_list), CLASSIFIERS.predict_question_type(question))
 
 
 def try_answer(response):
@@ -145,8 +157,8 @@ def try_answer(response):
             return check_confidence_and_return('Bye', fb_nlp_class[k])
     
     message = response['entry'][0]['messaging'][0]['message']['text']
-    message_query = process_question(message)
-    return generate_summurized_answer(message_query)
+    question_query, question_type = process_question(message)
+    return generate_summurized_answer(question_query, question_type)
 
 
 def check_confidence_and_return(message, pred_dict):
