@@ -19,12 +19,15 @@ def profile_handler(request):
     user_response = requests.get(
         'https://graph.facebook.com/v2.11/me?fields=picture,name&access_token=' + access_token)
 
+    if user_response.status_code == 400:
+        # should say session timeouted!
+        return HttpResponseRedirect('/logged/login?session_expired')
+
     fb_pages_response = requests.get(
         'https://graph.facebook.com/v2.11/me/accounts?type=page&access_token=' + access_token)
 
     user_data = json.loads(user_response._content)
     fb_page_data = json.loads(fb_pages_response._content)
-    from pprint import pprint
     username = user_data['name']
     user_pic = user_data['picture']['data']['url']
 
@@ -41,6 +44,6 @@ def profile_handler(request):
 
 
 def login(request):
-    if request.user.is_authenticated():
+    if request.user.is_authenticated() and 'session_expired' not in request.GET.keys():
         return HttpResponseRedirect('/logged/profile')
     return render(request, 'login.html', locals())

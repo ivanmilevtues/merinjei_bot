@@ -32,38 +32,37 @@ class ChatBot(View):
     # The purpose of this method is to recieve the subscribed webhooks
     # and call the needed handlers for certain messages
     def post(self, request, *args, **kwargs):
-        incoming_message = json.loads(self.request.body.decode('utf-8'))
-        pprint(incoming_message)
+        response = json.loads(self.request.body.decode('utf-8'))
+
+        if 'delivery'in response['entry'][0]['messaging'][0].keys():
+            return HttpResponse()
+        if 'message' not in response['entry'][0]['messaging'][0].keys():
+            return HttpResponse()
+        if 'is_echo' in response['entry'][0]['messaging'][0]['message'].keys():
+            return HttpResponse()
+
+
+        answer = ""
         try:
-            answer = get_answer(incoming_message)
-            print('======================================================\n' +
-                  answer +
-                  '======================================================\n')
-            page_id = incoming_message['entry'][0]['id']
-            incoming_message = incoming_message['entry'][0]['messaging'][0]
-            access_token = AccessTokens.objects.filter(id=page_id).first().access_token
-            if 'is_echo' in incoming_message['message'].keys():
-                return HttpResponse()
-
-            recipient = incoming_message['sender']['id']
-            message = incoming_message['message']['text']
-            question_qeury = process_question(message)
-            question_qeury = ' '.join(question_qeury)
-            if not answer:
-                answer = 'response' #generate_answer(question_qeury)
-
-            data = {
-                "messaging_type": "RESPONSE",
-                "recipient": {"id": recipient},
-                "message": {"text": answer}
-            }
-
-            response = requests.post(
-                "https://graph.facebook.com/v2.6/me/messages?access_token=" + access_token,
-                json=data)
+            answer = try_answer(response)
         except Exception as e:
-            print(e)
-        return HttpResponse()
+            pprint(e)
+            answer = "I couldn't understand you may you try once again with other words."
+
+        # Send a resposponse
+        page_id = response['entry'][0]['id']
+        recipient = response['entry'][0]['messaging'][0]['sender']['id']
+        access_token = AccessTokens.objects.filter(id=page_id).first().access_token
+        data = {
+            "messaging_type": "RESPONSE",
+            "recipient": {"id": recipient},
+            "message": {"text": answer}
+        }
+
+        response = requests.post(
+            "https://graph.facebook.com/v2.6/me/messages?access_token=" + access_token,
+            json=data)
+        return HttpResponse(200)
 
     @staticmethod
     def subscribe(request):
@@ -94,41 +93,41 @@ class ChatBot(View):
         return HttpResponse()
 
 
-def generate_answer(message):
-    answer = ""
-    request_url = "https://api.stackexchange.com/2.2/search/advanced?order=desc&sort=votes&title=" +\
-                   message + "&site=stackoverflow"
+def generate_summurized_answer(message):
+    answer = "Some answer?"
+    # request_url = "https://api.stackexchange.com/2.2/search/advanced?order=desc&sort=votes&title=" +\
+    #                message + "&site=stackoverflow"
 
-    response = requests.get(request_url)
-    pprint(json.loads(response._content))
-    items = json.loads(response._content)['items']
-    answers = ''
-    pprint(items)
-    for thread in items:
-        if thread['is_answered'] is True and 'accepted_answer_id' in thread.keys():
-            answer_id = thread['accepted_answer_id']
-            break
+    # response = requests.get(request_url)
+    # pprint(json.loads(response._content))
+    # items = json.loads(response._content)['items']
+    # answers = ''
+    # pprint(items)
+    # for thread in items:
+    #     if thread['is_answered'] is True and 'accepted_answer_id' in thread.keys():
+    #         answer_id = thread['accepted_answer_id']
+    #         break
 
-    request_url = 'https://api.stackexchange.com/2.2/answers/' + str(answer_id) +\
-                '?order=desc&sort=votes&site=stackoverflow&filter=withbody'
-    response = requests.get(request_url)
-    answer = json.loads(response._content)['items'][0]['body']
-    answer = html2text.html2text(answer)
-    answer = ' '.join(re.split(r'\s{2,}|\n', answer)).strip()
-    answers += '\n' + answer
+    # request_url = 'https://api.stackexchange.com/2.2/answers/' + str(answer_id) +\
+    #             '?order=desc&sort=votes&site=stackoverflow&filter=withbody'
+    # response = requests.get(request_url)
+    # answer = json.loads(response._content)['items'][0]['body']
+    # answer = html2text.html2text(answer)
+    # answer = ' '.join(re.split(r'\s{2,}|\n', answer)).strip()
+    # answers += '\n' + answer
 
-    print(answers)
-    summerized_answer = summarize(answers, word_count=50)
-    print('\n\n\nSUMMERIZED:\n|' + summerized_answer + '|')
-    if summerized_answer:
-        return summerized_answer
+    # print(answers)
+    # summerized_answer = summarize(answers, word_count=50)
+    # print('\n\n\nSUMMERIZED:\n|' + summerized_answer + '|')
+    # if summerized_answer:
+    #     return summerized_answer
     return answer
 
 
 def process_question(question):
     proba = CLASSIFIERS.predict_proba_question_type(question)
-    # if np.count_nonzero(proba > 0.3) == 0:
-    #     raise Exception('Not a question')
+    if np.count_nonzero(proba > 0.3) == 0:
+        raise Exception('Not a question')
     question_words = nltk.word_tokenize(question)
     pos_tagged = nltk.pos_tag(question_words)
     print(pos_tagged)
@@ -137,10 +136,20 @@ def process_question(question):
             yield w
 
 
-def get_answer(response):
-    fb_nlp_class = response['entry'][0]['messaging'][0]['message']['nlp']['entities'].keys()
-    for k in fb_nlp_class:
+def try_answer(response):
+    fb_nlp_class = response['entry'][0]['messaging'][0]['message']['nlp']['entities']
+    for k in fb_nlp_class.keys():
         if k == 'greetings':
-            return 'Hi'
-    return False
+           return check_confidence_and_return('Hi', fb_nlp_class[k])
+        if k == 'bye':
+            return check_confidence_and_return('Bye', fb_nlp_class[k])
     
+    message = response['entry'][0]['messaging'][0]['message']['text']
+    message_query = process_question(message)
+    return generate_summurized_answer(message_query)
+
+
+def check_confidence_and_return(message, pred_dict):
+     for el in pred_dict:
+            if el['confidence'] > 0.9:
+                return message
