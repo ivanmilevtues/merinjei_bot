@@ -172,9 +172,11 @@ Table of results:
 -----------------------------------------
 
 After changing the accuracy methods I got this results to 
-```Python
+```python
 classification_report(test_labels_pred, test_labels_true)
 ```
+
+Test:
 <table>
   <tr>
     <th>label</th>
@@ -206,17 +208,34 @@ classification_report(test_labels_pred, test_labels_true)
   </tr>
 </table>
 
-|label|precision|recall|f1-score|support|
-|-----|---------|------|-------|------|
-|0|0.84|0.99|0.91|6951|
-|1|0.97|0.56|0.71|2926|
-|avg / total| 0.88|0.86|0.85|9913|
-
 Train:
-             precision    recall  f1-score   support
-
-          0       0.89      0.99      0.94     11095
-          1       0.97      0.63      0.76      3774
-
-avg / total       0.91      0.90      0.89     14869
-
+<table>
+  <tr>
+    <th>label</th>
+    <th>precision</th>
+    <th>recall</th>
+    <th>f1-score</th>
+    <th>support</th>
+  </tr>
+  <tr>
+    <td>0</td>
+    <td>0.89</td>
+    <td>0.99</td>
+    <td>0.94</td>
+    <td>11095</td>
+  </tr>
+  <tr>
+    <td>1</td>
+    <td>0.97</td>
+    <td>0.63</td>
+    <td>0.76</td>
+    <td>3774</td>
+  </tr>
+  <tr>
+    <td>avg / total</td>
+    <td>0.91</td>
+    <td>0.90</td>
+    <td>0.89</td>
+    <td>14869</td>
+  </tr>
+</table>
