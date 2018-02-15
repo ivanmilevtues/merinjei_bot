@@ -10,16 +10,13 @@ from django.utils.decorators import method_decorator
 from hatespeech.models import AccessTokens
 from CONSTANTS import APP_ID, COMMENTS_CALLBACK, VERIFY_TOKEN, APP_SECRET
 from allauth.socialaccount.models import SocialToken
+from pprint import pprint
 
 
 from merinjei_classification.Classifiers import CLASSIFIERS
 
 
 def get_page_posts(access_token, page_id):
-    print('=  = = = = = == = = = = =')
-    print(page_id)
-    print(access_token)
-    print('== = = = = == = = = = = = = =')
     response = requests.get(
         'https://graph.facebook.com/v2.11/' + page_id + '/posts?access_token='
         + access_token)
@@ -76,6 +73,7 @@ def delete_comments(comments_to_del):
 class CommentScanner(View):
     def get(self, request):
         if self.request.GET['hub.verify_token'] == '19990402':
+            print('Comments Subscribed')
             return HttpResponse(self.request.GET['hub.challenge'])
         return HttpResponse('Error, invalid token')
 
@@ -99,8 +97,9 @@ class CommentScanner(View):
 
     # The purpose of this method is to recieve the subscribed webhooks
     # and call the needed handlers for certain messages
-    def post(self, request):
-        incoming_message = json.loads(self.request.body.decode('utf-8'))
+    @staticmethod
+    def process_new_comment(request):
+        incoming_message = json.loads(request.body.decode('utf-8'))
         from pprint import pprint
         pprint(incoming_message)
         entries = incoming_message['entry']
@@ -132,9 +131,22 @@ class CommentScanner(View):
             'fields': ['feed'],
             'verify_token': VERIFY_TOKEN,
             'access_token': access_token,
-            'active': True
-
         }
-        requests.post('https://graph.facebook.com/v2.11/' +
+        response = requests.post('https://graph.facebook.com/v2.11/' +
                       page_id + '/subscriptions', data)
+        return HttpResponse()
+
+    @staticmethod
+    def unsubscribe(request):
+        page_id = request.POST.get('page_id')
+        access_token = APP_ID + '|' + APP_SECRET
+        data = {
+            'object': 'page',
+            'fields': ['feed'],
+            'access_token': access_token
+        }
+        response = requests.delete('https://graph.facebook.com/v2.11/' +
+                        page_id + '/subscriptions', data=data)
+        pprint(response._content)
+        
         return HttpResponse()

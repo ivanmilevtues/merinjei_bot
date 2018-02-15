@@ -16,7 +16,7 @@ Including another URLconf
 from django.conf.urls import url
 from django.contrib import admin
 from django.conf.urls import include
-from merinjeiweb.views import redirect_to_login
+from merinjeiweb.views import redirect_to_login, WebHookHandler
 
 
 urlpatterns = [
@@ -25,5 +25,6 @@ urlpatterns = [
     url(r'^accounts/', include('allauth.urls')),
     url(r'^hatespeech/', include('hatespeech.urls')),
     url(r'^logged/', include('dashboard.urls')),
-    url(r'^chatbot/', include('chatbot.urls'))
+    url(r'^chatbot/', include('chatbot.urls')),
+    url(r'^webhook_handler/', WebHookHandler.as_view())
 ]

@@ -20,11 +20,6 @@ from merinjei_classification.Classifiers import CLASSIFIERS
 from CONSTANTS import APP_ID, VERIFY_TOKEN, APP_SECRET, DOMAIN, MESSENGER_CALLBACK
 
 class ChatBot(View):
-    def get(self, request, *args, **kwargs):
-        if self.request.GET['hub.verify_token'] == VERIFY_TOKEN:
-            return HttpResponse(self.request.GET['hub.challenge'])
-        return HttpResponse('Error, invalid token')
- 
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
 
@@ -32,8 +27,9 @@ class ChatBot(View):
 
     # The purpose of this method is to recieve the subscribed webhooks
     # and call the needed handlers for certain messages
-    def post(self, request, *args, **kwargs):
-        response = json.loads(self.request.body.decode('utf-8'))
+    @staticmethod
+    def process_messenger(request):
+        response = json.loads(request.body.decode('utf-8'))
 
         if 'delivery'in response['entry'][0]['messaging'][0].keys():
             return HttpResponse()
@@ -67,6 +63,7 @@ class ChatBot(View):
 
     @staticmethod
     def subscribe(request):
+        
         page_id = request.POST.get('page_id')
         page_access_token = request.POST.get('access_token')
         access_token = APP_ID + '|' + APP_SECRET
@@ -76,34 +73,50 @@ class ChatBot(View):
             'fields': ['messages'],
             'verify_token': VERIFY_TOKEN,
             'access_token': access_token,
-            'active': True
-
         }
 
         nlp_data = {
             'access_token': page_access_token
         }
         
+        app_data = {
+            'access_token': page_access_token
+        }
+
+        response = requests.post(
+            "https://graph.facebook.com/v2.11/" +
+            page_id + "/subscribed_apps", app_data)
         response = requests.post(
             'https://graph.facebook.com/v2.11/me/nlp_configs?nlp_enabled=true', nlp_data)
-        pprint(json.loads(response._content))
-
         response = requests.post('https://graph.facebook.com/v2.11/' +
                                  page_id + '/subscriptions', data)
+
+        return HttpResponse()
+
+    @staticmethod
+    def unsubscribe(request):
+        page_id = request.POST.get('page_id')
+        access_token = APP_ID + '|' + APP_SECRET
+        data = {
+            'object': 'page',
+            'fields': ['messages'],
+            'access_token': access_token
+        }
+
+        response = requests.delete('https://graph.facebook.com/v2.11/'
+                                 + page_id + '/subscriptions', data=data)
         pprint(json.loads(response._content))
         return HttpResponse()
 
-
 def generate_summurized_answer(user_question, question_type):
-    print('=====================================================',
-            user_question,
-          '=====================================================')
     answers = ""
     answers_ids = []
+    print(user_question)
     request_url = "https://api.stackexchange.com/2.2/search/advanced?order=desc&sort=votes&title=" +\
         user_question + "&site=stackoverflow"
 
     response = requests.get(request_url)
+
     questions = json.loads(response._content, object_pairs_hook=OrderedDict)['items']
     pprint(questions)
     for question in questions:
@@ -120,7 +133,7 @@ def generate_summurized_answer(user_question, question_type):
             str(answers_id) + \
             '?order=desc&sort=votes&site=stackoverflow&filter=withbody'
         response = requests.get(request_url)
-        answer = answer = json.loads(response._content)['items'][0]['body']
+        answer = json.loads(response._content)['items'][0]['body']
         answer = html2text.html2text(answer)
         answer = ' '.join(re.split(r'\s{2,}|\n', answer)).strip()
         answers += '\n' + answer
@@ -142,10 +155,10 @@ def process_question(question):
     question_words = nltk.word_tokenize(question)
     pos_tagged = nltk.pos_tag(question_words)
     question_list = []
-    for w, t in pos_tagged:
-        if t not in ['WP', 'VBZ', 'DT', '.']:
-            question_list.append(w)
-    return (' '.join(question_list), CLASSIFIERS.predict_question_type(question))
+    # for w, t in pos_tagged:
+    #     if t not in ['WP', 'VBZ', 'DT', '.']:
+    #         question_list.append(w)
+    return (question, CLASSIFIERS.predict_question_type(question))
 
 
 def try_answer(response):

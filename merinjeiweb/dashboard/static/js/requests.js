@@ -1,5 +1,62 @@
-function subscribeToComments(btn) {
+function handleCommentBtn(btn) {
     jqBtn = $(btn)
+    if (jqBtn.html().indexOf("ok") != -1) {
+        unsubscribeToComments(jqBtn);
+    } else {
+        subscribeToComments(jqBtn);
+    }
+}
+
+
+function handleMessengerBtn(btn) {
+    jqBtn = $(btn)
+    if (jqBtn.html().indexOf("ok") != -1) {
+        unsubscribeToMessenger(jqBtn);
+    } else {
+        subscribeToMessenger(jqBtn);
+    }
+}
+
+
+function unsubscribeToComments(jqBtn) {
+    var pageId = jqBtn.attr('data-id');
+    var CSRF = $('input[name="csrfmiddlewaretoken"]').val()
+
+    $.ajax({
+        type: "POST",
+        url: "/hatespeech/unsubscribe/",
+        data: {
+            csrfmiddlewaretoken: CSRF,
+            "page_id": pageId,
+        },
+        success: function () {
+            jqBtn.empty();
+            jqBtn.append('<i class="glyphicon glyphicon-remove"></i>');
+        }
+    });
+}
+
+
+function unsubscribeToMessenger(jqBtn) {
+    var pageId = jqBtn.attr('data-id');
+    var CSRF = $('input[name="csrfmiddlewaretoken"]').val()
+
+    $.ajax({
+        type: "POST",
+        url: "/chatbot/unsubscribe/",
+        data: {
+            csrfmiddlewaretoken: CSRF,
+            "page_id": pageId,
+        },
+        success: function () {
+            jqBtn.empty();
+            jqBtn.append('<i class="glyphicon glyphicon-remove"></i>');
+        }
+    });
+}
+
+
+function subscribeToComments(jqBtn) {
     var pageId = jqBtn.attr('data-id');
     var accessToken = jqBtn.attr('data-token');
 

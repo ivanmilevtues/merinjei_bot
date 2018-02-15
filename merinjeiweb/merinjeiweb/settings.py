@@ -25,7 +25,7 @@ SECRET_KEY = 'utdunzaiai$_ot3qc7jo#5gu_c=pjy!*!bi6%+n%!c(hsi!(ng'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', 'd9657bd9.ngrok.io']
+ALLOWED_HOSTS = ['localhost', 'a5186235.ngrok.io']
 
 # Application definition
 
@@ -151,6 +151,8 @@ STATIC_URL = '/static/'
 
 SOCIALACCOUNT_PROVIDERS = {
     'facebook': {
-        'SCOPE': ['email', 'public_profile', 'user_friends', 'pages_show_list'],
+        'SCOPE': ['email', 'public_profile', 'user_friends',
+                  'pages_show_list', 'pages_messaging', 'publish_pages',
+                  'manage_pages'],
     }
 }

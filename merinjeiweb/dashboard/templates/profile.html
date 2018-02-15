@@ -74,10 +74,10 @@
                 <tr>
                     <td>{{ page }}</td>
                     <td>
-                        <a title="Your subscription to the comments is DOWN" data-id='{{ value.id }}' data-token='{{ value.access_token }}' onclick="subscribeToComments(this)"><i class="glyphicon glyphicon-remove"></i></a>
+                        <a title="Your subscription to the comments is DOWN" data-id='{{ value.id }}' data-token='{{ value.access_token }}' onclick="handleCommentBtn(this)"><i class="glyphicon glyphicon-remove"></i></a>
                     </td>
                     <td>
-                        <a title="Your subscription to the comments is DOWN" data-id='{{ value.id }}' data-token='{{ value.access_token }}' onclick="subscribeToMessenger(this)"><i class="glyphicon glyphicon-remove"></i></a>
+                        <a title="Your subscription to the comments is DOWN" data-id='{{ value.id }}' data-token='{{ value.access_token }}' onclick="handleMessengerBtn(this)"><i class="glyphicon glyphicon-remove"></i></a>
                     </td>
                 </tr>
                 {% endfor %}
@@ -86,7 +86,7 @@
     </div>
 
     {% csrf_token %}
-    
+
     <!-- Scripts and CSS -->
     <script src={% static "js/jquery.min.js" %}></script>
     <script src={% static "js/requests.js" %}></script>

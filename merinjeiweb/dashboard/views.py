@@ -25,9 +25,12 @@ def profile_handler(request):
 
     fb_pages_response = requests.get(
         'https://graph.facebook.com/v2.11/me/accounts?type=page&access_token=' + access_token)
-
+    from pprint import pprint
+    print(access_token)
     user_data = json.loads(user_response._content)
     fb_page_data = json.loads(fb_pages_response._content)
+    pprint(user_data)
+    pprint(fb_page_data)
     username = user_data['name']
     user_pic = user_data['picture']['data']['url']
 
@@ -40,6 +43,7 @@ def profile_handler(request):
             defaults={'access_token': page['access_token']})
 
         obj.save()
+    print([(page.access_token, page.id) for page in list(AccessTokens.objects.all())])
     return render(request, 'profile.html', locals())
 
 
