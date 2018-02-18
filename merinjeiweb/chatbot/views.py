@@ -5,6 +5,7 @@ from django.views.generic import View
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 
+from dashboard.models import PageSubscriptions
 from pprint import pprint
 import json
 import nltk
@@ -90,7 +91,12 @@ class ChatBot(View):
             'https://graph.facebook.com/v2.11/me/nlp_configs?nlp_enabled=true', nlp_data)
         response = requests.post('https://graph.facebook.com/v2.11/' +
                                  page_id + '/subscriptions', data)
-
+        pprint(json.loads(response._content))
+        obj, _ = PageSubscriptions.objects.update_or_create(
+            id=page_id,
+            defaults={'messenger_subscription': True})
+        obj.save()
+    
         return HttpResponse()
 
     @staticmethod

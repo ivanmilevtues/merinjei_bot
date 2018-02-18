@@ -1,0 +1,4 @@
+from merinjei_classification.preprocess.Lexicon import Lexicon
+from merinjei_classification.model import hatespeech_model_init
+
+hatespeech_model_init()

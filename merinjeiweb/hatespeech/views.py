@@ -10,6 +10,7 @@ from django.utils.decorators import method_decorator
 from hatespeech.models import AccessTokens
 from CONSTANTS import APP_ID, COMMENTS_CALLBACK, VERIFY_TOKEN, APP_SECRET
 from allauth.socialaccount.models import SocialToken
+from dashboard.models import PageSubscriptions
 from pprint import pprint
 
 
@@ -50,7 +51,6 @@ def get_comments_for_post(posts, access_token):
 
 
 def delete_comments(comments_to_del):
-    print(comments_to_del)
     for page_id, comments in comments_to_del.items():
         access_token = AccessTokens.objects.filter(id=page_id)
         if access_token.count() == 0:
@@ -123,7 +123,7 @@ class CommentScanner(View):
     @staticmethod
     def subscribe(request):
         page_id = request.POST.get('page_id')
-
+        
         access_token = APP_ID + '|' + APP_SECRET
         data = {
             'object': 'page',
@@ -134,6 +134,12 @@ class CommentScanner(View):
         }
         response = requests.post('https://graph.facebook.com/v2.11/' +
                       page_id + '/subscriptions', data)
+        pprint(json.loads(response._content))
+        obj, _ = PageSubscriptions.objects.update_or_create(
+            id=page_id,
+            defaults={'feed_subscription': True})
+        obj.save()
+
         return HttpResponse()
 
     @staticmethod
@@ -147,6 +153,5 @@ class CommentScanner(View):
         }
         response = requests.delete('https://graph.facebook.com/v2.11/' +
                         page_id + '/subscriptions', data=data)
-        pprint(response._content)
         
         return HttpResponse()

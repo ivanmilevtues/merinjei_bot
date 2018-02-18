@@ -66,7 +66,7 @@
             </div>
             <table class="table table-hover">
                 <tr>
-                    <th>Pages:</th>
+                    <th>Page</th>
                     <th>Comments status</th>
                     <th>Messenger status</th>
                 </tr>
@@ -74,10 +74,22 @@
                 <tr>
                     <td>{{ page }}</td>
                     <td>
-                        <a title="Your subscription to the comments is DOWN" data-id='{{ value.id }}' data-token='{{ value.access_token }}' onclick="handleCommentBtn(this)"><i class="glyphicon glyphicon-remove"></i></a>
+                        <a title="Your subscription to the comments is DOWN" data-id='{{ value.id }}' data-token='{{ value.access_token }}' onclick="handleCommentBtn(this)">
+                            {% if value.feed_subscription %}
+                                <i class="glyphicon glyphicon-ok"></i>
+                            {% else %}
+                                <i class="glyphicon glyphicon-remove"></i>
+                            {% endif %}
+                        </a>
                     </td>
                     <td>
-                        <a title="Your subscription to the comments is DOWN" data-id='{{ value.id }}' data-token='{{ value.access_token }}' onclick="handleMessengerBtn(this)"><i class="glyphicon glyphicon-remove"></i></a>
+                        <a title="Your subscription to the comments is DOWN" data-id='{{ value.id }}' data-token='{{ value.access_token }}' onclick="handleMessengerBtn(this)">
+                             {% if value.messenger_subscription %}
+                                <i class="glyphicon glyphicon-ok"></i>
+                            {% else %}
+                                <i class="glyphicon glyphicon-remove"></i>
+                            {% endif %}
+                        </a>
                     </td>
                 </tr>
                 {% endfor %}

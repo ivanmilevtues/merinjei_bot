@@ -33,7 +33,7 @@ class WebHookHandler(View):
         pprint(parsed_request)
         if 'messaging' in parsed_request:
            ChatBot.process_messenger(request)
-           return HttpResponse
+           return HttpResponse()
         parsed_request = parsed_request['changes'][0]
         if 'field' in parsed_request and parsed_request['field'] == 'feed':
             CommentScanner.process_new_comment(request)
