@@ -33,11 +33,11 @@ class WebHookHandler(View):
         if 'messaging' in parsed_request and validate_chatbot_alive(parsed_request):
            ChatBot.process_messenger(request)
            return HttpResponse()
-
-        changes = parsed_request['changes'][0]
-        if 'field' in changes and changes['field'] == 'feed'\
-                and validate_feed_alive(parsed_request):
-            CommentScanner.process_new_comment(request)
+        if 'changes' in parsed_request.keys():
+            changes = parsed_request['changes'][0]
+            if 'field' in changes and changes['field'] == 'feed'\
+                    and validate_feed_alive(parsed_request):
+                CommentScanner.process_new_comment(request)
         return HttpResponse()
 
 
