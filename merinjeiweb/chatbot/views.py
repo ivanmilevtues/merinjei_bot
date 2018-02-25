@@ -102,16 +102,12 @@ class ChatBot(View):
     @staticmethod
     def unsubscribe(request):
         page_id = request.POST.get('page_id')
-        access_token = APP_ID + '|' + APP_SECRET
-        data = {
-            'object': 'page',
-            'fields': ['messages'],
-            'access_token': access_token
-        }
+        obj, _ = PageSubscriptions.objects.update_or_create(
+            id=page_id,
+            defaults={'messenger_subscription': False}
+        )
+        obj.save()
 
-        response = requests.delete('https://graph.facebook.com/v2.11/'
-                                 + page_id + '/subscriptions', data=data)
-        pprint(json.loads(response._content))
         return HttpResponse()
 
 def generate_summurized_answer(user_question, question_type):

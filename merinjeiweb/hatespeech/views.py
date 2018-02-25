@@ -65,7 +65,8 @@ def delete_comments(comments_to_del):
                                            access_token)
             except KeyError:
                 response = requests.delete('https://graph.facebook.com/v2.11/' +
-                                           comment['comment_id'] + '?access_token=' +
+                                           comment['comment_id'] +
+                                           '?access_token=' +
                                            access_token)
             print(json.loads(response._content))
 
@@ -145,13 +146,10 @@ class CommentScanner(View):
     @staticmethod
     def unsubscribe(request):
         page_id = request.POST.get('page_id')
-        access_token = APP_ID + '|' + APP_SECRET
-        data = {
-            'object': 'page',
-            'fields': ['feed'],
-            'access_token': access_token
-        }
-        response = requests.delete('https://graph.facebook.com/v2.11/' +
-                        page_id + '/subscriptions', data=data)
-        
+        obj, _ = PageSubscriptions.objects.update_or_create(
+            id=page_id,
+            defaults={'feed_subscription': False}
+        )
+        obj.save()
+
         return HttpResponse()
