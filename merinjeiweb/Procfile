@@ -1,0 +1,1 @@
+web: gunicorn merinjeiweb.wsgi --log-file -

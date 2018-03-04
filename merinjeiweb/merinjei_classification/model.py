@@ -1,7 +1,7 @@
 import time
 import pickle
 import numpy as np
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 from sklearn.naive_bayes import GaussianNB
 from sklearn.feature_extraction.text import  TfidfTransformer
 from merinjei_classification.preprocess.HateLineParser import HateLineParser
@@ -18,18 +18,18 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.feature_selection import SelectFromModel
 
 
-def plot(data):
-    x = list(range(len(data)))
-    y = data
+# def plot(data):
+#     x = list(range(len(data)))
+#     y = data
 
-    plt.plot(x, y, 'ro')
-    plt.axis([0, len(x), min(y), max(y)])
+#     plt.plot(x, y, 'ro')
+#     plt.axis([0, len(x), min(y), max(y)])
 
-    plt.xlabel('feature number')
-    plt.ylabel('feature importance')
-    plt.title('Features importance rate')
+#     plt.xlabel('feature number')
+#     plt.ylabel('feature importance')
+#     plt.title('Features importance rate')
 
-    plt.show()
+#     plt.show()
 
 
 def terminal_testing(clf, features):
