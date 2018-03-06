@@ -114,7 +114,7 @@ def generate_summurized_answer(user_question, question_type):
     answers = ""
     answers_ids = []
     print(user_question)
-    request_url = "https://api.stackexchange.com/2.2/search/advanced?order=desc&sort=votes&title=" +\
+    request_url = "https://api.stackexchange.com/2.2/search/advanced?order=desc&sort=relevance&title=" +\
         user_question + "&site=stackoverflow"
 
     response = requests.get(request_url)
@@ -124,8 +124,8 @@ def generate_summurized_answer(user_question, question_type):
     for question in questions:
         print(question_type, question['title'], CLASSIFIERS.predict_question_type(
             question['title']))
-        if question['is_answered'] is True and 'accepted_answer_id' in question.keys() and \
-            CLASSIFIERS.predict_question_type(question['title']) == question_type:
+        if question['is_answered'] is True and 'accepted_answer_id' in question.keys():# and \
+            #CLASSIFIERS.predict_question_type(question['title']) == question_type:
             answers_ids.append(question['accepted_answer_id'])
         if len(answers_ids) >= 3:
             break
@@ -157,10 +157,10 @@ def process_question(question):
     question_words = nltk.word_tokenize(question)
     pos_tagged = nltk.pos_tag(question_words)
     question_list = []
-    # for w, t in pos_tagged:
-    #     if t not in ['WP', 'VBZ', 'DT', '.']:
-    #         question_list.append(w)
-    return (question, CLASSIFIERS.predict_question_type(question))
+    for w, t in pos_tagged:
+        if t not in ['WP', 'VBZ', '.']:
+            question_list.append(w)
+    return (' '.join(question_list), CLASSIFIERS.predict_question_type(question))
 
 
 def try_answer(response):
