@@ -36,11 +36,13 @@ def init_dataset():
     # print(pjson_q.features)
 
     # ds_json_q = pjson_q.init_dataset()
-    ds_json_q = pjson_q.load_and_get_dataset('data/processed_data/dataset_questions_json_full_fs.pkl')
+    ds_json_q = pjson_q.load_and_get_dataset(
+        'merinjei_classification/data/processed_data/dataset_questions_json_full_fs.pkl')
 
 
     # ds_q = pq.init_dataset()
-    ds_q = pq.load_and_get_dataset('data/processed_data/dataset_questions_types_full_fs.pkl')
+    ds_q = pq.load_and_get_dataset(
+        'merinjei_classification/data/processed_data/dataset_questions_types_full_fs.pkl')
 
     return np.concatenate([ds_q, ds_json_q])
 
