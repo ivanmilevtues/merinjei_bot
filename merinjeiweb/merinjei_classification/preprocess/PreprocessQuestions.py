@@ -8,10 +8,10 @@ from merinjei_classification.preprocess.decorators import not_none
 
 class PreprocessQuestions(PreprocessData):
 
-    def __init__(self, sub_dirs: list, file_names: list, main_dir='data'):
+    def __init__(self, sub_dirs: list, file_names: list,
+                 main_dir='merinjei_classification/data'):
         super().__init__(sub_dirs, file_names, main_dir )
         self.labels = ['ABBR', 'DESC', 'PROCEDURE', 'HUM', 'LOC', 'NUM']
-    
 
     def init_features(self):
         files = self.open_files(self.paths)
