@@ -44,7 +44,7 @@ class PreprocessQuestions(PreprocessData):
                 if label is None:
                     continue
                 tokens = list(filter(None, tokens))
-                print(tokens)
+                # print(tokens)
                 pos_tags = [pos for _, pos in nltk.pos_tag(tokens)]
                 tokens += pos_tags
                 tokens = Counter(word for word in tokens)
