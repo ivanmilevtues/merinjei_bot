@@ -113,19 +113,36 @@ def hatespeech_model_init():
         split_to_train_test(dataset, test_set_percent=0.4, shuffle=False, labels=labels)
 
     time_start = time.time()
-    pipe = Pipeline(
-        [('select', SelectFromModel(LogisticRegression(class_weight='balanced',
-                                                       penalty="l1", C=0.01))),
-         ('model', LogisticRegression(class_weight='balanced', penalty='l2'))])
 
-    param_grid = [{}]
+    logistic_regression = LogisticRegression()
+    param_grid_l1 = {
+        'C': [0.001, 0.01, 1, 10, 100, 1000],
+        'penalty': ['l1'],
+        'dual': [False],
+        'fit_intercept':[True, False],
+        'solver': ['liblinear', 'saga'],
+        'warm_start': [True, False],
+        'n_jobs': [1, -1, 10, 100]
+    }
 
-    clf = GridSearchCV(pipe,param_grid, cv=StratifiedKFold(n_splits=5,
-                                        random_state=42).split(features_train, labels_train),
-                                        verbose=2)
+    param_grid_l2 = {
+        'C': [0.001, 0.01, 1, 10, 100, 1000],
+        'penalty': ['l2'],
+        'dual': [True, False],
+        'fit_intercept': [True, False],
+        'solver': ['newton-cg', 'lbfgs','sag'],
+        'warm_start': [True, False],
+        'n_jobs': [1, -1, 10, 100]
+    }
 
+    clf = GridSearchCV(logistic_regression, param_grid_l1)
 
+    # train_classifiers(features_test, features_train, labels_test, labels_train)
     clf.fit(features_train, labels_train)
+    train_pred = clf.predict(features_train)
+    test_pred = clf.predict(features_test)
+    log_classifier(clf, train_pred, labels_train, test_pred, labels_test,
+                    time_start, time.time())
 
     return clf.best_estimator_
 

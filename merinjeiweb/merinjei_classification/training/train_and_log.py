@@ -14,7 +14,7 @@ Train:
 =======================""".format(time.asctime(), time_end - time_start, str(clf),
                                   classification_report(test_labels_pred, test_labels_true),
                                   classification_report(train_labels_pred, train_labels_true))
-    with open("resultsQuestions.txt", "a") as f:
+    with open("D:/ProgramingProjects/Diploma/merinjei_bot/merinjeiweb/merinjei_classification/results.txt", "a") as f:
         f.write(log_text)
 
 def train_and_log(clf_class, features_train, labels_train, features_test, labels_test):
