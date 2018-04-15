@@ -1534,4 +1534,32 @@ Train:
 
 avg / total       0.91      0.90      0.90     14869
 
+==============================================
+Date: Mon Apr  9 23:57:50 2018
+Time taken to train: 5.721668720245361 seconds
+Classifier: GridSearchCV(cv=None, error_score='raise',
+       estimator=LogisticRegression(C=1.0, class_weight=None, dual=False, fit_intercept=True,
+          intercept_scaling=1, max_iter=100, multi_class='ovr', n_jobs=1,
+          penalty='l2', random_state=None, solver='liblinear', tol=0.0001,
+          verbose=0, warm_start=False),
+       fit_params=None, iid=True, n_jobs=1, param_grid={},
+       pre_dispatch='2*n_jobs', refit=True, return_train_score='warn',
+       scoring=None, verbose=0)
+---------------------------------
+Test:
+             precision    recall  f1-score   support
+
+          0       0.96      0.94      0.95     12571
+          1       0.70      0.77      0.73      2298
+
+avg / total       0.92      0.91      0.92     14869
+
+Train:
+             precision    recall  f1-score   support
+
+          0       1.00      1.00      1.00      8252
+          1       1.00      1.00      1.00      1662
+
+avg / total       1.00      1.00      1.00      9914
+
 =======================

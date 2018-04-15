@@ -1,5 +1,5 @@
 APP_ID = '390093838084850'
-DOMAIN = 'https://d85c52ed.ngrok.io'
+DOMAIN = 'https://ef1ac6ba.ngrok.io'
 COMMENTS_CALLBACK = DOMAIN + \
     '/webhook_handler/'
 MESSENGER_CALLBACK = DOMAIN + \

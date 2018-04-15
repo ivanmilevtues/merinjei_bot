@@ -116,13 +116,13 @@ def hatespeech_model_init():
 
     logistic_regression = LogisticRegression()
     param_grid_l1 = {
-        'C': [0.001, 0.01, 1, 10, 100, 1000],
-        'penalty': ['l1'],
-        'dual': [False],
-        'fit_intercept':[True, False],
-        'solver': ['liblinear', 'saga'],
-        'warm_start': [True, False],
-        'n_jobs': [1, -1, 10, 100]
+        # 'C': [0.001, 0.01, 1, 10, 100, 1000],
+        # 'penalty': ['l1'],
+        # 'dual': [False],
+        # 'fit_intercept':[True, False],
+        # 'solver': ['liblinear', 'saga'],
+        # 'warm_start': [True, False],
+        # 'n_jobs': [1, -1, 10, 100]
     }
 
     param_grid_l2 = {

@@ -50,4 +50,4 @@ def split_to_train_test(features_and_labels: list, test_set_percent=0.4,
         labels = labels.ravel()
 
     return train_test_split(features, labels, test_size=test_set_percent,
-                            random_state=42, shuffle=shuffle, stratify=labels)
+                            random_state=42, shuffle=True, stratify=labels)
