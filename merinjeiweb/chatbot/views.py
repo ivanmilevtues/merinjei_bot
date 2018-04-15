@@ -170,7 +170,7 @@ def try_answer(response):
            return check_confidence_and_return('Hi', fb_nlp_class[k])
         if k == 'bye':
             return check_confidence_and_return('Bye', fb_nlp_class[k])
-        if k == 'thanks'
+        if k == 'thanks':
             return check_confidence_and_return('It was pleasure to help',
                                                 fb_nlp_class[k])
     
