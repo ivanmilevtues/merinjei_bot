@@ -13,6 +13,7 @@ class QuestionLineParser:
         self.stemmer = SnowballStemmer('english')    
 
     def parse_line(self, question):
+        print(len(self.features))
         data = [0 for _ in range(len(self.features))]
         pattern = r'[^a-zA-Z0-9_\']'
 

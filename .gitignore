@@ -121,3 +121,4 @@ venv.bak/
 .idea
 
 merinjeiweb/merinjei_classification/data/
+merinjeiweb/db.sqlite3

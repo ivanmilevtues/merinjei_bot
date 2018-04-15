@@ -8,10 +8,10 @@ from merinjei_classification.preprocess.decorators import not_none
 
 class PreprocessQuestions(PreprocessData):
 
-    def __init__(self, sub_dirs: list, file_names: list, main_dir='data'):
+    def __init__(self, sub_dirs: list, file_names: list,
+                 main_dir='merinjei_classification/data'):
         super().__init__(sub_dirs, file_names, main_dir )
         self.labels = ['ABBR', 'DESC', 'PROCEDURE', 'HUM', 'LOC', 'NUM']
-    
 
     def init_features(self):
         files = self.open_files(self.paths)
@@ -44,7 +44,7 @@ class PreprocessQuestions(PreprocessData):
                 if label is None:
                     continue
                 tokens = list(filter(None, tokens))
-                print(tokens)
+                # print(tokens)
                 pos_tags = [pos for _, pos in nltk.pos_tag(tokens)]
                 tokens += pos_tags
                 tokens = Counter(word for word in tokens)

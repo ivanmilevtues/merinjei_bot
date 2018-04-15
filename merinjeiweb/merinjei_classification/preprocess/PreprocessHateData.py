@@ -93,7 +93,7 @@ class PreprocessHateData(PreprocessData):
                 preprocessor=None,
                 ngram_range=(1, 3),
                 stop_words=None,
-                use_idf=False,
+                use_idf=True,
                 smooth_idf=False,
                 norm=None,
                 decode_error='replace',

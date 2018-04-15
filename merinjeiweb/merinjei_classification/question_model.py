@@ -17,49 +17,73 @@ def init_dataset():
     
     pjson_q = PreprocessJSONQuestions(['questions'], ['question_types.json'])
     # pjson_q.init_features()
-    # pjson_q.save_features('data/processed_data/questions_json_features.pkl')
+    # pjson_q.save_features(
+    #     'merinjei_classification/data/processed_data/questions_json_features.pkl')
 
-    # fs_json_q = pjson_q.load_and_get_features('data/processed_data/questions_json_features.pkl')
+    fs_json_q = pjson_q.load_and_get_features(
+        'merinjei_classification/data/processed_data/questions_json_features.pkl')
 
     pq = PreprocessQuestions(['questions'], ['question_types01.txt'])   
     # pq.init_features()
-    # pq.save_features('data/processed_data/questions_types01_features.pkl')
-    # fs_q = pq.load_and_get_features('data/processed_data/questions_types01_features.pkl')
+    # pq.save_features(
+    #     'merinjei_classification/data/processed_data/questions_types01_features.pkl')
+    fs_q = pq.load_and_get_features(
+        'merinjei_classification/data/processed_data/questions_types01_features.pkl')
     
-    # with open('data/processed_data/questions_full_features.pkl', 'wb') as f:
-    #     fs = set(fs_json_q)
-    #     fs.update(fs_q)
-    #     pickle.dump(list(fs), f)
+    with open(
+        'merinjei_classification/data/features/questions_full_features.pkl', 'wb') as f:
+        fs = set(fs_json_q)
+        fs.update(fs_q)
+        pickle.dump(list(fs), f)
     
-    # pq.load_features('data/processed_data/questions_full_features.pkl')
-    # pjson_q.load_features('data/processed_data/questions_full_features.pkl')
-    # print(pjson_q.features)
+    pq.load_features(
+        'merinjei_classification/data/features/questions_full_features.pkl')
+    print('FEATURES:' + str(len(pq.get_features())))
+    pjson_q.load_features(
+        'merinjei_classification/data/features/questions_full_features.pkl')
 
-    # ds_json_q = pjson_q.init_dataset()
-    ds_json_q = pjson_q.load_and_get_dataset(
+    ds_json_q = pjson_q.init_dataset()
+    pjson_q.save_dataset(
         'merinjei_classification/data/processed_data/dataset_questions_json_full_fs.pkl')
+    # ds_json_q = pjson_q.load_and_get_dataset(
+    #     'merinjei_classification/data/processed_data/dataset_questions_json_full_fs.pkl')
 
 
-    # ds_q = pq.init_dataset()
-    ds_q = pq.load_and_get_dataset(
+    ds_q = pq.init_dataset()
+    pq.save_dataset(
         'merinjei_classification/data/processed_data/dataset_questions_types_full_fs.pkl')
+    # ds_q = pq.load_and_get_dataset(
+    #     'merinjei_classification/data/processed_data/dataset_questions_types_full_fs.pkl')
 
     return np.concatenate([ds_q, ds_json_q])
 
 
 def quesition_model_init():
     ds = init_dataset()
+    print(ds.shape)
     pq = PreprocessQuestions([''], [''])
     features_test, features_train, labels_test, labels_train = split_to_train_test(ds, test_set_percent=0.2)
     
+    time_start = time.time()
     clf = RandomForestClassifier()
+
     clf.fit(features_train, labels_train)
+    time_end = time.time()
+
+    pred_train = clf.predict(features_train)
+    pred_test = clf.predict(features_test)
+
+    log_classifier(clf, pred_train, labels_train, pred_test, labels_test,
+                   time_start, time_end)
+    with open('merinjei_classification/classifiers/question_clf.pkl', 'wb') as f:
+        pickle.dump(clf, f)
     return clf
 
 
 def main():
     ds = init_dataset()
-    
+    print("DATASET")
+    print(ds.shape)
     pq = PreprocessQuestions([''], [''])
     fs = pq.load_and_get_features('data/processed_data/questions_full_features.pkl')
     features_test, features_train, labels_test, labels_train = split_to_train_test(ds, test_set_percent=0.2)

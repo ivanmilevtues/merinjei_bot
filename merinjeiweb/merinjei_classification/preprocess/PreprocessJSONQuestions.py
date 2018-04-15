@@ -8,9 +8,11 @@ import nltk
 
 class PreprocessJSONQuestions(PreprocessQuestions):
 
-    def __init__(self, sub_dirs: list, file_names: list, main_dir='data'):
+    def __init__(self, sub_dirs: list, file_names: list,
+                 main_dir='merinjei_classification/data'):
         super().__init__(sub_dirs, file_names, main_dir)
-        self.labels = ['ABBR', 'DESC', 'PROCEDURE', 'PERSON', 'LOCATION', 'NUMBER', 'ORGANIZATION', 'CAUSALITY']
+        self.labels = ['ABBR', 'DESC', 'PROCEDURE', 'PERSON', 'LOCATION',
+                       'NUMBER', 'ORGANIZATION', 'CAUSALITY']
 
     def init_features(self):
         files = self.open_files(self.paths)
@@ -24,10 +26,11 @@ class PreprocessJSONQuestions(PreprocessQuestions):
         for data_dict in data_dicts:
             for entry in data_dict:
                 tokens = re.split(pattern, entry['q_en'])
+                words = self._reduce_tokens(tokens)
                 tokens = list(filter(None, tokens))
                 tags = [pos for _, pos in nltk.pos_tag(tokens)]
-                features.update(self._reduce_tokens(tokens))
-                # features.update(tags)
+                features.update(self._reduce_tokens(tags))
+                features.update(self._reduce_tokens(words))
 
         self.close_files(files)
         self.features = list(features)
@@ -36,14 +39,13 @@ class PreprocessJSONQuestions(PreprocessQuestions):
     @not_none('features')
     def init_dataset(self):
         files = self.open_files(self.paths)
-        # all non character chars
         pattern = r'([^a-zA-Z0-9_\'])+'
         dataset = []
         data_dicts = []
 
         for f in files:
             data_dicts.append(json.loads(f.read()))
-        
+
         for data_dict in data_dicts:
             for entry in data_dict:
                 if entry['q_en'] is '':
