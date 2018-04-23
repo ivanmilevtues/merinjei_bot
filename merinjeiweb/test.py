@@ -1,10 +1,12 @@
 from merinjei_classification.preprocess.Lexicon import Lexicon
 from merinjei_classification.Classifiers import CLASSIFIERS
+from merinjei_classification.model import hatespeech_model_init
 
 # quesition_model_init()
 # print(CLASSIFIERS.predict_proba_question_type(input("Input here:")))
 # CLASSIFIERS.init_hatespeech_classifier()
-print(CLASSIFIERS.predict_proba_comment_type("I like this really much"))
+# hatespeech_model_init()
+print(CLASSIFIERS.predict_comment_type("I like this really much"))
 print(CLASSIFIERS.predict_proba_comment_type("This is cool man"))
 print(CLASSIFIERS.predict_proba_comment_type("I am into your comments"))
 print(CLASSIFIERS.predict_proba_comment_type("Fuck you and fuck all your fucking family"))

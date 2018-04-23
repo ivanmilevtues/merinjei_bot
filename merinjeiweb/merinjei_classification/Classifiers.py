@@ -76,8 +76,11 @@ class Classifiers:
         data = self.hlp.parse_line(comment)
         return self.hs_classifier.predict_proba(data)
 
-    def predict_parsed_comments(self, comment_np):
-        return self.hs_classifier.predict(comment_np)
+    def predict_parsed_comments(self, comments):
+        return self.hs_classifier.predict(comments)
+    
+    def predict_proba_parsed_comments(self, comments):
+        return self.hs_classifier.predict_proba(comments)
     
     def get_hs_parser(self):
         return self.hlp
