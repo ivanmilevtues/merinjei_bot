@@ -32,9 +32,9 @@ def score_comments(comments):
     for comment in comments:
         data.append(hlp.parse_line(comment['message'])[0])
     data = np.array(data)
-    scored_comments = CLASSIFIERS.predict_parsed_comments(data)
+    scored_comments = CLASSIFIERS.predict_proba_parsed_comments(data)
     comments_to_delete = [comments[i] for i in range(len(scored_comments))\
-                          if scored_comments[i] == 0]
+                          if scored_comments[i][0] >= 0.7]
     return comments_to_delete
 
 
