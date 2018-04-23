@@ -4,6 +4,7 @@ import nltk
 from merinjei_classification.preprocess.preprocessing_utilities import add_to_array
 from collections import Counter
 from nltk.stem import SnowballStemmer
+from nltk.util import trigrams, bigrams
 from sklearn.feature_extraction.text import TfidfTransformer
 from merinjei_classification.preprocess.PreprocessHateData import PreprocessHateData
 
@@ -14,12 +15,13 @@ class HateLineParser:
         self.features = features
         self.pos_analyzer = self.features['ngram_vectorizer'].build_analyzer()
         self.ngram_analyzer = self.features['pos_vectorizer'].build_analyzer()
+        self.lexicon = self.features['lexicon']
         self.pphd = PreprocessHateData([], [])
 
     def parse_line(self, tweet):
         dataset = [0 for _ in range(len(self.features['ngram_features']) + 
-                               len(self.features['pos_features']) + 
-                               len(self.features['other_features']))]
+                                    len(self.features['pos_features']) + 
+                                    len(self.features['other_features']))]
 
 
         cleaned_tweet = self.pphd.replace_mentions_urls(tweet)
@@ -50,4 +52,14 @@ class HateLineParser:
             ds_indx = (len(other_features) - indx)
             dataset[-ds_indx] = other_features[indx]
         
+        lex_data = [0 for _ in range(len(self.lexicon))]
+
+        tweet_ngrams = tweet.split() + list(trigrams(tweet.split()))\
+                        + list(bigrams(tweet.split()))
+        for ngram in tweet_ngrams:
+            ngram = ' '.join(ngram)
+            if ngram in self.lexicon:
+                indx = list(self.lexicon.keys()).index(ngram)
+                lex_data[indx] = self.lexicon[ngram]
+        dataset += lex_data
         return np.array([dataset])

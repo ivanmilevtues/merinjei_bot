@@ -1,7 +1,7 @@
 import time
 import pickle
 import numpy as np
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 from sklearn.naive_bayes import GaussianNB
 from sklearn.feature_extraction.text import  TfidfTransformer
 from merinjei_classification.preprocess.HateLineParser import HateLineParser
@@ -18,18 +18,18 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.feature_selection import SelectFromModel
 
 
-def plot(data):
-    x = list(range(len(data)))
-    y = data
+# def plot(data):
+#     x = list(range(len(data)))
+#     y = data
 
-    plt.plot(x, y, 'ro')
-    plt.axis([0, len(x), min(y), max(y)])
+#     plt.plot(x, y, 'ro')
+#     plt.axis([0, len(x), min(y), max(y)])
 
-    plt.xlabel('feature number')
-    plt.ylabel('feature importance')
-    plt.title('Features importance rate')
+#     plt.xlabel('feature number')
+#     plt.ylabel('feature importance')
+#     plt.title('Features importance rate')
 
-    plt.show()
+#     plt.show()
 
 
 def terminal_testing(clf, features):
@@ -61,26 +61,27 @@ def preprocess_data():
 
     preprocess.dataset = full_dataset
     preprocess.balance_dataset()
-    print(full_dataset.shape)
-    print(preprocess.get_dataset().shape)
+    # print(full_dataset.shape)
+    # print(preprocess.get_dataset().shape)
     full_dataset = preprocess.get_dataset()
     dataset = full_dataset[:, :-1]
     labels = full_dataset[:, -1:]
 
-    unused_indxs = get_unused_dataset_indxs(full_dataset, 10, int(len(full_dataset) * 0.3))
+    unused_indxs = get_unused_dataset_indxs(full_dataset, 10,
+                                            int(len(full_dataset) * 0.3))
     
     full_dataset = PreprocessData.reduce_dataset(dataset, unused_indxs)
     features = PreprocessData.reduce_features(features, unused_indxs)
 
     full_dataset = np.append(full_dataset, labels, axis=1)
-    print(full_dataset.shape)
-    features_test, features_train, labels_test, labels_train = split_to_train_test(full_dataset)
+    features_test, features_train, labels_test, labels_train =\
+        split_to_train_test(full_dataset)
     
     features_test  = TfidfTransformer().fit_transform(features_test).toarray()
     features_train = TfidfTransformer().fit_transform(features_train).toarray()
 
-    features_test, features_train, labels_test, labels_train = split_to_train_test(full_dataset, test_set_percent=0.2,
-                                                                                   shuffle=True)
+    features_test, features_train, labels_test, labels_train =\
+        split_to_train_test(full_dataset, test_set_percent=0.2, shuffle=True)
 
     from sklearn.ensemble import RandomForestClassifier
     clf = RandomForestClassifier()
@@ -95,22 +96,22 @@ def preprocess_data():
 
 def hatespeech_model_init():
     preprocess = PreprocessHateData(
-        ['data'], ['twitter_hate_speech.csv'], main_dir='merinjei_classification')
+        ['data'], ['twitter_hate_speech.csv'],
+        main_dir='merinjei_classification')
     # pd.load_features('reduced_full_features.pickle')
-    _, labels = preprocess.init_dataset()
-    with open('merinjei_classification/data/processed_data/labels.pkl', 'wb') as f:
+    dataset, labels = preprocess.init_dataset()
+    with open(
+        'merinjei_classification/data/processed_data/labels.pkl', 'wb') as f:
         pickle.dump(labels, f)
-    preprocess.save_dataset("merinjei_classification/data/processed_data/dataset_hs_w_trigrams_stemmed.pkl")
-    features = preprocess.init_features()
-    features = preprocess.get_features()
-    preprocess.save_features()
-    dataset = preprocess.load_and_get_dataset(
-        'merinjei_classification/data/processed_data/dataset_hs_w_trigrams_stemmed.pkl')
-    labels = preprocess.load_and_get_dataset('merinjei_classification/data/processed_data/labels.pkl')
+    preprocess.save_dataset(
+        "merinjei_classification/data/processed_data/dataset_hs_w_trigrams_stemmed.pkl")
+    preprocess.init_features()
+    preprocess.save_features(
+        'merinjei_classification/data/features/hatespeech_features.pkl')
     labels = np.array(labels)
-    
     features_test, features_train, labels_test, labels_train =\
-        split_to_train_test(dataset, test_set_percent=0.4, shuffle=False, labels=labels)
+        split_to_train_test(dataset, test_set_percent=0.4,
+                            shuffle=True, labels=labels)
 
     time_start = time.time()
 
@@ -130,9 +131,9 @@ def hatespeech_model_init():
         'penalty': ['l2'],
         'dual': [True, False],
         'fit_intercept': [True, False],
-        'solver': ['newton-cg', 'lbfgs','sag'],
+        # 'solver': ['newton-cg', 'lbfgs','sag'],
         'warm_start': [True, False],
-        'n_jobs': [1, -1, 10, 100]
+        'n_jobs': [-1]
     }
 
     clf = GridSearchCV(logistic_regression, param_grid_l1)
@@ -143,7 +144,8 @@ def hatespeech_model_init():
     test_pred = clf.predict(features_test)
     log_classifier(clf, train_pred, labels_train, test_pred, labels_test,
                     time_start, time.time())
-
+    with open("merinjei_classification/classifiers/hatespeech_clf.pkl", 'wb') as f:
+        pickle.dump(clf.best_estimator_, f)
     return clf.best_estimator_
 
 
@@ -170,7 +172,8 @@ def main():
     # full_dataset = np.concatenate((dataset, labels), axis=1)
     
     features_test, features_train, labels_test, labels_train =\
-        split_to_train_test(dataset, test_set_percent=0.4, shuffle=False, labels=labels)
+        split_to_train_test(dataset, test_set_percent=0.4, shuffle=False,
+                            labels=labels)
 
     # print(features_test.shape, labels_test.shape)
     # print(features_train.shape, labels_train.shape)
@@ -184,8 +187,9 @@ def main():
 
     param_grid = [{}]  # Optionally add parameters here
 
-    clf = GridSearchCV(pipe,param_grid, cv=StratifiedKFold(n_splits=5,
-                                        random_state=42).split(features_train, labels_train),
+    clf = GridSearchCV(pipe,param_grid,cv=StratifiedKFold(n_splits=5,
+                                        random_state=42)
+                                        .split(features_train, labels_train),
                                         verbose=2)
 
     clf.fit(features_train, labels_train)
@@ -199,7 +203,6 @@ def main():
                    time_start, time_end)
     
     print(classification_report(pred_test, labels_test))
-    print(features_test.shape)
     del features_test
     del features_train
     del labels_test

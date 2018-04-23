@@ -81,7 +81,9 @@ class PreprocessHateData(PreprocessData):
         print(pos_data.shape)
         print(ngram_data.shape)
         print(lexicon.shape, np.sum(lexicon))
-        self.dataset = np.concatenate([ngram_data, pos_data, additional_features, lexicon], axis=1)
+        self.dataset = np.concatenate([ngram_data, pos_data,
+                                       additional_features, lexicon], axis=1)
+        print("InitDS:", self.dataset.shape)
         return (self.dataset, labels)
 
     @not_none('corpus')
@@ -107,7 +109,8 @@ class PreprocessHateData(PreprocessData):
             tokens = nltk.word_tokenize(tweet)
             tokens_tagged = nltk.pos_tag(tokens)
             # Taking only the part of speech (Word, PartOfSpeech)
-            pos_tags = [pos[1] for pos in tokens_tagged if re.match('\w+', pos[1])]
+            pos_tags = [pos[1] for pos in tokens_tagged if re.match('\w+',
+                                                                    pos[1])]
             curr_row = ' '.join(pos_tags)
             dataset.append(curr_row)
 
@@ -134,10 +137,12 @@ class PreprocessHateData(PreprocessData):
 
         avrg_syllables = number_of_syllables / number_of_words
         # Flesch–Kincaid grade level
-        fkra_score = (0.39 * number_of_words) + ( 11.8 * number_of_syllables / number_of_words) - 15.59
+        fkra_score = (0.39 * number_of_words) \
+                    + ( 11.8 * number_of_syllables / number_of_words) - 15.59
 
         # Flesch reading ease
-        fre_score = 206.835 - (1.015 * number_of_words) - (84.6 * number_of_syllables / number_of_words)
+        fre_score = 206.835 - (1.015 * number_of_words)\
+                    - (84.6 * number_of_syllables / number_of_words)
 
         tweet.replace('URL', '')
         tweet.replace('MENTION', '')
@@ -148,7 +153,8 @@ class PreprocessHateData(PreprocessData):
                 number_of_terms, number_of_unique_terms,number_of_syllables,\
                 number_of_chars, number_of_chars_total, avrg_syllables,\
                 fkra_score, fre_score,\
-                polarity['neg'], polarity['neu'], polarity['pos'], polarity['compound']]
+                polarity['neg'], polarity['neu'], polarity['pos'],
+                polarity['compound']]
 
     @not_none('corpus')
     def init_other_features(self):
@@ -156,10 +162,12 @@ class PreprocessHateData(PreprocessData):
         for tweet in self.corpus:
             dataset.append(self.get_other_features(tweet))
 
-        self.other_features = ['URLCOUNT', 'MENTIONCOUNT', 'HASHTAGCOUNT', 'WORDSCOUNT',
-                               'TERMSCOUNT', 'UNIQUETERMSCOUNT', 'SYLLABLESCOUNT', 'CHARSCOUNT',
-                               'TOTALCHARSCOUNT', 'AVRGSYLLABLESCOUNT', 'FKRA', 'FRE',
-                               'POLARITYNEG', 'POLARITYNEU', 'POLARITYPOS', 'POLARITYCOMP']
+        self.other_features = ['URLCOUNT', 'MENTIONCOUNT', 'HASHTAGCOUNT',
+                               'WORDSCOUNT', 'TERMSCOUNT', 'UNIQUETERMSCOUNT',
+                               'SYLLABLESCOUNT', 'CHARSCOUNT',
+                               'TOTALCHARSCOUNT', 'AVRGSYLLABLESCOUNT', 'FKRA',
+                               'FRE', 'POLARITYNEG', 'POLARITYNEU',
+                               'POLARITYPOS', 'POLARITYCOMP']
 
         return np.array(dataset)
 
@@ -202,7 +210,8 @@ class PreprocessHateData(PreprocessData):
 
         for tweet in self.corpus:
             row = [0 for _ in range(len(self.lexicon))]
-            tweet_ngrams = tweet.split() + list(trigrams(tweet.split())) + list(bigrams(tweet.split()))
+            tweet_ngrams = tweet.split() + list(trigrams(tweet.split()))\
+                           + list(bigrams(tweet.split()))
             for ngram in tweet_ngrams:
                 ngram = ' '.join(ngram)
                 if ngram in self.lexicon:
