@@ -28,13 +28,14 @@ def get_page_posts(access_token, page_id):
 def score_comments(comments):
     data = []
     comments_to_delete = []
+    IS_HATE = 0
     hlp = CLASSIFIERS.get_hs_parser()
     for comment in comments:
         data.append(hlp.parse_line(comment['message'])[0])
     data = np.array(data)
-    scored_comments = CLASSIFIERS.predict_proba_parsed_comments(data)
+    scored_comments = CLASSIFIERS.predict_parsed_comments(data)
     comments_to_delete = [comments[i] for i in range(len(scored_comments))\
-                          if scored_comments[i][0] >= 0.7]
+                          if scored_comments[i] == IS_HATE]
     return comments_to_delete
 
 
