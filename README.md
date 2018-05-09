@@ -1,5 +1,5 @@
 # Merinjei Bot
-Merinjei bot is system for facebook page maintenance.
+Merinjei bot is system for facebook page maintenance. Developed as my Graduation project for [Technology School Electronic Systems](http://elsys-bg.org)
 
 The idea behind him is to make facebook page maintenance easier than ever. If you start using the bot your only job will be to post new content in your page.Everything else will be covered by your fellow Merinjei.
 
@@ -10,9 +10,8 @@ The chatbot is using online services for question answering for the moment the b
 The application is **hosted** on https://merinjei-bot.herokuapp.com.
 However yet it is not usable from non-testers as Facebook's policy states code review for the project before it gets released so that they are sure the application is not malicious in any way.
 
------------------------------
 
-## Setup MerinjeiBot localy
+# Setup MerinjeiBot localy
 ### Get yourself https connection
 Firstly you should find yourself an https comminication and domain for it. I would suggest you to use [ngrok](https://ngrok.com/download)
 it is very easy to setup and use.
@@ -71,3 +70,9 @@ Navigate to the merinjeiweb folder and run the application:
 cd merinjeiweb
 python manage.py
 ```
+
+# Requirements for the project
+- [x] Hatespeech classifier
+- [x] Question type classifier
+- [x] Query extraction and answer summarization
+- [x] Full integration with Facebook
