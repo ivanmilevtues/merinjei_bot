@@ -5,16 +5,17 @@ from django.views.generic import View
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 
-from dashboard.models import PageSubscriptions
-from pprint import pprint
 import json
 import nltk
 import html2text
 import numpy as np
 import requests
 import re
+from pprint import pprint
+from rake_nltk import Rake
 from collections import OrderedDict
 
+from dashboard.models import PageSubscriptions
 from hatespeech.models import AccessTokens
 from gensim.summarization import summarize
 from merinjei_classification.Classifiers import CLASSIFIERS
@@ -48,8 +49,6 @@ class ChatBot(View):
             answer = "I couldn't understand you may you try once again with other words."
 
         # Send a resposponse
-        print("=/=/=/=/=/=/=/=/")
-        print(answer)
         page_id = response['entry'][0]['id']
         recipient = response['entry'][0]['messaging'][0]['sender']['id']
         access_token = AccessTokens.objects.filter(id=page_id).first().access_token
@@ -114,12 +113,12 @@ class ChatBot(View):
 
         return HttpResponse()
 
-def generate_summurized_answer(user_question, question_type):
+def generate_summurized_answer(question_query, question_type):
     answers = ""
     answers_ids = []
-    print(user_question)
+    print(question_query)
     request_url = "https://api.stackexchange.com/2.2/search/advanced?order=desc&sort=relevance&title=" +\
-        user_question.lower() + "&site=stackoverflow"
+        question_query.lower() + "&site=stackoverflow"
 
     response = requests.get(request_url)
 
@@ -131,7 +130,7 @@ def generate_summurized_answer(user_question, question_type):
         if question['is_answered'] is True and \
             'accepted_answer_id' in question.keys() and \
             (CLASSIFIERS.predict_question_type(question['title']) == question_type or\
-            title_contains(question['title'], user_question)):
+            title_contains(question['title'], question_query)):
             answers_ids.append(question['accepted_answer_id'])
         if len(answers_ids) >= 3:
             break
@@ -142,6 +141,7 @@ def generate_summurized_answer(user_question, question_type):
             '?order=desc&sort=votes&site=stackoverflow&filter=withbody'
         response = requests.get(request_url)
         answer = json.loads(response._content)['items'][0]['body']
+        answer = remove_code_tag(answer)
         answer = html2text.html2text(answer)
         answer = ' '.join(re.split(r'\s{2,}|\n', answer)).strip()
         answers += '\n' + answer
@@ -159,16 +159,13 @@ def generate_summurized_answer(user_question, question_type):
 
 
 def process_question(question):
-    # proba = CLASSIFIERS.predict_proba_question_type(question)
-    # if np.count_nonzero(proba > 0.3) == 0:
-    #     raise Exception('Not a question')
-    question_words = nltk.word_tokenize(question)
-    pos_tagged = nltk.pos_tag(question_words)
-    question_list = []
-    for w, t in pos_tagged:
-        if t not in ['WP', 'VBZ', '.']:
-            question_list.append(w)
-    return (' '.join(question_list), CLASSIFIERS.predict_question_type(question))
+    stopwords = nltk.corpus.stopwords.words('english')
+    stopwords += ['know', 'think', 'tell']
+    rake_algo = Rake(stopwords=stopwords)
+    rake_algo.extract_keywords_from_text(question)
+    question_query_list = rake_algo.get_ranked_phrases()
+    return (' '.join(question_query_list),
+            CLASSIFIERS.predict_question_type(question))
 
 
 def try_answer(response):
@@ -197,3 +194,11 @@ def title_contains(overflow_q, user_q):
     overflow_q_words = set(overflow_q.lower().split())
     overlapped_words = user_q_words & overflow_q_words
     return 1 - ((len(user_q_words) - len(overflow_q_words)) / len(user_q_words)) > 0.7
+
+
+def remove_code_tag(html):
+    regex = r"<code>.*?</code>"
+    matches = re.finditer(regex, html, re.DOTALL)
+    for match in matches:
+        html = html.replace(match.group(), '')
+    return html

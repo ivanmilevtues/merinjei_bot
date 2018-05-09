@@ -39,6 +39,8 @@ def profile_handler(request):
     fb_pages = {}
 
     for page in fb_page_data['data']:
+        if not has_perms(page):
+            continue
         feed_subscription, messenger_subscription = get_subsriptions_for_page(
             page['id'])
 
@@ -53,7 +55,7 @@ def profile_handler(request):
             defaults={'access_token': page['access_token']})
 
         obj.save()
-    return render(request, 'profile.html', locals())
+    return render(request, 'dashboard.html', locals())
 
 
 def login(request):
@@ -72,3 +74,7 @@ def get_subsriptions_for_page(page_id):
         page_subscriptions = page_subscriptions.first()
     return (page_subscriptions.feed_subscription,
             page_subscriptions .messenger_subscription)
+
+def has_perms(page):
+    return 'ADMINISTER' in page['perms'] or 'EDIT_PROFILE' in page['perms'] \
+        or 'MODERATE_CONTENT' in page['perms'] or 'BASIC_ADMIN' in page['perms']

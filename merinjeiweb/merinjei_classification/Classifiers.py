@@ -12,6 +12,10 @@ class Classifiers:
         self.question_classifer = None
         self.hlp = None
         self.qlp = None
+        self.hatespeech_threshold = 0.7
+        self.IS_HATE = 0
+        self.NOT_HATE = 1
+        self.hate_predict = 0
         hs_features = None
         question_features = None
         try:
@@ -70,7 +74,14 @@ class Classifiers:
 
     def predict_comment_type(self, comment):
         data = self.hlp.parse_line(comment)
-        return self.hs_classifier.predict(data)
+        clf_prediction = self.hs_classifier.predict(data)
+        rounded_clf_prediction = []
+        for pred in clf_prediction:
+            if pred[self.hate_predict] < self.hatespeech_threshold:
+                rounded_clf_prediction.append(self.NOT_HATE)
+            else:
+                rounded_clf_prediction.append(self.IS_HATE)            
+        return rounded_clf_prediction
 
     def predict_proba_comment_type(self, comment):
         data = self.hlp.parse_line(comment)

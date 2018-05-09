@@ -10,6 +10,7 @@
         crossorigin="anonymous">
 </head>
 <body>
+    {% load staticfiles %}
     {% load socialaccount %}
     {% providers_media_js %}
     
@@ -22,7 +23,7 @@
             </li>
             <li class="list-group-item">
                 <a href="{% provider_login_url "facebook" method="js_sdk" %}">
-                    <img src='https://goo.gl/6A7oL1'>
+                    <img src={% static "imgs/facebook_login.png" %} class="h-25">
                 </a>
             </li>
         </ul>
