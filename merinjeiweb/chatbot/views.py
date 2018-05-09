@@ -48,6 +48,8 @@ class ChatBot(View):
             answer = "I couldn't understand you may you try once again with other words."
 
         # Send a resposponse
+        print("=/=/=/=/=/=/=/=/")
+        print(answer)
         page_id = response['entry'][0]['id']
         recipient = response['entry'][0]['messaging'][0]['sender']['id']
         access_token = AccessTokens.objects.filter(id=page_id).first().access_token
@@ -60,6 +62,7 @@ class ChatBot(View):
         response = requests.post(
             "https://graph.facebook.com/v2.6/me/messages?access_token=" + access_token,
             json=data)
+        print(json.loads(response._content))
         return HttpResponse(200)
 
     @staticmethod
@@ -91,6 +94,7 @@ class ChatBot(View):
             'https://graph.facebook.com/v2.11/me/nlp_configs?nlp_enabled=true', nlp_data)
         response = requests.post('https://graph.facebook.com/v2.11/' +
                                  page_id + '/subscriptions', data)
+        print("MESSENGER SUBSCRIPTION")                                 
         pprint(json.loads(response._content))
         obj, _ = PageSubscriptions.objects.update_or_create(
             id=page_id,
@@ -115,7 +119,7 @@ def generate_summurized_answer(user_question, question_type):
     answers_ids = []
     print(user_question)
     request_url = "https://api.stackexchange.com/2.2/search/advanced?order=desc&sort=relevance&title=" +\
-        user_question + "&site=stackoverflow"
+        user_question.lower() + "&site=stackoverflow"
 
     response = requests.get(request_url)
 
@@ -124,8 +128,10 @@ def generate_summurized_answer(user_question, question_type):
     for question in questions:
         print(question_type, question['title'], CLASSIFIERS.predict_question_type(
             question['title']))
-        if question['is_answered'] is True and 'accepted_answer_id' in question.keys():# and \
-            #CLASSIFIERS.predict_question_type(question['title']) == question_type:
+        if question['is_answered'] is True and \
+            'accepted_answer_id' in question.keys() and \
+            (CLASSIFIERS.predict_question_type(question['title']) == question_type or\
+            title_contains(question['title'], user_question)):
             answers_ids.append(question['accepted_answer_id'])
         if len(answers_ids) >= 3:
             break
@@ -142,18 +148,20 @@ def generate_summurized_answer(user_question, question_type):
 
     print(answers)
     summarized_answer = summarize(answers, word_count=50)
-    print('\n\n\nSUMMERIZED:\n|' + summarized_answer + '|')
     if summarized_answer:
         return summarized_answer
-    else:
-        summarized_answer = summarize(answers)
-    return summarized_answer if summarized_answer != '' else answers
+    summarized_answer = summarize(answers)
+    if summarized_answer == '':
+        return "Sorry, I couldn't find any information in my datasources. :("
+
+    return summarized_answer
+    
 
 
 def process_question(question):
-    proba = CLASSIFIERS.predict_proba_question_type(question)
-    if np.count_nonzero(proba > 0.3) == 0:
-        raise Exception('Not a question')
+    # proba = CLASSIFIERS.predict_proba_question_type(question)
+    # if np.count_nonzero(proba > 0.3) == 0:
+    #     raise Exception('Not a question')
     question_words = nltk.word_tokenize(question)
     pos_tagged = nltk.pos_tag(question_words)
     question_list = []
@@ -171,7 +179,7 @@ def try_answer(response):
         if k == 'bye':
             return check_confidence_and_return('Bye', fb_nlp_class[k])
         if k == 'thanks':
-            return check_confidence_and_return('It was pleasure to help',
+            return check_confidence_and_return('It was pleasure to help :-)',
                                                 fb_nlp_class[k])
     
     message = response['entry'][0]['messaging'][0]['message']['text']
@@ -183,3 +191,9 @@ def check_confidence_and_return(message, pred_dict):
      for el in pred_dict:
             if el['confidence'] > 0.9:
                 return message
+
+def title_contains(overflow_q, user_q):
+    user_q_words = set(user_q.lower().split())
+    overflow_q_words = set(overflow_q.lower().split())
+    overlapped_words = user_q_words & overflow_q_words
+    return 1 - ((len(user_q_words) - len(overflow_q_words)) / len(user_q_words)) > 0.7
