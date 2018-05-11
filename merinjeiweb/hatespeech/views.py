@@ -73,16 +73,6 @@ def delete_comments(comments_to_del):
 
 
 class CommentScanner(View):
-    def get(self, request):
-        if self.request.GET['hub.verify_token'] == '19990402':
-            print('Comments Subscribed')
-            return HttpResponse(self.request.GET['hub.challenge'])
-        return HttpResponse('Error, invalid token')
-
-    @method_decorator(csrf_exempt)
-    def dispatch(self, request, *args, **kwargs):
-        return View.dispatch(self, request, *args, **kwargs)
-
     # This will scan the page at first.
     @staticmethod
     def scan_page(request):
