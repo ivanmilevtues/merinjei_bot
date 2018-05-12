@@ -7,11 +7,12 @@ from django.views.generic import View
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 
-from hatespeech.models import AccessTokens
+from hatespeech.models import AccessTokens, DeletedPageComments
 from CONSTANTS import APP_ID, COMMENTS_CALLBACK, VERIFY_TOKEN, APP_SECRET
 from allauth.socialaccount.models import SocialToken
-from dashboard.models import PageSubscriptions
+from dashboard.models import Page
 from pprint import pprint
+
 
 
 from merinjei_classification.Classifiers import CLASSIFIERS
@@ -51,6 +52,13 @@ def get_comments_for_post(posts, access_token):
     return comments
 
 
+def save_comment(comment, page_id):
+    page = Page.objects.filter(id=page_id).first()
+    db_instance = DeletedPageComments(page=page,
+                                      deleted_comment=comment['message'])
+    db_instance.save()
+
+
 def delete_comments(comments_to_del):
     for page_id, comments in comments_to_del.items():
         access_token = AccessTokens.objects.filter(id=page_id)
@@ -58,7 +66,7 @@ def delete_comments(comments_to_del):
             continue
         access_token = access_token.first().access_token
         for comment in comments:
-            from pprint import pprint
+            save_comment(comment, page_id)
             pprint(comment)
             try:
                 response = requests.delete('https://graph.facebook.com/v2.11/' +
@@ -126,8 +134,9 @@ class CommentScanner(View):
         }
         response = requests.post('https://graph.facebook.com/v2.11/' +
                       page_id + '/subscriptions', data)
+        print('COMMENTS WEBHOOK SUBSCRIBE')
         pprint(json.loads(response._content))
-        obj, _ = PageSubscriptions.objects.update_or_create(
+        obj, _ = Page.objects.update_or_create(
             id=page_id,
             defaults={'feed_subscription': True})
         obj.save()
@@ -137,7 +146,7 @@ class CommentScanner(View):
     @staticmethod
     def unsubscribe(request):
         page_id = request.POST.get('page_id')
-        obj, _ = PageSubscriptions.objects.update_or_create(
+        obj, _ = Page.objects.update_or_create(
             id=page_id,
             defaults={'feed_subscription': False}
         )

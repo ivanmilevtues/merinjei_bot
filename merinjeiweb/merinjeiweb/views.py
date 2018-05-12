@@ -6,7 +6,7 @@ from django.utils.decorators import method_decorator
 
 from chatbot.views import ChatBot
 from hatespeech.views import CommentScanner
-from dashboard.models import PageSubscriptions
+from dashboard.models import Page
 
 import json
 from pprint import pprint
@@ -44,11 +44,11 @@ class WebHookHandler(View):
 
 def validate_chatbot_alive(request):
     page_id = request['id']
-    return PageSubscriptions.objects.filter(id=page_id)\
+    return Page.objects.filter(id=page_id)\
             .first().messenger_subscription
 
 
 def validate_feed_alive(request):
     page_id = request['id']
-    return PageSubscriptions.objects.filter(id=page_id)\
+    return Page.objects.filter(id=page_id)\
         .first().feed_subscription
