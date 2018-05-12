@@ -128,3 +128,22 @@ $('#logout a').click(
         })
     }
 );
+
+$('.page-name').click(
+    function () {
+        page_name = this.innerText;
+        var CSRF = $('input[name="csrfmiddlewaretoken"]').val()
+        $.ajax({
+            type: "GET",
+            url: "/logged/page_details",
+            data: {
+                csrfmiddlewaretoken: CSRF,
+                page_name: page_name
+            },
+            success: function (data) {
+                console.log(data)
+                $('#table-container').html(data);
+            }
+        })
+    }
+)

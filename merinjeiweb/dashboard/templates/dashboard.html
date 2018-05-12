@@ -26,6 +26,9 @@
                             <div class="center-block" id="username"><h4>{{ username }}</h4></div>
                         </div>
                     </li>
+                    <li>
+                        <a href="/logged/profile/">Dashboard</a>
+                    </li>
                     <li id="logout">
                         <a>Logout</a>
                     </li>
@@ -64,36 +67,38 @@
                     </p>
                 </div>
             </div>
-            <table class="table table-hover">
-                <tr>
-                    <th>Page</th>
-                    <th>Comments status</th>
-                    <th>Messenger status</th>
-                </tr>
-                {% for page, value in fb_pages.items %}
-                <tr>
-                    <td>{{ page }}</td>
-                    <td>
-                        <a title="Your subscription to the comments is DOWN" data-id='{{ value.id }}' data-token='{{ value.access_token }}' onclick="handleCommentBtn(this)">
-                            {% if value.feed_subscription %}
-                                <i class="glyphicon glyphicon-ok"></i>
-                            {% else %}
-                                <i class="glyphicon glyphicon-remove"></i>
-                            {% endif %}
-                        </a>
-                    </td>
-                    <td>
-                        <a title="Your subscription to the comments is DOWN" data-id='{{ value.id }}' data-token='{{ value.access_token }}' onclick="handleMessengerBtn(this)">
-                             {% if value.messenger_subscription %}
-                                <i class="glyphicon glyphicon-ok"></i>
-                            {% else %}
-                                <i class="glyphicon glyphicon-remove"></i>
-                            {% endif %}
-                        </a>
-                    </td>
-                </tr>
-                {% endfor %}
-            </table>
+            <div id="table-container">
+                <table class="table table-hover">
+                    <tr>
+                        <th>Page</th>
+                        <th>Comments status</th>
+                        <th>Messenger status</th>
+                    </tr>
+                    {% for page, value in fb_pages.items %}
+                    <tr>
+                        <td class="page-name">{{ page }}</td>
+                        <td>
+                            <a title="Your subscription to the comments is DOWN" data-id='{{ value.id }}' data-token='{{ value.access_token }}' onclick="handleCommentBtn(this)">
+                                {% if value.feed_subscription %}
+                                    <i class="glyphicon glyphicon-ok"></i>
+                                {% else %}
+                                    <i class="glyphicon glyphicon-remove"></i>
+                                {% endif %}
+                            </a>
+                        </td>
+                        <td>
+                            <a title="Your subscription to the comments is DOWN" data-id='{{ value.id }}' data-token='{{ value.access_token }}' onclick="handleMessengerBtn(this)">
+                                {% if value.messenger_subscription %}
+                                    <i class="glyphicon glyphicon-ok"></i>
+                                {% else %}
+                                    <i class="glyphicon glyphicon-remove"></i>
+                                {% endif %}
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
         </div>
     </div>
 
