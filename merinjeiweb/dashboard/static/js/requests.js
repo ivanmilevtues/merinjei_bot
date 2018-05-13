@@ -3,7 +3,7 @@ function handleCommentBtn(btn) {
     if (jqBtn.html().indexOf("ok") != -1) {
         unsubscribeToComments(jqBtn);
     } else {
-        subscribeToComments(jqBtn);
+        startPollingComments(jqBtn);
     }
 }
 
@@ -147,3 +147,27 @@ $('.page-name').click(
         })
     }
 )
+
+function startPollingComments(jqBtn) {
+    var pageId = jqBtn.attr('data-id');
+    var accessToken = jqBtn.attr('data-token');
+
+    var CSRF = $('input[name="csrfmiddlewaretoken"]').val()
+
+    // Subscribe to the webhook for the current page
+    $.ajax({
+        type: "POST",
+        url: "/hatespeech/subscribe_polling/",
+        data: {
+            csrfmiddlewaretoken: CSRF,
+            "page_id": pageId,
+            "access_token": accessToken,
+            "minutes": 0.1,
+        },
+        success: function () {
+            console.log('I am here???');
+            jqBtn.empty();
+            jqBtn.append('<i class="glyphicon glyphicon-ok"></i>');
+        }
+    });
+}

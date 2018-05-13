@@ -1,6 +1,9 @@
 import json
 import requests
 import numpy as np
+import threading
+from time import sleep
+from pprint import pprint
 
 from django.http import HttpResponse
 from django.views.generic import View
@@ -11,7 +14,6 @@ from hatespeech.models import AccessTokens, DeletedPageComments
 from CONSTANTS import APP_ID, COMMENTS_CALLBACK, VERIFY_TOKEN, APP_SECRET
 from allauth.socialaccount.models import SocialToken
 from dashboard.models import Page
-from pprint import pprint
 
 
 
@@ -80,7 +82,7 @@ def delete_comments(comments_to_del):
             print(json.loads(response._content))
 
 
-class CommentScanner(View):
+class CommentScanner:
     # This will scan the page at first.
     @staticmethod
     def scan_page(request):
@@ -153,3 +155,41 @@ class CommentScanner(View):
         obj.save()
 
         return HttpResponse()
+    
+
+    @staticmethod
+    def subscribe_polling(request):
+        page_id = request.POST.get('page_id')
+        if not Page.objects.filter(id=page_id)\
+            .first().feed_subscription:
+            polling_thread = CommentPollingThread(request)
+            
+            obj, _ = Page.objects.update_or_create(
+                id=page_id,
+                defaults={'feed_subscription': True})
+            obj.save()
+            
+            polling_thread.start()
+            
+            return HttpResponse(status=200)
+        return HttpResponse(status=500)
+
+
+class CommentPollingThread(threading.Thread):
+    def __init__(self, request):
+        super(CommentPollingThread, self).__init__()
+        self.request = request
+    
+
+    def run(self):
+        page_id = self.request.POST.get('page_id')
+        minutes = float(self.request.POST.get('minutes'))
+        while True:
+            print("Thread goes")
+            print("minutes", minutes * 60)
+            sleep(minutes * 60)
+            if Page.objects.filter(id=page_id)\
+                .first().feed_subscription:
+                CommentScanner.scan_page(self.request)
+            else:
+                break
