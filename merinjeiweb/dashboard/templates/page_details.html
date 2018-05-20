@@ -1,0 +1,10 @@
+<table class="table table-hover">
+    <tr>
+        <th>Deleted comments from {{ page_name }}</th>
+    </tr>
+     {% for comment in deleted_comments %}
+    <tr>
+        <td>{{ comment }}</td>
+    </tr>
+    {% endfor %}
+</table>

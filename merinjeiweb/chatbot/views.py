@@ -15,7 +15,7 @@ from pprint import pprint
 from rake_nltk import Rake
 from collections import OrderedDict
 
-from dashboard.models import PageSubscriptions
+from dashboard.models import Page
 from hatespeech.models import AccessTokens
 from gensim.summarization import summarize
 from merinjei_classification.Classifiers import CLASSIFIERS
@@ -95,7 +95,7 @@ class ChatBot(View):
                                  page_id + '/subscriptions', data)
         print("MESSENGER SUBSCRIPTION")                                 
         pprint(json.loads(response._content))
-        obj, _ = PageSubscriptions.objects.update_or_create(
+        obj, _ = Page.objects.update_or_create(
             id=page_id,
             defaults={'messenger_subscription': True})
         obj.save()
@@ -105,7 +105,7 @@ class ChatBot(View):
     @staticmethod
     def unsubscribe(request):
         page_id = request.POST.get('page_id')
-        obj, _ = PageSubscriptions.objects.update_or_create(
+        obj, _ = Page.objects.update_or_create(
             id=page_id,
             defaults={'messenger_subscription': False}
         )
