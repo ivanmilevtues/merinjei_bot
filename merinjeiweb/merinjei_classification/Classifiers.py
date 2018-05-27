@@ -74,7 +74,7 @@ class Classifiers:
 
     def predict_comment_type(self, comment):
         data = self.hlp.parse_line(comment)
-        clf_prediction = self.hs_classifier.predict(data)
+        clf_prediction = self.hs_classifier.predict_proba(data)
         rounded_clf_prediction = []
         for pred in clf_prediction:
             if pred[self.hate_predict] < self.hatespeech_threshold:

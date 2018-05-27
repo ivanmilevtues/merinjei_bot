@@ -136,7 +136,7 @@ def hatespeech_model_init():
         'n_jobs': [-1]
     }
 
-    clf = GridSearchCV(logistic_regression, param_grid_l1)
+    clf = GridSearchCV(logistic_regression, param_grid_l2)
 
     # train_classifiers(features_test, features_train, labels_test, labels_train)
     clf.fit(features_train, labels_train)
