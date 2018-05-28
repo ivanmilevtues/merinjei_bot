@@ -31,19 +31,18 @@ def get_answer_bodies(answers_ids):
         request_url = 'https://api.stackexchange.com/2.2/answers/' + \
         str(answers_id) + \
         '?order=desc&sort=votes&site=stackoverflow&filter=withbody'
-    response = requests.get(request_url)
-    answer = json.loads(response._content)['items'][0]['body']
-    answer = remove_code_tag(answer)
-    answer = html2text.html2text(answer)
-    answer = ' '.join(re.split(r'\s{2,}|\n', answer)).strip()
-    answers += '\n' + answer
-
+        response = requests.get(request_url)
+        answer = json.loads(response._content)['items'][0]['body']
+        answer = remove_code_tag(answer)
+        answer = html2text.html2text(answer)
+        answer = ' '.join(re.split(r'\s{2,}|\n', answer)).strip()
+        answers += '\n' + answer
     return answers
 
 
 def get_stackoverflow_answer_ids(question_query, question_type):
     answers_ids = []
-    print(question_query)
+    top3_answer_ids = []
     request_url = "https://api.stackexchange.com/2.2/search/advanced?order=desc&sort=relevance&title=" +\
         question_query.lower() + "&site=stackoverflow"
 
@@ -51,18 +50,24 @@ def get_stackoverflow_answer_ids(question_query, question_type):
 
     questions = json.loads(
         response._content, object_pairs_hook=OrderedDict)['items']
-    pprint(questions)
+    
     for question in questions:
         print(question_type, question['title'], CLASSIFIERS.predict_question_type(
             question['title']))
+
+        if len(top3_answer_ids) <= 3 and question['is_answered'] is True and \
+            'accepted_answer_id' in question.keys():
+            top3_answer_ids.append(question['accepted_answer_id'])
+
         if question['is_answered'] is True and \
             'accepted_answer_id' in question.keys() and \
             (CLASSIFIERS.predict_question_type(question['title']) == question_type or
              title_contains(question['title'], question_query)):
             answers_ids.append(question['accepted_answer_id'])
+    
         if len(answers_ids) >= 3:
             return answers_ids
-    return answers_ids
+    return answers_ids if len(answers_ids) != 0 else top3_answer_ids
 
 
 def process_question(question):
