@@ -9,7 +9,6 @@ from django.views.generic import View
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 
-from hatespeech.models import AccessTokens
 from hatespeech.page_crawler import get_page_posts, get_comments_for_post,\
                                     score_comments, delete_comments
 from CONSTANTS import APP_ID, COMMENTS_CALLBACK, VERIFY_TOKEN, APP_SECRET
