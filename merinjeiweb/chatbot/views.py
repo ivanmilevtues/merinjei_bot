@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.views.generic import View
 
 from django.views.decorators.csrf import csrf_exempt
@@ -106,3 +106,22 @@ class ChatBot(View):
         obj.save()
 
         return HttpResponse()
+
+
+# The purpose of this endpoint is if there is any problem with facebook's 
+# Messenger that I can show demo of the chatbot working.
+def backup_chatbot(request):
+    fb_encapsulated_msg = {
+        'entry': [{
+            'messaging': [{
+                'message': {
+                    'nlp': {
+                        'entities': {}
+                    },
+                    'text': request.GET.get('message')
+                }
+            }]
+        }]
+    }
+    answer = try_answer(fb_encapsulated_msg)
+    return JsonResponse({'answer': answer})
