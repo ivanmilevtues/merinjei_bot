@@ -124,5 +124,4 @@ def backup_chatbot(request):
         }]
     }
     answer = try_answer(fb_encapsulated_msg)
-
     return JsonResponse({'answer': answer})

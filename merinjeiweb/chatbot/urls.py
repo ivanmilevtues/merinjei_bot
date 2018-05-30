@@ -5,5 +5,6 @@ from chatbot.views import ChatBot, backup_chatbot
 urlpatterns = [
     url(r'^subscribe', ChatBot.subscribe),
     url(r'^unsubscribe', ChatBot.unsubscribe),
-    url(r'^backup', backup_chatbot)
+    url(r'^backup', backup_chatbot),
+
 ]

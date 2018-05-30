@@ -10,7 +10,10 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 
 from merinjei_classification.Classifiers import CLASSIFIERS
+<<<<<<< HEAD
 
+=======
+>>>>>>> master
 from hatespeech.page_crawler import get_page_posts, get_comments_for_post,\
                                     score_comments, delete_comments
 from CONSTANTS import APP_ID, COMMENTS_CALLBACK, VERIFY_TOKEN, APP_SECRET
@@ -130,8 +133,6 @@ class CommentPollingThread(threading.Thread):
             else:
                 break
 
-# The purpose of this methos is to be used if there is any problem with Facebooks
-# endpoints.
 def backup_hatespeech_detect(request):
     msg = request.GET.get('message')
     pred = CLASSIFIERS.predict_comment_type(msg)
