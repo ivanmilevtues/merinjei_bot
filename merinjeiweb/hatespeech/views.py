@@ -4,10 +4,12 @@ import threading
 from time import sleep
 from pprint import pprint
 
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.views.generic import View
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
+
+from merinjei_classification.Classifiers import CLASSIFIERS
 
 from hatespeech.page_crawler import get_page_posts, get_comments_for_post,\
                                     score_comments, delete_comments
@@ -127,3 +129,10 @@ class CommentPollingThread(threading.Thread):
                 CommentScanner.scan_page(self.request)
             else:
                 break
+
+# The purpose of this methos is to be used if there is any problem with Facebooks
+# endpoints.
+def backup_hatespeech_detect(request):
+    msg = request.GET.get('message')
+    pred = CLASSIFIERS.predict_comment_type(msg)
+    return JsonResponse({'is_not_hatespeech': pred})
