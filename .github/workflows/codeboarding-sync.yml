@@ -25,6 +25,7 @@ on:
 
 permissions:
   contents: write   # commit the generated baseline + docs to the branch
+  pull-requests: write # open/update the rolling baseline PR for a protected target branch
   id-token: write   # identifies this repo to CodeBoarding's hosted tier, used by the free
                     # tier AND a license, and as the fallback until your own key exists
 
@@ -42,7 +43,9 @@ jobs:
         with:
           mode: sync
           force_full: ${{ inputs.force_full || false }}
+          sync_strategy: pull_request
           target_branch: 'master'
-          # CodeBoarding's free hosted tier. No secret to add: the run authenticates
-          # with the GitHub OIDC token that `id-token: write` above grants.
-          llm: hosted
+          # Your CodeBoarding plan, on CodeBoarding's hosted tier. The run fails with
+          # a message naming this secret if CODEBOARDING_LICENSE is not set.
+          llm: license
+          license_key: ${{ secrets.CODEBOARDING_LICENSE }}
