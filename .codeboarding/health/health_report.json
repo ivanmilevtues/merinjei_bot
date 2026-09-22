@@ -1,0 +1,180 @@
+{
+  "repository_name": ".codeboarding-target",
+  "timestamp": "2026-09-22T22:06:18.599657+00:00",
+  "overall_score": 0.9871794871794872,
+  "check_summaries": [
+    {
+      "check_name": "function_size",
+      "description": "Checks that functions/methods do not exceed line count thresholds",
+      "languages": [
+        "javascript"
+      ],
+      "check_type": "standard",
+      "total_entities_checked": 15,
+      "findings_count": 0,
+      "warning_count": 0,
+      "score": 1.0,
+      "finding_groups": []
+    },
+    {
+      "check_name": "circular_dependencies",
+      "description": "Detects circular dependencies between packages",
+      "languages": [
+        "javascript"
+      ],
+      "check_type": "circular_dependencies",
+      "cycles": [],
+      "packages_checked": 4,
+      "packages_in_cycles": 0
+    },
+    {
+      "check_name": "unused_code_diagnostics",
+      "description": "Detects unused imports, variables, functions, and dead code via LSP diagnostics",
+      "languages": [
+        "javascript"
+      ],
+      "check_type": "standard",
+      "total_entities_checked": 2,
+      "findings_count": 2,
+      "warning_count": 0,
+      "score": 0.9,
+      "finding_groups": [
+        {
+          "severity": "info",
+          "threshold": 0,
+          "description": "Variables declared but never used",
+          "entities": [
+            {
+              "entity_name": "[unused_variable] 'result' is declared but its value is never read.",
+              "file_path": "merinjeiweb/dashboard/static/js/requests.js",
+              "line_start": 107,
+              "line_end": 107,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'result' is declared but its value is never read.",
+              "file_path": "merinjeiweb/dashboard/static/js/requests.js",
+              "line_start": 125,
+              "line_end": 125,
+              "metric_value": 0.0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "check_name": "function_size",
+      "description": "Checks that functions/methods do not exceed line count thresholds",
+      "languages": [
+        "python"
+      ],
+      "check_type": "standard",
+      "total_entities_checked": 133,
+      "findings_count": 0,
+      "warning_count": 0,
+      "score": 1.0,
+      "finding_groups": []
+    },
+    {
+      "check_name": "circular_dependencies",
+      "description": "Detects circular dependencies between packages",
+      "languages": [
+        "python"
+      ],
+      "check_type": "circular_dependencies",
+      "cycles": [],
+      "packages_checked": 11,
+      "packages_in_cycles": 0
+    },
+    {
+      "check_name": "unused_code_diagnostics",
+      "description": "Detects unused imports, variables, functions, and dead code via LSP diagnostics",
+      "languages": [
+        "python"
+      ],
+      "check_type": "standard",
+      "total_entities_checked": 6,
+      "findings_count": 6,
+      "warning_count": 3,
+      "score": 0.7,
+      "finding_groups": [
+        {
+          "severity": "warning",
+          "threshold": 0,
+          "description": "Unused import statements that should be removed",
+          "entities": [
+            {
+              "entity_name": "[unused_import] Import \"django\" is not accessed",
+              "file_path": "merinjeiweb/manage.py",
+              "line_start": 14,
+              "line_end": 14,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"Lexicon\" is not accessed",
+              "file_path": "merinjeiweb/test.py",
+              "line_start": 1,
+              "line_end": 1,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"hatespeech_model_init\" is not accessed",
+              "file_path": "merinjeiweb/test.py",
+              "line_start": 3,
+              "line_end": 3,
+              "metric_value": 0.0
+            }
+          ]
+        },
+        {
+          "severity": "info",
+          "threshold": 0,
+          "description": "Variables declared but never used",
+          "entities": [
+            {
+              "entity_name": "[unused_variable] \"django\" is not accessed",
+              "file_path": "merinjeiweb/manage.py",
+              "line_start": 14,
+              "line_end": 14,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"Lexicon\" is not accessed",
+              "file_path": "merinjeiweb/test.py",
+              "line_start": 1,
+              "line_end": 1,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"hatespeech_model_init\" is not accessed",
+              "file_path": "merinjeiweb/test.py",
+              "line_start": 3,
+              "line_end": 3,
+              "metric_value": 0.0
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "file_summaries": [
+    {
+      "file_path": "merinjeiweb/test.py",
+      "total_findings": 4,
+      "warning_findings": 2,
+      "composite_risk_score": 50.0
+    },
+    {
+      "file_path": "merinjeiweb/manage.py",
+      "total_findings": 2,
+      "warning_findings": 1,
+      "composite_risk_score": 25.0
+    },
+    {
+      "file_path": "merinjeiweb/dashboard/static/js/requests.js",
+      "total_findings": 2,
+      "warning_findings": 0,
+      "composite_risk_score": 20.0
+    }
+  ]
+}
