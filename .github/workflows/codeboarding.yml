@@ -22,7 +22,7 @@ jobs:
       contents: read        # check out the repo + read the committed baseline (no writes in review mode)
       pull-requests: write  # post the architecture-diff PR comment
       issues: write         # the /codeboarding issue_comment trigger + comment API
-      id-token: write       # mint a GitHub OIDC token for the free hosted tier (write is the only level for id-token)
+      id-token: write       # identify the run to the dev hosted tier (write is the only level for id-token)
       actions: read         # let a repeat review download the analysis an earlier run published, instead of re-deriving the whole PR
     if: >
       (github.event_name == 'pull_request' && github.event.action != 'closed' &&
@@ -31,8 +31,11 @@ jobs:
        startsWith(github.event.comment.body, '/codeboarding') &&
        contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.comment.author_association))
     steps:
-      - uses: CodeBoarding/CodeBoarding-action@v1
+      # Paywall release candidate: CodeBoarding/CodeBoarding-action PR #134.
+      - uses: CodeBoarding/CodeBoarding-action@36360dbcc117d0f0f6d41053ca08883c631da95f
+        env:
+          CODEBOARDING_PROXY_URL: https://gartpdb5oz7bdq5motdya3dthe0tvakn.lambda-url.us-east-1.on.aws
         with:
-          # CodeBoarding's free hosted tier. No secret to add: the run authenticates
-          # with the GitHub OIDC token that `id-token: write` above grants.
+          # Hosted analysis on the dev stack, authenticated by GitHub OIDC. No secrets.
           llm: hosted
+          depth_cap: '5'
